@@ -48,7 +48,30 @@ class App extends Component {
     this.setState({
       locationLoader: true
     });
+    window.addEventListener("focus", () => {
+      fetch(`https://thevirustracker.com/free-api?global=stats`, {
+        method: "GET"
+      })
+        .then(res => res.json())
+        .then(response => {
+          this.setState({
+            globalData: response.results[0],
+            locationLoader: false
+          });
+        })
+        .catch(error => {
+          this.setState({
+            locationLoader: false
+          });
+        });
 
+      this.setState({
+        cards: []
+      });
+      this.renderCards(
+        this.chunkArray(Object.keys(Countrys), 9)[this.state.currentCardPage]
+      );
+    });
     fetch(`https://thevirustracker.com/free-api?global=stats`, {
       method: "GET"
     })
@@ -71,10 +94,6 @@ class App extends Component {
   }
 
   renderCards(cardId) {
-    this.setState({
-      isChart: 0,
-      cards: []
-    });
     cardId.map(location => {
       fetch(`https://thevirustracker.com/free-api?countryTotal=${location}`, {
         method: "GET"
@@ -96,9 +115,6 @@ class App extends Component {
 
   renderCharts(data) {
     this.renderCards(data);
-    this.setState({
-      isChart: 1
-    });
     data.map(location => {
       fetch(
         `https://thevirustracker.com/free-api?countryTimeline=${location}`,

@@ -44,6 +44,34 @@ class India extends Component {
   }
 
   componentDidMount() {
+    window.addEventListener("focus", () => {
+      fetch(`https://api.covid19india.org/data.json`, {
+        method: "GET"
+      })
+        .then(res => res.json())
+        .then(response => {
+          this.setState({
+            india: response,
+            locationLoader: false
+          });
+        })
+        .catch(error => {
+          this.setState({
+            locationLoader: false
+          });
+        });
+      fetch("https://api.covid19india.org/state_district_wise.json", {
+        method: "GET"
+      })
+        .then(res => res.json())
+        .then(response => {
+          this.setState({
+            stateWiseCity: response
+          });
+        })
+        .catch(error => {});
+    });
+
     this.setState({
       locationLoader: true
     });
