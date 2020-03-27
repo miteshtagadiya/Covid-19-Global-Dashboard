@@ -9,6 +9,7 @@ import Github from "./assets/github1.png";
 import Virus from "./assets/virus.gif";
 import ErrorBoundary from "./ErrorBoundry";
 import Countrys from "./CountryList.json";
+import _ from "lodash";
 
 class App extends Component {
   constructor(props) {
@@ -47,22 +48,6 @@ class App extends Component {
     this.setState({
       locationLoader: true
     });
-    fetch(`https://coronavirus-tracker-api.herokuapp.com/v2/locations`, {
-      method: "GET"
-    })
-      .then(res => res.json())
-      .then(response => {
-        this.setState({
-          data: response,
-          totalPages: this.chunkArray(response.locations, 9).length,
-          locationLoader: false
-        });
-      })
-      .catch(error => {
-        this.setState({
-          locationLoader: false
-        });
-      });
 
     fetch(`https://thevirustracker.com/free-api?global=stats`, {
       method: "GET"
@@ -110,6 +95,7 @@ class App extends Component {
   }
 
   renderCharts(data) {
+    this.renderCards(data);
     this.setState({
       isChart: 1
     });
@@ -149,42 +135,41 @@ class App extends Component {
   };
 
   onPageChanged = data1 => {
-    const { data } = this.state;
-    const { currentPage, totalPages, pageLimit } = data1;
+    const { currentPage, totalPages } = data1;
 
-    const offset = (currentPage - 1) * pageLimit;
-    const currentLocations = data.locations.slice(offset, offset + pageLimit);
     this.setState({
       timelines: [],
       locationLoader: true
     });
     if (!this.state.selectedCountry) {
-      this.renderCharts(
-        this.chunkArray(Object.keys(Countrys), 9)[currentPage - 1]
-      );
+      this.renderCharts(_.chunk(Object.keys(Countrys), 9)[currentPage - 1]);
     }
 
     this.setState({
       currentPage: currentPage - 1,
-      currentLocations: currentLocations,
       totalPages: totalPages
     });
   };
 
-  onCardPageChanged = data1 => {
-    const { data } = this.state;
-    const { currentPage, totalPages, pageLimit } = data1;
+  changeState = () => {
+    this.setState({
+      locationLoader: true
+    });
+  };
 
-    const offset = (currentPage - 1) * pageLimit;
+  onCardPageChanged = data1 => {
+    this.setState({
+      locationLoader: data1.locationLoader
+    });
+    const { currentPage } = data1;
+
     this.setState({
       cards: [],
       locationLoader: true
     });
 
     if (this.state.loadDefaultCards === false && !this.state.selectedCountry) {
-      this.renderCards(
-        this.chunkArray(Object.keys(Countrys), 9)[currentPage - 1]
-      );
+      this.renderCards(_.chunk(Object.keys(Countrys), 9)[currentPage - 1]);
     }
     this.setState({
       currentCardPage: currentPage - 1,
@@ -224,6 +209,10 @@ class App extends Component {
         label: Countrys[location]
       };
     });
+
+    let date = new Date();
+    let todayDate =
+      date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
 
     return (
       <ErrorBoundary>
@@ -302,11 +291,12 @@ class App extends Component {
                         : 0}
                     </div>
                     <div style={{ fontSize: 18, marginBottom: 10 }}>
-                      [+{" "}
+                      <span style={{ fontSize: 20, fontWeight: "bold" }}>
+                        &#9650;
+                      </span>{" "}
                       {this.state.globalData.length !== 0
                         ? this.state.globalData.total_new_cases_today
                         : 0}
-                      ]
                     </div>
                     <div style={{ fontSize: 18 }}>Confirmed</div>
                   </div>
@@ -318,7 +308,7 @@ class App extends Component {
                       minHeight: 156,
                       fontWeight: "bold",
                       background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
-                      color: "#530803",
+                      color: "#192a56",
                       borderRadius: 10
                     }}
                   >
@@ -334,36 +324,10 @@ class App extends Component {
                   <div
                     style={{
                       padding: 20,
-                      fontWeight: "bold",
-                      minHeight: 156,
-                      background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
-                      color: "#530803",
-                      borderRadius: 10
-                    }}
-                  >
-                    <div style={{ fontSize: 35 }}>
-                      {this.state.globalData.length !== 0
-                        ? this.state.globalData.total_deaths
-                        : 0}
-                    </div>
-                    <div style={{ fontSize: 18, marginBottom: 10 }}>
-                      [+{" "}
-                      {this.state.globalData.length !== 0
-                        ? this.state.globalData.total_new_deaths_today
-                        : 0}
-                      ]
-                    </div>
-                    <div style={{ fontSize: 18 }}>Deaths</div>
-                  </div>
-                </div>
-                <div className="col-sm-3" style={{ padding: 15 }}>
-                  <div
-                    style={{
-                      padding: 20,
                       minHeight: 156,
                       fontWeight: "bold",
                       background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
-                      color: "#530803",
+                      color: "#006266",
                       borderRadius: 10
                     }}
                   >
@@ -375,9 +339,37 @@ class App extends Component {
                     <div style={{ fontSize: 18 }}>Recovered</div>
                   </div>
                 </div>
+                <div className="col-sm-3" style={{ padding: 15 }}>
+                  <div
+                    style={{
+                      padding: 20,
+                      fontWeight: "bold",
+                      minHeight: 156,
+                      background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
+                      color: "#535c68",
+                      borderRadius: 10
+                    }}
+                  >
+                    <div style={{ fontSize: 35 }}>
+                      {this.state.globalData.length !== 0
+                        ? this.state.globalData.total_deaths
+                        : 0}
+                    </div>
+                    <div style={{ fontSize: 18, marginBottom: 10 }}>
+                      <span style={{ fontSize: 20, fontWeight: "bold" }}>
+                        &#9650;
+                      </span>{" "}
+                      {this.state.globalData.length !== 0
+                        ? this.state.globalData.total_new_deaths_today
+                        : 0}
+                    </div>
+                    <div style={{ fontSize: 18 }}>Deaths</div>
+                  </div>
+                </div>
               </div>
               <div>
                 <Select
+                  isClearable={true}
                   onChange={selectedOption => {
                     this.setState({
                       timelines: [],
@@ -385,8 +377,16 @@ class App extends Component {
                       selectedCountry: true
                     });
                     this.state.isChart === 0
-                      ? this.renderCards([selectedOption.value.toUpperCase()])
-                      : this.renderCharts([selectedOption.value.toUpperCase()]);
+                      ? this.renderCards(
+                          selectedOption === null
+                            ? _.chunk(Object.keys(Countrys), 9)[0]
+                            : [selectedOption.value.toUpperCase()]
+                        )
+                      : this.renderCharts(
+                          selectedOption === null
+                            ? _.chunk(Object.keys(Countrys), 9)[0]
+                            : [selectedOption.value.toUpperCase()]
+                        );
                   }}
                   styles={colourStyles}
                   options={options}
@@ -404,7 +404,8 @@ class App extends Component {
                   onClick={() =>
                     this.setState({
                       isChart: 1,
-                      selectedCountry: false
+                      selectedCountry: false,
+                      locationLoader: true
                     })
                   }
                   style={
@@ -431,7 +432,10 @@ class App extends Component {
                 </span>
                 <span
                   onClick={() =>
-                    this.setState({ isChart: 0, selectedCountry: false })
+                    this.setState({
+                      isChart: 0,
+                      selectedCountry: false
+                    })
                   }
                   style={
                     this.state.isChart === 0
@@ -512,12 +516,18 @@ class App extends Component {
                                           }}
                                         >
                                           {"  "}
-                                          [+
+                                          <span
+                                            style={{
+                                              fontSize: 17,
+                                              fontWeight: "bold"
+                                            }}
+                                          >
+                                            &#9650;
+                                          </span>
                                           {
                                             location.countrydata[0]
                                               .total_new_cases_today
                                           }
-                                          ]
                                         </span>
                                       )}
                                     </div>
@@ -554,12 +564,18 @@ class App extends Component {
                                           }}
                                         >
                                           {"  "}
-                                          [+
+                                          <span
+                                            style={{
+                                              fontSize: 17,
+                                              fontWeight: "bold"
+                                            }}
+                                          >
+                                            &#9650;
+                                          </span>
                                           {
                                             location.countrydata[0]
                                               .total_new_deaths_today
                                           }
-                                          ]
                                         </span>
                                       )}
                                     </div>
@@ -596,14 +612,21 @@ class App extends Component {
                           );
                         })
                       : null}
-                    <div className="row" style={{ width: "100%", padding: 30 }}>
-                      <Pagination
-                        totalRecords={Object.keys(Countrys).length}
-                        pageLimit={9}
-                        pageNeighbours={1}
-                        onPageChanged={data => this.onCardPageChanged(data)}
-                      />
-                    </div>
+                    {!this.state.selectedCountry ? (
+                      <div
+                        className="row"
+                        style={{ width: "100%", padding: 30 }}
+                      >
+                        <Pagination
+                          totalRecords={Object.keys(Countrys).length}
+                          pageLimit={9}
+                          pageNeighbours={1}
+                          onPageChanged={data => {
+                            this.onCardPageChanged(data);
+                          }}
+                        />
+                      </div>
+                    ) : null}
                   </div>
                 )
               ) : (
@@ -614,9 +637,8 @@ class App extends Component {
                     </div>
                   ) : this.state.timelines.length !== 0 ? (
                     this.state.timelines.map((timeline, index1) => {
-                      console.log(timeline);
                       let data = Object.keys(timeline.timelineitems[0])
-                        .filter(data => data !== "stat")
+                        .filter(data => data !== "stat" && data !== todayDate)
                         .map((dataKey, index) => {
                           return {
                             name: dataKey,
@@ -635,7 +657,117 @@ class App extends Component {
                                 .new_daily_deaths
                           };
                         });
-
+                      let confirmed =
+                        typeof this.state.cards.filter(
+                          country =>
+                            country.countrydata[0].info.title ===
+                            timeline.countrytimelinedata[0].info.title
+                        )[0] !== "undefined"
+                          ? this.state.cards.filter(
+                              country =>
+                                country.countrydata[0].info.title ===
+                                timeline.countrytimelinedata[0].info.title
+                            )[0].countrydata[0].total_cases
+                          : Object.values(timeline.timelineitems[0])[
+                              Object.values(timeline.timelineitems[0]).length -
+                                2
+                            ].total_cases;
+                      let deaths =
+                        typeof this.state.cards.filter(
+                          country =>
+                            country.countrydata[0].info.title ===
+                            timeline.countrytimelinedata[0].info.title
+                        )[0] !== "undefined"
+                          ? this.state.cards.filter(
+                              country =>
+                                country.countrydata[0].info.title ===
+                                timeline.countrytimelinedata[0].info.title
+                            )[0].countrydata[0].total_deaths
+                          : Object.values(timeline.timelineitems[0])[
+                              Object.values(timeline.timelineitems[0]).length -
+                                2
+                            ].total_deaths;
+                      let recovered =
+                        typeof this.state.cards.filter(
+                          country =>
+                            country.countrydata[0].info.title ===
+                            timeline.countrytimelinedata[0].info.title
+                        )[0] !== "undefined"
+                          ? this.state.cards.filter(
+                              country =>
+                                country.countrydata[0].info.title ===
+                                timeline.countrytimelinedata[0].info.title
+                            )[0].countrydata[0].total_recovered
+                          : Object.values(timeline.timelineitems[0])[
+                              Object.values(timeline.timelineitems[0]).length -
+                                2
+                            ].total_recoveries;
+                      let NewConfirmed =
+                        typeof this.state.cards.filter(
+                          country =>
+                            country.countrydata[0].info.title ===
+                            timeline.countrytimelinedata[0].info.title
+                        )[0] !== "undefined"
+                          ? this.state.cards.filter(
+                              country =>
+                                country.countrydata[0].info.title ===
+                                timeline.countrytimelinedata[0].info.title
+                            )[0].countrydata[0].total_new_cases_today
+                          : Object.values(timeline.timelineitems[0])[
+                              Object.values(timeline.timelineitems[0]).length -
+                                2
+                            ].new_daily_cases;
+                      let NewDeaths =
+                        typeof this.state.cards.filter(
+                          country =>
+                            country.countrydata[0].info.title ===
+                            timeline.countrytimelinedata[0].info.title
+                        )[0] !== "undefined"
+                          ? this.state.cards.filter(
+                              country =>
+                                country.countrydata[0].info.title ===
+                                timeline.countrytimelinedata[0].info.title
+                            )[0].countrydata[0].total_new_deaths_today
+                          : Object.values(timeline.timelineitems[0])[
+                              Object.values(timeline.timelineitems[0]).length -
+                                2
+                            ].new_daily_deaths;
+                      if (
+                        typeof this.state.cards.filter(
+                          country =>
+                            country.countrydata[0].info.title ===
+                            timeline.countrytimelinedata[0].info.title
+                        )[0] !== "undefined"
+                      ) {
+                        data.push({
+                          name: todayDate,
+                          Confirmed: this.state.cards.filter(
+                            country =>
+                              country.countrydata[0].info.title ===
+                              timeline.countrytimelinedata[0].info.title
+                          )[0].countrydata[0].total_cases,
+                          Deaths: this.state.cards.filter(
+                            country =>
+                              country.countrydata[0].info.title ===
+                              timeline.countrytimelinedata[0].info.title
+                          )[0].countrydata[0].total_deaths,
+                          Recovered: this.state.cards.filter(
+                            country =>
+                              country.countrydata[0].info.title ===
+                              timeline.countrytimelinedata[0].info.title
+                          )[0].countrydata[0].total_recovered,
+                          ["New Conf."]: this.state.cards.filter(
+                            country =>
+                              country.countrydata[0].info.title ===
+                              timeline.countrytimelinedata[0].info.title
+                          )[0].countrydata[0].total_new_cases_today,
+                          ["New Deaths"]: this.state.cards.filter(
+                            country =>
+                              country.countrydata[0].info.title ===
+                              timeline.countrytimelinedata[0].info.title
+                          )[0].countrydata[0].total_new_deaths_today
+                        });
+                      }
                       return (
                         <div
                           key={index1}
@@ -672,29 +804,19 @@ class App extends Component {
                                 }}
                               >
                                 <div>
-                                  {
-                                    Object.values(timeline.timelineitems[0])[
-                                      Object.values(timeline.timelineitems[0])
-                                        .length - 2
-                                    ].total_cases
-                                  }
-                                  {Object.values(timeline.timelineitems[0])[
-                                    Object.values(timeline.timelineitems[0])
-                                      .length - 2
-                                  ].new_daily_deaths === 0 ? null : (
+                                  {confirmed}
+                                  {NewConfirmed === 0 ? null : (
                                     <span style={{ fontSize: 13 }}>
                                       {"  "}
-                                      [+
-                                      {
-                                        Object.values(
-                                          timeline.timelineitems[0]
-                                        )[
-                                          Object.values(
-                                            timeline.timelineitems[0]
-                                          ).length - 2
-                                        ].new_daily_cases
-                                      }
-                                      ]
+                                      <span
+                                        style={{
+                                          fontSize: 17,
+                                          fontWeight: "bold"
+                                        }}
+                                      >
+                                        &#9650;
+                                      </span>
+                                      {NewConfirmed}
                                     </span>
                                   )}
                                 </div>
@@ -708,29 +830,19 @@ class App extends Component {
                                 }}
                               >
                                 <div>
-                                  {
-                                    Object.values(timeline.timelineitems[0])[
-                                      Object.values(timeline.timelineitems[0])
-                                        .length - 2
-                                    ].total_deaths
-                                  }
-                                  {Object.values(timeline.timelineitems[0])[
-                                    Object.values(timeline.timelineitems[0])
-                                      .length - 2
-                                  ].new_daily_deaths === 0 ? null : (
+                                  {deaths}
+                                  {NewDeaths === 0 ? null : (
                                     <span style={{ fontSize: 13 }}>
                                       {"  "}
-                                      [+
-                                      {
-                                        Object.values(
-                                          timeline.timelineitems[0]
-                                        )[
-                                          Object.values(
-                                            timeline.timelineitems[0]
-                                          ).length - 2
-                                        ].new_daily_deaths
-                                      }
-                                      ]
+                                      <span
+                                        style={{
+                                          fontSize: 17,
+                                          fontWeight: "bold"
+                                        }}
+                                      >
+                                        &#9650;
+                                      </span>
+                                      {NewDeaths}
                                     </span>
                                   )}
                                 </div>
@@ -743,14 +855,7 @@ class App extends Component {
                                   color: "#2F847C"
                                 }}
                               >
-                                <div>
-                                  {
-                                    Object.values(timeline.timelineitems[0])[
-                                      Object.values(timeline.timelineitems[0])
-                                        .length - 2
-                                    ].total_recoveries
-                                  }
-                                </div>
+                                <div>{recovered}</div>
                                 <div>Recovered</div>
                               </div>
                             </div>
