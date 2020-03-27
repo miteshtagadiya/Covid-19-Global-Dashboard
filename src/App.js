@@ -3,17 +3,27 @@ import "./App.css";
 import Select from "react-select";
 import SimpleLineChart from "./SimpleLineChart/SimpleLineChart";
 import Pagination from "./Pagination";
+import IndiaIcon from "./assets/india.png";
+import World from "./assets/world.png";
 import Github from "./assets/github1.png";
+import Virus from "./assets/virus.gif";
+import ErrorBoundary from "./ErrorBoundry";
+import Countrys from "./CountryList.json";
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       searchString: "",
+      cards: [],
       currentPage: 0,
+      currentCardPage: 0,
+      totalCardPages: 0,
       totalPages: 0,
-      activePage: 0,
+      globalData: 0,
+      locationLoader: false,
       selectedCountry: false,
+      loadDefaultCards: true,
       data: [],
       timelines: [],
       labels: ["January", "February", "March", "April", "May"],
@@ -34,6 +44,9 @@ class App extends Component {
   }
 
   componentDidMount() {
+    this.setState({
+      locationLoader: true
+    });
     fetch(`https://coronavirus-tracker-api.herokuapp.com/v2/locations`, {
       method: "GET"
     })
@@ -41,10 +54,59 @@ class App extends Component {
       .then(response => {
         this.setState({
           data: response,
-          totalPages: this.chunkArray(response.locations, 9).length
+          totalPages: this.chunkArray(response.locations, 9).length,
+          locationLoader: false
         });
       })
-      .catch(error => {});
+      .catch(error => {
+        this.setState({
+          locationLoader: false
+        });
+      });
+
+    fetch(`https://thevirustracker.com/free-api?global=stats`, {
+      method: "GET"
+    })
+      .then(res => res.json())
+      .then(response => {
+        this.setState({
+          globalData: response.results[0],
+          locationLoader: false
+        });
+      })
+      .catch(error => {
+        this.setState({
+          locationLoader: false
+        });
+      });
+
+    this.renderCards(
+      this.chunkArray(Object.keys(Countrys), 9)[this.state.currentCardPage]
+    );
+  }
+
+  renderCards(cardId) {
+    this.setState({
+      isChart: 0,
+      cards: []
+    });
+    cardId.map(location => {
+      fetch(`https://thevirustracker.com/free-api?countryTotal=${location}`, {
+        method: "GET"
+      })
+        .then(res => res.json())
+        .then(response => {
+          this.setState({
+            locationLoader: false,
+            cards: this.state.cards.concat(response)
+          });
+        })
+        .catch(error => {
+          this.setState({
+            locationLoader: false
+          });
+        });
+    });
   }
 
   renderCharts(data) {
@@ -53,7 +115,7 @@ class App extends Component {
     });
     data.map(location => {
       fetch(
-        `https://coronavirus-tracker-api.herokuapp.com/v2/locations/${location.id}`,
+        `https://thevirustracker.com/free-api?countryTimeline=${location}`,
         {
           method: "GET"
         }
@@ -62,12 +124,18 @@ class App extends Component {
         .then(response => {
           this.setState(state => {
             const timelines = state.timelines.concat(response);
+            const locationLoader = false;
             return {
-              timelines
+              timelines,
+              locationLoader
             };
           });
         })
-        .catch(error => {});
+        .catch(error => {
+          this.setState({
+            locationLoader: false
+          });
+        });
     });
   }
 
@@ -87,11 +155,12 @@ class App extends Component {
     const offset = (currentPage - 1) * pageLimit;
     const currentLocations = data.locations.slice(offset, offset + pageLimit);
     this.setState({
-      timelines: []
+      timelines: [],
+      locationLoader: true
     });
     if (!this.state.selectedCountry) {
       this.renderCharts(
-        this.chunkArray(this.state.data.locations, 9)[currentPage - 1]
+        this.chunkArray(Object.keys(Countrys), 9)[currentPage - 1]
       );
     }
 
@@ -99,6 +168,29 @@ class App extends Component {
       currentPage: currentPage - 1,
       currentLocations: currentLocations,
       totalPages: totalPages
+    });
+  };
+
+  onCardPageChanged = data1 => {
+    const { data } = this.state;
+    const { currentPage, totalPages, pageLimit } = data1;
+
+    const offset = (currentPage - 1) * pageLimit;
+    this.setState({
+      cards: [],
+      locationLoader: true
+    });
+
+    if (this.state.loadDefaultCards === false && !this.state.selectedCountry) {
+      this.renderCards(
+        this.chunkArray(Object.keys(Countrys), 9)[currentPage - 1]
+      );
+    }
+    this.setState({
+      currentCardPage: currentPage - 1,
+      locationLoader: false,
+      loadDefaultCards: false,
+      selectedCountry: false
     });
   };
 
@@ -126,407 +218,596 @@ class App extends Component {
       }
     };
 
-    const options =
-      this.state.data !== [] && this.state.data.locations
-        ? this.state.data.locations.map(location => {
-            return {
-              value:
-                location.province === "" ? location.country : location.province,
-              label:
-                location.province === "" ? location.country : location.province
-            };
-          })
-        : [];
+    const options = Object.keys(Countrys).map(location => {
+      return {
+        value: location,
+        label: Countrys[location]
+      };
+    });
 
     return (
-      <div
-        className="App"
-        style={{
-          background: "#172852",
-          color: "white",
-          height: "100vh",
-          overflowY: "scroll"
-        }}
-      >
-        <div className="container">
-          <div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                fontSize: 40,
-                fontWeight: "bold",
-                marginTop: 30,
-                paddingBottom: 30,
-                borderBottom: "2px solid white"
-              }}
-            >
-              Covid-19 Global Dashboard
+      <ErrorBoundary>
+        <div
+          className="App"
+          style={{
+            background: "#172852",
+            color: "white",
+            height: "100vh",
+            overflowY: "scroll"
+          }}
+        >
+          <div className="container">
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: 40,
+                  fontWeight: "bold",
+                  marginTop: 30,
+                  paddingBottom: 30,
+                  borderBottom: "2px solid white"
+                }}
+              >
+                Covid-19 Global Dashboard
+                <img
+                  onClick={() =>
+                    window.open(
+                      "https://github.com/miteshtagadiya/Covid-19-Global-Dashboard",
+                      "_blank"
+                    )
+                  }
+                  src={Github}
+                  alt="github"
+                  style={{ height: 50, width: 50, cursor: "pointer" }}
+                />
+              </div>
+            </div>
+            <div style={{ paddingTop: 15 }}>
               <img
-                onClick={() =>
-                  window.open(
-                    "https://github.com/miteshtagadiya/Covid-19-Global-Dashboard",
-                    "_blank"
-                  )
-                }
-                src={Github}
-                alt="github"
-                style={{ height: 50, width: 50, cursor: "pointer" }}
+                onClick={() => this.props.history.push("/india")}
+                src={IndiaIcon}
+                alt="India"
+                style={{ height: 50, width: 70, cursor: "pointer" }}
+              />
+              <span style={{ fontWeight: "bold" }}>Switch</span>
+              <img
+                onClick={() => this.props.history.push("/")}
+                src={World}
+                alt="World"
+                style={{
+                  marginLeft: 15,
+                  height: 50,
+                  width: 50,
+                  cursor: "pointer"
+                }}
               />
             </div>
-          </div>
-          <div style={{ minHeight: "90vh" }}>
-            <div className="row" style={{ padding: "30px 0px" }}>
-              <div className="col-sm-4" style={{ padding: 15 }}>
-                <div
-                  style={{
-                    padding: 20,
-                    fontWeight: "bold",
-                    background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
-                    color: "#530803",
-                    borderRadius: 10
-                  }}
-                >
-                  <div style={{ fontSize: 35, marginBottom: 10 }}>
-                    {this.state.data.length !== 0
-                      ? this.state.data.latest.confirmed
-                      : 0}
+            <div style={{ minHeight: "90vh" }}>
+              <div className="row" style={{ padding: "30px 0px" }}>
+                <div className="col-sm-3" style={{ padding: 15 }}>
+                  <div
+                    style={{
+                      padding: 20,
+                      fontWeight: "bold",
+                      minHeight: 156,
+                      background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
+                      color: "#530803",
+                      borderRadius: 10
+                    }}
+                  >
+                    <div style={{ fontSize: 35 }}>
+                      {this.state.globalData.length !== 0
+                        ? this.state.globalData.total_cases
+                        : 0}
+                    </div>
+                    <div style={{ fontSize: 18, marginBottom: 10 }}>
+                      [+{" "}
+                      {this.state.globalData.length !== 0
+                        ? this.state.globalData.total_new_cases_today
+                        : 0}
+                      ]
+                    </div>
+                    <div style={{ fontSize: 18 }}>Confirmed</div>
                   </div>
-                  <div style={{ fontSize: 18 }}>Confirmed</div>
+                </div>
+                <div className="col-sm-3" style={{ padding: 15 }}>
+                  <div
+                    style={{
+                      padding: 20,
+                      minHeight: 156,
+                      fontWeight: "bold",
+                      background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
+                      color: "#530803",
+                      borderRadius: 10
+                    }}
+                  >
+                    <div style={{ fontSize: 35, marginBottom: 37 }}>
+                      {this.state.globalData.length !== 0
+                        ? this.state.globalData.total_active_cases
+                        : 0}
+                    </div>
+                    <div style={{ fontSize: 18 }}>Active</div>
+                  </div>
+                </div>
+                <div className="col-sm-3" style={{ padding: 15 }}>
+                  <div
+                    style={{
+                      padding: 20,
+                      fontWeight: "bold",
+                      minHeight: 156,
+                      background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
+                      color: "#530803",
+                      borderRadius: 10
+                    }}
+                  >
+                    <div style={{ fontSize: 35 }}>
+                      {this.state.globalData.length !== 0
+                        ? this.state.globalData.total_deaths
+                        : 0}
+                    </div>
+                    <div style={{ fontSize: 18, marginBottom: 10 }}>
+                      [+{" "}
+                      {this.state.globalData.length !== 0
+                        ? this.state.globalData.total_new_deaths_today
+                        : 0}
+                      ]
+                    </div>
+                    <div style={{ fontSize: 18 }}>Deaths</div>
+                  </div>
+                </div>
+                <div className="col-sm-3" style={{ padding: 15 }}>
+                  <div
+                    style={{
+                      padding: 20,
+                      minHeight: 156,
+                      fontWeight: "bold",
+                      background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
+                      color: "#530803",
+                      borderRadius: 10
+                    }}
+                  >
+                    <div style={{ fontSize: 35, marginBottom: 37 }}>
+                      {this.state.globalData.length !== 0
+                        ? this.state.globalData.total_recovered
+                        : 0}
+                    </div>
+                    <div style={{ fontSize: 18 }}>Recovered</div>
+                  </div>
                 </div>
               </div>
-              <div className="col-sm-4" style={{ padding: 15 }}>
-                <div
-                  style={{
-                    padding: 20,
-                    fontWeight: "bold",
-                    background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
-                    color: "#530803",
-                    borderRadius: 10
-                  }}
-                >
-                  <div style={{ fontSize: 35, marginBottom: 10 }}>
-                    {this.state.data.length !== 0
-                      ? this.state.data.latest.deaths
-                      : 0}
-                  </div>
-                  <div style={{ fontSize: 18 }}>Deaths</div>
-                </div>
-              </div>
-              <div className="col-sm-4" style={{ padding: 15 }}>
-                <div
-                  style={{
-                    padding: 20,
-                    fontWeight: "bold",
-                    background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
-                    color: "#530803",
-                    borderRadius: 10
-                  }}
-                >
-                  <div style={{ fontSize: 35, marginBottom: 10 }}>
-                    {/* {this.state.data.length !== 0
-                    ? this.state.data.latest.recovered
-                    : 0} */}
-                    N/A
-                  </div>
-                  <div style={{ fontSize: 18 }}>Recovered</div>
-                </div>
-              </div>
-            </div>
-            {this.state.isChart === 1 ? (
               <div>
                 <Select
                   onChange={selectedOption => {
                     this.setState({
                       timelines: [],
+                      cards: [],
                       selectedCountry: true
                     });
-                    this.renderCharts(
-                      this.state.data.locations.filter(location =>
-                        location.province === ""
-                          ? location.country
-                              .toLowerCase()
-                              .includes(selectedOption.value.toLowerCase())
-                          : location.province
-                              .toLowerCase()
-                              .includes(selectedOption.value.toLowerCase())
-                      )
-                    );
+                    this.state.isChart === 0
+                      ? this.renderCards([selectedOption.value.toUpperCase()])
+                      : this.renderCharts([selectedOption.value.toUpperCase()]);
                   }}
                   styles={colourStyles}
                   options={options}
                 />
               </div>
-            ) : (
-              <div>
-                <input
-                  type="text"
-                  placeholder="Search"
-                  onChange={e =>
+
+              <div
+                style={{
+                  textAlign: "right",
+                  padding: "15px 0px",
+                  marginTop: 15
+                }}
+              >
+                <span
+                  onClick={() =>
                     this.setState({
-                      searchString: e.target.value
+                      isChart: 1,
+                      selectedCountry: false
                     })
                   }
-                />
+                  style={
+                    this.state.isChart === 1
+                      ? {
+                          background: "#f6565b",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          color: "white",
+                          padding: "10px 30px",
+                          borderRadius: "20px 0px 0px 20px"
+                        }
+                      : {
+                          background: "white",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          color: "black",
+                          padding: "10px 30px",
+                          borderRadius: "20px 0px 0px 20px"
+                        }
+                  }
+                >
+                  Chart
+                </span>
+                <span
+                  onClick={() =>
+                    this.setState({ isChart: 0, selectedCountry: false })
+                  }
+                  style={
+                    this.state.isChart === 0
+                      ? {
+                          background: "#f6565b",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          color: "white",
+                          padding: "10px 30px",
+                          borderRadius: "0px 20px 20px 0px"
+                        }
+                      : {
+                          background: "white",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          color: "black",
+                          padding: "10px 30px",
+                          borderRadius: "0px 20px 20px 0px"
+                        }
+                  }
+                >
+                  Card
+                </span>
               </div>
-            )}
-            <div
-              style={{ textAlign: "right", padding: "15px 0px", marginTop: 15 }}
-            >
-              <span
-                onClick={() =>
-                  this.setState({
-                    isChart: 1
-                  })
-                }
-                style={
-                  this.state.isChart === 1
-                    ? {
-                        background: "#f6565b",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                        color: "white",
-                        padding: "10px 30px",
-                        borderRadius: "20px 0px 0px 20px"
-                      }
-                    : {
-                        background: "white",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                        color: "black",
-                        padding: "10px 30px",
-                        borderRadius: "20px 0px 0px 20px"
-                      }
-                }
-              >
-                Chart
-              </span>
-              <span
-                onClick={() =>
-                  this.setState({ isChart: 0, selectedCountry: false })
-                }
-                style={
-                  this.state.isChart === 0
-                    ? {
-                        background: "#f6565b",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                        color: "white",
-                        padding: "10px 30px",
-                        borderRadius: "0px 20px 20px 0px"
-                      }
-                    : {
-                        background: "white",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                        color: "black",
-                        padding: "10px 30px",
-                        borderRadius: "0px 20px 20px 0px"
-                      }
-                }
-              >
-                Card
-              </span>
-            </div>
-            {this.state.isChart === 0 ? (
-              <div className="row">
-                {this.state.data.length !== 0
-                  ? this.state.data.locations
-                      .filter(location =>
-                        location.province === ""
-                          ? location.country
-                              .toLowerCase()
-                              .includes(this.state.searchString.toLowerCase())
-                          : location.province
-                              .toLowerCase()
-                              .includes(this.state.searchString.toLowerCase())
-                      )
-                      .map((location, index) => {
-                        return (
-                          <div
-                            key={index}
-                            className="col-sm-4"
-                            style={{ padding: 15 }}
-                          >
+              {this.state.isChart === 0 ? (
+                this.state.locationLoader === true ? (
+                  <div>
+                    <img src={Virus} alt="Loader" />
+                  </div>
+                ) : (
+                  <div className="row">
+                    {this.state.cards.length !== 0
+                      ? this.state.cards.map((location, index) => {
+                          return (
                             <div
-                              style={{
-                                textAlign: "center",
-                                borderRadius: 10,
-                                background: "white",
-                                color: "black"
-                              }}
+                              key={index}
+                              className="col-sm-4"
+                              style={{ padding: 15 }}
                             >
-                              <label
+                              <div
                                 style={{
-                                  borderTopLeftRadius: 10,
-                                  borderTopRightRadius: 10,
-                                  color: "white",
-                                  width: "100%",
-                                  fontSize: 18,
-                                  fontWeight: "bold",
-                                  padding: 10,
-                                  background: "#f6565b"
+                                  textAlign: "center",
+                                  borderRadius: 10,
+                                  background: "white",
+                                  color: "black"
                                 }}
                               >
-                                {location.province === ""
-                                  ? location.country
-                                  : location.province}
-                              </label>
-                              <br />
-                              <div className="row justify-content-center">
-                                <div
-                                  style={{ padding: 20, fontWeight: "bold" }}
+                                <label
+                                  style={{
+                                    borderTopLeftRadius: 10,
+                                    borderTopRightRadius: 10,
+                                    color: "white",
+                                    width: "100%",
+                                    fontSize: 18,
+                                    fontWeight: "bold",
+                                    padding: 10,
+                                    background: "#f6565b"
+                                  }}
                                 >
-                                  <div>{location.latest.confirmed}</div>
-                                  <div>Confirmed</div>
-                                </div>
-                                <div
-                                  style={{ padding: 20, fontWeight: "bold" }}
-                                >
-                                  <div>{location.latest.deaths}</div>
-                                  <div>Deaths</div>
-                                </div>
-                                <div
-                                  style={{ padding: 20, fontWeight: "bold" }}
-                                >
-                                  <div>{location.latest.recovered}</div>
-                                  <div>Recovered</div>
+                                  {location.countrydata[0].info.title}
+                                </label>
+                                <br />
+                                <div className="row justify-content-center">
+                                  <div
+                                    style={{
+                                      padding: 20,
+                                      fontWeight: "bold"
+                                    }}
+                                  >
+                                    <div>
+                                      {location.countrydata[0].total_cases}
+                                      {location.countrydata[0]
+                                        .total_new_cases_today === 0 ? null : (
+                                        <span
+                                          style={{
+                                            fontSize: 12,
+                                            color: "#e43339"
+                                          }}
+                                        >
+                                          {"  "}
+                                          [+
+                                          {
+                                            location.countrydata[0]
+                                              .total_new_cases_today
+                                          }
+                                          ]
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div>Confirmed</div>
+                                  </div>
+                                  <div
+                                    style={{
+                                      padding: 20,
+                                      fontWeight: "bold"
+                                    }}
+                                  >
+                                    <div>
+                                      {
+                                        location.countrydata[0]
+                                          .total_active_cases
+                                      }
+                                    </div>
+                                    <div>Active</div>
+                                  </div>
+                                  <div
+                                    style={{
+                                      padding: 20,
+                                      fontWeight: "bold"
+                                    }}
+                                  >
+                                    <div>
+                                      {location.countrydata[0].total_deaths}
+                                      {location.countrydata[0]
+                                        .total_new_deaths_today === 0 ? null : (
+                                        <span
+                                          style={{
+                                            fontSize: 12,
+                                            color: "#535c68"
+                                          }}
+                                        >
+                                          {"  "}
+                                          [+
+                                          {
+                                            location.countrydata[0]
+                                              .total_new_deaths_today
+                                          }
+                                          ]
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div>Deaths</div>
+                                  </div>
+                                  <div
+                                    style={{
+                                      padding: 20,
+                                      fontWeight: "bold"
+                                    }}
+                                  >
+                                    <div>
+                                      {location.countrydata[0].total_recovered}
+                                    </div>
+                                    <div>Recovered</div>
+                                  </div>
+                                  <div
+                                    style={{
+                                      padding: 20,
+                                      fontWeight: "bold"
+                                    }}
+                                  >
+                                    <div>
+                                      {
+                                        location.countrydata[0]
+                                          .total_serious_cases
+                                      }
+                                    </div>
+                                    <div>Serious</div>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      })
-                  : null}
-              </div>
-            ) : (
-              <div className="row">
-                {this.state.timelines.length !== 0
-                  ? this.state.timelines
-                      .filter(locations =>
-                        locations.location.country
-                          .toLowerCase()
-                          .includes(this.state.searchString.toLowerCase())
-                      )
-                      .map((timeline, index1) => {
-                        let data = Object.keys(
-                          timeline.location.timelines.confirmed.timeline
-                        ).map((dataKey, index) => {
+                          );
+                        })
+                      : null}
+                    <div className="row" style={{ width: "100%", padding: 30 }}>
+                      <Pagination
+                        totalRecords={Object.keys(Countrys).length}
+                        pageLimit={9}
+                        pageNeighbours={1}
+                        onPageChanged={data => this.onCardPageChanged(data)}
+                      />
+                    </div>
+                  </div>
+                )
+              ) : (
+                <div className="row">
+                  {this.state.locationLoader === true ? (
+                    <div style={{ width: "100%" }}>
+                      <img src={Virus} alt="Loader" />
+                    </div>
+                  ) : this.state.timelines.length !== 0 ? (
+                    this.state.timelines.map((timeline, index1) => {
+                      console.log(timeline);
+                      let data = Object.keys(timeline.timelineitems[0])
+                        .filter(data => data !== "stat")
+                        .map((dataKey, index) => {
                           return {
-                            name: new Date(dataKey).toDateString(),
+                            name: dataKey,
                             Confirmed:
-                              timeline.location.timelines.confirmed.timeline[
-                                dataKey
-                              ],
+                              timeline.timelineitems[0][dataKey].total_cases,
                             Deaths:
-                              timeline.location.timelines.deaths.timeline[
-                                dataKey
-                              ]
+                              timeline.timelineitems[0][dataKey].total_deaths,
+                            Recovered:
+                              timeline.timelineitems[0][dataKey]
+                                .total_recoveries,
+                            ["New Conf."]:
+                              timeline.timelineitems[0][dataKey]
+                                .new_daily_cases,
+                            ["New Deaths"]:
+                              timeline.timelineitems[0][dataKey]
+                                .new_daily_deaths
                           };
                         });
-                        return (
+
+                      return (
+                        <div
+                          key={index1}
+                          className="col-sm-4"
+                          style={{ padding: 15 }}
+                        >
                           <div
-                            key={index1}
-                            className="col-sm-4"
-                            style={{ padding: 15 }}
+                            style={{
+                              background: "white",
+                              borderRadius: 10
+                            }}
                           >
-                            <div
-                              style={{ background: "white", borderRadius: 10 }}
+                            <label
+                              style={{
+                                borderTopLeftRadius: 10,
+                                borderTopRightRadius: 10,
+                                color: "white",
+                                width: "100%",
+                                fontSize: 18,
+                                fontWeight: "bold",
+                                padding: 10,
+                                background: "#f6565b"
+                              }}
                             >
-                              <label
+                              {timeline.countrytimelinedata[0].info.title}
+                            </label>
+                            <br />
+                            <div className="row justify-content-center">
+                              <div
                                 style={{
-                                  borderTopLeftRadius: 10,
-                                  borderTopRightRadius: 10,
-                                  color: "white",
-                                  width: "100%",
-                                  fontSize: 18,
+                                  padding: 20,
                                   fontWeight: "bold",
-                                  padding: 10,
-                                  background: "#f6565b"
+                                  color: "#92063e"
                                 }}
                               >
-                                {timeline.location.province === ""
-                                  ? timeline.location.country
-                                  : timeline.location.province}
-                              </label>
-                              <br />
-                              <div className="row justify-content-center">
-                                <div
-                                  style={{
-                                    padding: 20,
-                                    fontWeight: "bold",
-                                    color: "#92063e"
-                                  }}
-                                >
-                                  <div>
-                                    {timeline.location.latest.confirmed}
-                                  </div>
-                                  <div>Confirmed</div>
+                                <div>
+                                  {
+                                    Object.values(timeline.timelineitems[0])[
+                                      Object.values(timeline.timelineitems[0])
+                                        .length - 2
+                                    ].total_cases
+                                  }
+                                  {Object.values(timeline.timelineitems[0])[
+                                    Object.values(timeline.timelineitems[0])
+                                      .length - 2
+                                  ].new_daily_deaths === 0 ? null : (
+                                    <span style={{ fontSize: 13 }}>
+                                      {"  "}
+                                      [+
+                                      {
+                                        Object.values(
+                                          timeline.timelineitems[0]
+                                        )[
+                                          Object.values(
+                                            timeline.timelineitems[0]
+                                          ).length - 2
+                                        ].new_daily_cases
+                                      }
+                                      ]
+                                    </span>
+                                  )}
                                 </div>
-                                <div
-                                  style={{
-                                    padding: 20,
-                                    fontWeight: "bold",
-                                    color: "black"
-                                  }}
-                                >
-                                  <div>{timeline.location.latest.deaths}</div>
-                                  <div>Deaths</div>
-                                </div>
-                                <div
-                                  style={{
-                                    padding: 20,
-                                    fontWeight: "bold",
-                                    color: "#2F847C"
-                                  }}
-                                >
-                                  <div>
-                                    {timeline.location.latest.recovered}
-                                  </div>
-                                  <div>Recovered</div>
-                                </div>
+                                <div>Confirmed</div>
                               </div>
-                              <SimpleLineChart
-                                data={data}
-                                label2="Deaths"
-                                label1="Confirmed"
-                              />
+                              <div
+                                style={{
+                                  padding: 20,
+                                  fontWeight: "bold",
+                                  color: "black"
+                                }}
+                              >
+                                <div>
+                                  {
+                                    Object.values(timeline.timelineitems[0])[
+                                      Object.values(timeline.timelineitems[0])
+                                        .length - 2
+                                    ].total_deaths
+                                  }
+                                  {Object.values(timeline.timelineitems[0])[
+                                    Object.values(timeline.timelineitems[0])
+                                      .length - 2
+                                  ].new_daily_deaths === 0 ? null : (
+                                    <span style={{ fontSize: 13 }}>
+                                      {"  "}
+                                      [+
+                                      {
+                                        Object.values(
+                                          timeline.timelineitems[0]
+                                        )[
+                                          Object.values(
+                                            timeline.timelineitems[0]
+                                          ).length - 2
+                                        ].new_daily_deaths
+                                      }
+                                      ]
+                                    </span>
+                                  )}
+                                </div>
+                                <div>Deaths</div>
+                              </div>
+                              <div
+                                style={{
+                                  padding: 20,
+                                  fontWeight: "bold",
+                                  color: "#2F847C"
+                                }}
+                              >
+                                <div>
+                                  {
+                                    Object.values(timeline.timelineitems[0])[
+                                      Object.values(timeline.timelineitems[0])
+                                        .length - 2
+                                    ].total_recoveries
+                                  }
+                                </div>
+                                <div>Recovered</div>
+                              </div>
                             </div>
+                            <SimpleLineChart
+                              labels={[
+                                "Confirmed",
+                                "Recovered",
+                                "Deaths",
+                                "New Conf.",
+                                "New Deaths"
+                              ]}
+                              colors={[
+                                "#e43339",
+                                "#006266",
+                                "#535c68",
+                                "#192a56",
+                                "#192a56"
+                              ]}
+                              data={data}
+                            />
                           </div>
-                        );
-                      })
-                  : null}
-                <br />
-                {!this.state.selectedCountry ? (
-                  <div className="row" style={{ width: "100%", padding: 30 }}>
-                    <Pagination
-                      totalRecords={this.state.data.locations.length}
-                      pageLimit={9}
-                      pageNeighbours={2}
-                      onPageChanged={this.onPageChanged}
-                    />
-                  </div>
-                ) : null}
-              </div>
-            )}
-          </div>
-          <div style={{ padding: 15 }}>
-            Designed and Developed by{"  "}
-            <a
-              style={{
-                color: "#f6565b",
-                fontWeight: "bold",
-                textDecoration: "none"
-              }}
-              href="https://miteshtagadiya.js.org"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Mitesh Tagadiya
-            </a>
+                        </div>
+                      );
+                    })
+                  ) : null}
+                  <br />
+                  {!this.state.selectedCountry ? (
+                    <div className="row" style={{ width: "100%", padding: 30 }}>
+                      <Pagination
+                        totalRecords={Object.keys(Countrys).length}
+                        pageLimit={9}
+                        pageNeighbours={1}
+                        onPageChanged={this.onPageChanged}
+                      />
+                    </div>
+                  ) : null}
+                </div>
+              )}
+            </div>
+            <div style={{ padding: 15 }}>
+              Designed and Developed by{"  "}
+              <a
+                style={{
+                  color: "#f6565b",
+                  fontWeight: "bold",
+                  textDecoration: "none"
+                }}
+                href="https://miteshtagadiya.js.org"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Mitesh Tagadiya
+              </a>
+            </div>
           </div>
         </div>
-      </div>
+      </ErrorBoundary>
     );
   }
 }
