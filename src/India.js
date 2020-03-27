@@ -433,7 +433,9 @@ class India extends Component {
                         : 0}
                     </div>
                     <div style={{ fontSize: 15, marginBottom: 10 }}>
-                      [+
+                      <span style={{ fontSize: 17, fontWeight: "bold" }}>
+                        &#9650;
+                      </span>
                       {this.state.india.length !== 0
                         ? this.state.india.statewise.filter(
                             record => record.state === "Total"
@@ -442,7 +444,6 @@ class India extends Component {
                             this.state.india.cases_time_series.length - 2
                           ].totalconfirmed
                         : 0}
-                      ]
                     </div>
                     <div style={{ fontSize: 18 }}>Confirmed</div>
                     {this.state.india.length !== 0 ? (
@@ -472,7 +473,9 @@ class India extends Component {
                         : 0}
                     </div>
                     <div style={{ fontSize: 15, marginBottom: 10 }}>
-                      [+
+                      <span style={{ fontSize: 17, fontWeight: "bold" }}>
+                        &#9650;
+                      </span>
                       {this.state.india.length !== 0
                         ? this.state.india.statewise.filter(
                             record => record.state === "Total"
@@ -487,7 +490,6 @@ class India extends Component {
                               this.state.india.cases_time_series.length - 2
                             ].totalrecovered)
                         : 0}
-                      ]
                     </div>
                     <div style={{ fontSize: 18 }}>Active</div>
                     {this.state.india.length !== 0 ? (
@@ -517,7 +519,9 @@ class India extends Component {
                         : 0}
                     </div>
                     <div style={{ fontSize: 15, marginBottom: 10 }}>
-                      [+
+                      <span style={{ fontSize: 17, fontWeight: "bold" }}>
+                        &#9650;
+                      </span>
                       {this.state.india.length !== 0
                         ? this.state.india.statewise.filter(
                             record => record.state === "Total"
@@ -526,7 +530,6 @@ class India extends Component {
                             this.state.india.cases_time_series.length - 2
                           ].totalrecovered
                         : 0}
-                      ]
                     </div>
                     <div style={{ fontSize: 18 }}>Recovered</div>
                     {this.state.india.length !== 0 ? (
@@ -556,7 +559,9 @@ class India extends Component {
                         : 0}
                     </div>
                     <div style={{ fontSize: 15, marginBottom: 10 }}>
-                      [+
+                      <span style={{ fontSize: 17, fontWeight: "bold" }}>
+                        &#9650;
+                      </span>
                       {this.state.india.length !== 0
                         ? this.state.india.statewise.filter(
                             record => record.state === "Total"
@@ -565,7 +570,6 @@ class India extends Component {
                             this.state.india.cases_time_series.length - 2
                           ].totaldeceased
                         : 0}
-                      ]
                     </div>
                     <div style={{ fontSize: 18 }}>Deaths</div>
                     {this.state.india.length !== 0 ? (
