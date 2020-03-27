@@ -24,6 +24,67 @@ const SimpleLineChart = props => {
           { name: "July", uv: 3490, pv: 4300, amt: 2100 }
         ]
       : props.data;
+
+  const getIntroOfPage = label => {
+    if (label === "Page A") {
+      return "Page A is about men's clothing";
+    }
+    if (label === "Page B") {
+      return "Page B is about women's dress";
+    }
+    if (label === "Page C") {
+      return "Page C is about women's bag";
+    }
+    if (label === "Page D") {
+      return "Page D is about household goods";
+    }
+    if (label === "Page E") {
+      return "Page E is about food";
+    }
+    if (label === "Page F") {
+      return "Page F is about baby food";
+    }
+  };
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active) {
+      return (
+        <div
+          className="custom-tooltip"
+          style={{ background: "white", padding: 15, borderRadius: 10 }}
+        >
+          <p
+            style={{ textAlign: "center", fontWeight: "bold", color: "black" }}
+          >
+            {label}
+          </p>
+          {payload.map((item, index) => {
+            return (
+              <div key={index}>
+                <span style={{ color: item.color, fontWeight: "bold" }}>
+                  {item.name}:{" "}
+                </span>
+                <span style={{ color: item.color, fontWeight: "bold" }}>
+                  {item.value}
+                  {" [+"}
+                  {
+                    props.data.filter(
+                      data => data?.name === item.payload.name
+                    )[0][`daily${item.name}`]
+                  }
+                  {/* {props.data[payload.payload.name][`daily${payload.name}`]} */}
+                  {"]"}
+                </span>
+                <br />
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
+    return null;
+  };
   return (
     <div
       className="container-Linechart"
@@ -50,21 +111,27 @@ const SimpleLineChart = props => {
           <XAxis hide={false} dataKey={props.axis ? props.axis : "name"} />
 
           <YAxis />
-          <Tooltip />
+          {props.customTooltip ? (
+            <Tooltip content={<CustomTooltip />} />
+          ) : (
+            <Tooltip />
+          )}
           <Legend
             layout={props.legendLayout ? props.legendLayout : "horizontal"}
             margin={{ top: 0, left: 0, right: 0, bottom: 10 }}
             verticalAlign={props.verticalAlign ? props.verticalAlign : "bottom"}
           />
-          <Line
-            type="monotone"
-            dataKey={props.label1 ? props.label1 : "pv"}
-            stroke="#561845"
-            activeDot={{ r: 8 }}
-            fill="#561845"
-            dot={false}
-          />
-          <Line type="monotone" dataKey={props.label2} stroke="#c23616" />
+          {props.labels.map((label, index) => (
+            <Line
+              key={index}
+              type="monotone"
+              dataKey={label}
+              stroke={props.colors[index]}
+              activeDot={{ r: 8 }}
+              fill={props.colors[index]}
+              dot={false}
+            />
+          ))}
         </LineChart>
       </ResponsiveContainer>
     </div>

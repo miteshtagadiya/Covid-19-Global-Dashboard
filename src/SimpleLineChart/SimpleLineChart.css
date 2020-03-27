@@ -10,6 +10,11 @@
         position: absolute;
         left: 0px !important;
 }
+
+.recharts-text .recharts-cartesian-axis-tick-value{
+    font-weight: bold !important;
+    color: black !important;
+}
 .container-Linechart .recharts-default-legend{
         margin-bottom: 10px !important;
 }
@@ -28,6 +33,7 @@
     font-family: 'Work Sans' !important;
     font-size: 11px !important;
     color: black !important;
+    font-weight: bold !important;
 }
 .recharts-tooltip-label{
     color: black !important;
