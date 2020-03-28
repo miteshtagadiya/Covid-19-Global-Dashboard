@@ -9,6 +9,7 @@ import IndiaIcon from "./assets/india.png";
 import World from "./assets/world.png";
 import { withRouter } from "react-router-dom";
 import Virus from "./assets/virus.gif";
+import Popover from "react-popover";
 import ErrorBoundary from "./ErrorBoundry";
 
 class India extends Component {
@@ -18,6 +19,9 @@ class India extends Component {
       searchString: "",
       currentPage: 0,
       selectedCity: "",
+      confirmedOpen: false,
+      activeOpen: false,
+      deathsOpen: false,
       totalPages: 0,
       activePage: 0,
       selectedCountry: false,
@@ -383,6 +387,57 @@ class India extends Component {
           ]
         : [];
 
+    const totalConformedToday =
+      this.state.india.length !== 0
+        ? this.state.india.statewise.filter(
+            record => record.state === "Total"
+          )[0].delta.confirmed
+        : 0;
+
+    const totalActiveToday =
+      this.state.india.length !== 0
+        ? this.state.india.statewise.filter(
+            record => record.state === "Total"
+          )[0].delta.active
+        : 0;
+
+    const totalDeathsToday =
+      this.state.india.length !== 0
+        ? this.state.india.statewise.filter(
+            record => record.state === "Total"
+          )[0].delta.deaths
+        : 0;
+
+    const confirmedPopover =
+      this.state.india.length !== 0
+        ? this.state.india.statewise
+            .filter(record => record.state !== "Total")
+            .filter(state => state.delta.confirmed !== 0)
+            .map(state => {
+              return { [state.state]: state.delta.confirmed };
+            })
+        : [];
+    const activePopover =
+      this.state.india.length !== 0
+        ? this.state.india.statewise
+            .filter(record => record.state !== "Total")
+            .filter(state => state.delta.active !== 0)
+            .map(state => {
+              return { [state.state]: state.delta.active };
+            })
+        : [];
+    const deathsPopover =
+      this.state.india.length !== 0
+        ? this.state.india.statewise
+            .filter(record => record.state !== "Total")
+            .filter(state => state.delta.deaths !== 0)
+            .map(state => {
+              return { [state.state]: state.delta.deaths };
+            })
+        : [];
+
+    console.log(confirmedPopover);
+
     return (
       <ErrorBoundary>
         <div
@@ -460,18 +515,72 @@ class India extends Component {
                           )[0].confirmed
                         : 0}
                     </div>
-                    <div style={{ fontSize: 15, marginBottom: 10 }}>
+                    <div
+                      style={{
+                        fontSize: 15,
+                        marginBottom: 10,
+                        display: "flex",
+                        justifyContent: "center"
+                      }}
+                    >
                       <span style={{ fontSize: 17, fontWeight: "bold" }}>
                         &#9650;
                       </span>
                       {this.state.india.length !== 0
-                        ? this.state.india.statewise.filter(
+                        ? typeof this.state.india.statewise.filter(
                             record => record.state === "Total"
-                          )[0].confirmed -
-                          this.state.india.cases_time_series[
-                            this.state.india.cases_time_series.length - 2
-                          ].totalconfirmed
+                          )[0].delta.confirmed !== "undefined" &&
+                          this.state.india.statewise.filter(
+                            record => record.state === "Total"
+                          )[0].delta.confirmed !== null
+                          ? this.state.india.statewise.filter(
+                              record => record.state === "Total"
+                            )[0].delta.confirmed
+                          : 0
                         : 0}
+                      {totalConformedToday !== 0 ? (
+                        <Popover
+                          body={
+                            <div
+                              style={{
+                                background: "white",
+                                borderRadius: 10,
+                                padding: 15,
+                                color: "#192a56",
+                                fontWeight: "bold"
+                              }}
+                            >
+                              {confirmedPopover.map(state => {
+                                return (
+                                  <div>
+                                    {Object.keys(state)[0]}:{" "}
+                                    {Object.values(state)[0]}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          }
+                          preferPlace={"below"}
+                          isOpen={this.state.confirmedOpen}
+                          onOuterAction={() =>
+                            this.setState({
+                              confirmedOpen: !this.state.confirmedOpen
+                            })
+                          }
+                        >
+                          <div
+                            onClick={() =>
+                              this.setState({
+                                confirmedOpen: !this.state.confirmedOpen
+                              })
+                            }
+                            className="report-tile"
+                            style={{ marginLeft: 5, cursor: "pointer" }}
+                          >
+                            ?
+                          </div>
+                        </Popover>
+                      ) : null}
                     </div>
                     <div style={{ fontSize: 18 }}>Confirmed</div>
                     {this.state.india.length !== 0 ? (
@@ -500,24 +609,72 @@ class India extends Component {
                           )[0].active
                         : 0}
                     </div>
-                    <div style={{ fontSize: 15, marginBottom: 10 }}>
+                    <div
+                      style={{
+                        fontSize: 15,
+                        marginBottom: 10,
+                        display: "flex",
+                        justifyContent: "center"
+                      }}
+                    >
                       <span style={{ fontSize: 17, fontWeight: "bold" }}>
                         &#9650;
                       </span>
                       {this.state.india.length !== 0
-                        ? this.state.india.statewise.filter(
+                        ? typeof this.state.india.statewise.filter(
                             record => record.state === "Total"
-                          )[0].active -
-                          (this.state.india.cases_time_series[
-                            this.state.india.cases_time_series.length - 2
-                          ].totalconfirmed -
-                            this.state.india.cases_time_series[
-                              this.state.india.cases_time_series.length - 2
-                            ].totaldeceased -
-                            this.state.india.cases_time_series[
-                              this.state.india.cases_time_series.length - 2
-                            ].totalrecovered)
+                          )[0].delta.active !== "undefined" &&
+                          this.state.india.statewise.filter(
+                            record => record.state === "Total"
+                          )[0].delta.active !== null
+                          ? this.state.india.statewise.filter(
+                              record => record.state === "Total"
+                            )[0].delta.active
+                          : 0
                         : 0}
+                      {totalActiveToday !== 0 ? (
+                        <Popover
+                          body={
+                            <div
+                              style={{
+                                background: "white",
+                                borderRadius: 10,
+                                padding: 15,
+                                color: "#192a56",
+                                fontWeight: "bold"
+                              }}
+                            >
+                              {activePopover.map(state => {
+                                return (
+                                  <div>
+                                    {Object.keys(state)[0]}:{" "}
+                                    {Object.values(state)[0]}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          }
+                          preferPlace={"below"}
+                          isOpen={this.state.activeOpen}
+                          onOuterAction={() =>
+                            this.setState({
+                              activeOpen: !this.state.activeOpen
+                            })
+                          }
+                        >
+                          <div
+                            onClick={() =>
+                              this.setState({
+                                activeOpen: !this.state.activeOpen
+                              })
+                            }
+                            className="report-tile"
+                            style={{ marginLeft: 5, cursor: "pointer" }}
+                          >
+                            ?
+                          </div>
+                        </Popover>
+                      ) : null}
                     </div>
                     <div style={{ fontSize: 18 }}>Active</div>
                     {this.state.india.length !== 0 ? (
@@ -546,17 +703,28 @@ class India extends Component {
                           )[0].recovered
                         : 0}
                     </div>
-                    <div style={{ fontSize: 15, marginBottom: 10 }}>
+                    <div
+                      style={{
+                        fontSize: 15,
+                        marginBottom: 10,
+                        display: "flex",
+                        justifyContent: "center"
+                      }}
+                    >
                       <span style={{ fontSize: 17, fontWeight: "bold" }}>
                         &#9650;
                       </span>
                       {this.state.india.length !== 0
-                        ? this.state.india.statewise.filter(
+                        ? typeof this.state.india.statewise.filter(
                             record => record.state === "Total"
-                          )[0].recovered -
-                          this.state.india.cases_time_series[
-                            this.state.india.cases_time_series.length - 2
-                          ].totalrecovered
+                          )[0].delta.recovered !== "undefined" &&
+                          this.state.india.statewise.filter(
+                            record => record.state === "Total"
+                          )[0].delta.recovered !== null
+                          ? this.state.india.statewise.filter(
+                              record => record.state === "Total"
+                            )[0].delta.recovered
+                          : 0
                         : 0}
                     </div>
                     <div style={{ fontSize: 18 }}>Recovered</div>
@@ -586,18 +754,72 @@ class India extends Component {
                           )[0].deaths
                         : 0}
                     </div>
-                    <div style={{ fontSize: 15, marginBottom: 10 }}>
+                    <div
+                      style={{
+                        fontSize: 15,
+                        marginBottom: 10,
+                        display: "flex",
+                        justifyContent: "center"
+                      }}
+                    >
                       <span style={{ fontSize: 17, fontWeight: "bold" }}>
                         &#9650;
                       </span>
                       {this.state.india.length !== 0
-                        ? this.state.india.statewise.filter(
+                        ? typeof this.state.india.statewise.filter(
                             record => record.state === "Total"
-                          )[0].deaths -
-                          this.state.india.cases_time_series[
-                            this.state.india.cases_time_series.length - 2
-                          ].totaldeceased
+                          )[0].delta.deaths !== "undefined" &&
+                          this.state.india.statewise.filter(
+                            record => record.state === "Total"
+                          )[0].delta.deaths !== null
+                          ? this.state.india.statewise.filter(
+                              record => record.state === "Total"
+                            )[0].delta.deaths
+                          : 0
                         : 0}
+                      {totalDeathsToday !== 0 ? (
+                        <Popover
+                          body={
+                            <div
+                              style={{
+                                background: "white",
+                                borderRadius: 10,
+                                padding: 15,
+                                color: "#192a56",
+                                fontWeight: "bold"
+                              }}
+                            >
+                              {deathsPopover.map(state => {
+                                return (
+                                  <div>
+                                    {Object.keys(state)[0]}:{" "}
+                                    {Object.values(state)[0]}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          }
+                          preferPlace={"below"}
+                          isOpen={this.state.deathsOpen}
+                          onOuterAction={() =>
+                            this.setState({
+                              deathsOpen: !this.state.deathsOpen
+                            })
+                          }
+                        >
+                          <div
+                            onClick={() =>
+                              this.setState({
+                                deathsOpen: !this.state.deathsOpen
+                              })
+                            }
+                            className="report-tile"
+                            style={{ marginLeft: 5, cursor: "pointer" }}
+                          >
+                            ?
+                          </div>
+                        </Popover>
+                      ) : null}
                     </div>
                     <div style={{ fontSize: 18 }}>Deaths</div>
                     {this.state.india.length !== 0 ? (
