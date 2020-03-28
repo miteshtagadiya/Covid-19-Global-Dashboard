@@ -17,6 +17,7 @@ class App extends Component {
     this.state = {
       searchString: "",
       cards: [],
+      globalTimelines: [],
       currentPage: 0,
       currentCardPage: 0,
       totalCardPages: 0,
@@ -65,6 +66,22 @@ class App extends Component {
           });
         });
 
+      fetch(`https://covid19.mathdro.id/api/daily`, {
+        method: "GET"
+      })
+        .then(res => res.json())
+        .then(response => {
+          this.setState({
+            globalTimelines: response,
+            locationLoader: false
+          });
+        })
+        .catch(error => {
+          this.setState({
+            locationLoader: false
+          });
+        });
+
       this.setState({
         cards: []
       });
@@ -79,6 +96,22 @@ class App extends Component {
       .then(response => {
         this.setState({
           globalData: response.results[0],
+          locationLoader: false
+        });
+      })
+      .catch(error => {
+        this.setState({
+          locationLoader: false
+        });
+      });
+
+    fetch(`https://covid19.mathdro.id/api/daily`, {
+      method: "GET"
+    })
+      .then(res => res.json())
+      .then(response => {
+        this.setState({
+          globalTimelines: response,
           locationLoader: false
         });
       })
@@ -225,6 +258,46 @@ class App extends Component {
         label: Countrys[location]
       };
     });
+
+    let totalData =
+      this.state.globalTimelines.length !== 0
+        ? this.state.globalTimelines.map((cases, index) => {
+            return {
+              name: cases.reportDate,
+              Confirmed: Number(cases.totalConfirmed),
+              Active:
+                Number(cases.totalConfirmed) -
+                Number(cases.totalRecovered) -
+                Number(cases.deaths.total),
+              Recovered: Number(cases.totalRecovered),
+              Deaths: Number(cases.deaths.total),
+              dailyConfirmed: Number(cases.deltaConfirmed),
+              dailyActive:
+                index === 0
+                  ? Number(cases.totalConfirmed) -
+                    Number(cases.totalRecovered) -
+                    Number(cases.deaths.total)
+                  : Number(cases.totalConfirmed) -
+                    Number(cases.totalRecovered) -
+                    Number(cases.deaths.total) -
+                    (Number(
+                      this.state.globalTimelines[index - 1].totalConfirmed
+                    ) -
+                      Number(
+                        this.state.globalTimelines[index - 1].totalRecovered
+                      ) -
+                      Number(
+                        this.state.globalTimelines[index - 1].deaths.total
+                      )),
+              dailyRecovered: Number(cases.deltaRecovered),
+              dailyDeaths:
+                index === 0
+                  ? Number(cases.deaths.total)
+                  : Number(cases.deaths.total) -
+                    Number(this.state.globalTimelines[index - 1].deaths.total)
+            };
+          })
+        : null;
 
     let date = new Date();
     let todayDate =
@@ -382,6 +455,24 @@ class App extends Component {
                     <div style={{ fontSize: 18 }}>Deaths</div>
                   </div>
                 </div>
+              </div>
+              <div
+                style={{
+                  background: "linear-gradient(to right, #d9a7c7, #fffcdc)",
+                  paddingBottom: 15,
+                  paddingLeft: 15,
+                  borderRadius: 15,
+                  marginBottom: 15,
+                  paddingTop: 30
+                }}
+              >
+                <SimpleLineChart
+                  customTooltip={true}
+                  grid={false}
+                  data={totalData}
+                  labels={["Confirmed", "Active", "Deaths"]}
+                  colors={["#e43339", "#192a56", "#535c68"]}
+                />
               </div>
               <div>
                 <Select
