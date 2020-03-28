@@ -436,8 +436,6 @@ class India extends Component {
             })
         : [];
 
-    console.log(confirmedPopover);
-
     return (
       <ErrorBoundary>
         <div
@@ -550,9 +548,9 @@ class India extends Component {
                                 fontWeight: "bold"
                               }}
                             >
-                              {confirmedPopover.map(state => {
+                              {confirmedPopover.map((state, index) => {
                                 return (
-                                  <div>
+                                  <div key={index}>
                                     {Object.keys(state)[0]}:{" "}
                                     {Object.values(state)[0]}
                                   </div>
@@ -644,9 +642,9 @@ class India extends Component {
                                 fontWeight: "bold"
                               }}
                             >
-                              {activePopover.map(state => {
+                              {activePopover.map((state, index) => {
                                 return (
-                                  <div>
+                                  <div key={index}>
                                     {Object.keys(state)[0]}:{" "}
                                     {Object.values(state)[0]}
                                   </div>
@@ -789,9 +787,9 @@ class India extends Component {
                                 fontWeight: "bold"
                               }}
                             >
-                              {deathsPopover.map(state => {
+                              {deathsPopover.map((state, index) => {
                                 return (
-                                  <div>
+                                  <div key={index}>
                                     {Object.keys(state)[0]}:{" "}
                                     {Object.values(state)[0]}
                                   </div>
@@ -836,6 +834,8 @@ class India extends Component {
                 style={{
                   background: "linear-gradient(to right, #d9a7c7, #fffcdc)",
                   paddingBottom: 15,
+                  paddingLeft: 15,
+                  paddingTop: 30,
                   borderRadius: 15,
                   marginBottom: 15
                 }}
