@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/Covid-19-Global-Dashboard/static/css/main.784e524c.chunk.css",
-    "main.js": "/Covid-19-Global-Dashboard/static/js/main.ac96e0ca.chunk.js",
-    "main.js.map": "/Covid-19-Global-Dashboard/static/js/main.ac96e0ca.chunk.js.map",
+    "main.js": "/Covid-19-Global-Dashboard/static/js/main.b811832b.chunk.js",
+    "main.js.map": "/Covid-19-Global-Dashboard/static/js/main.b811832b.chunk.js.map",
     "runtime-main.js": "/Covid-19-Global-Dashboard/static/js/runtime-main.55d25ab9.js",
     "runtime-main.js.map": "/Covid-19-Global-Dashboard/static/js/runtime-main.55d25ab9.js.map",
     "static/css/2.94a79f0b.chunk.css": "/Covid-19-Global-Dashboard/static/css/2.94a79f0b.chunk.css",
     "static/js/2.824a94bf.chunk.js": "/Covid-19-Global-Dashboard/static/js/2.824a94bf.chunk.js",
     "static/js/2.824a94bf.chunk.js.map": "/Covid-19-Global-Dashboard/static/js/2.824a94bf.chunk.js.map",
     "index.html": "/Covid-19-Global-Dashboard/index.html",
-    "precache-manifest.5d6f535c460c472284043d995c2d689d.js": "/Covid-19-Global-Dashboard/precache-manifest.5d6f535c460c472284043d995c2d689d.js",
+    "precache-manifest.8359d34b2e6583f448d0721bf8aeaf22.js": "/Covid-19-Global-Dashboard/precache-manifest.8359d34b2e6583f448d0721bf8aeaf22.js",
     "service-worker.js": "/Covid-19-Global-Dashboard/service-worker.js",
     "static/css/2.94a79f0b.chunk.css.map": "/Covid-19-Global-Dashboard/static/css/2.94a79f0b.chunk.css.map",
     "static/css/main.784e524c.chunk.css.map": "/Covid-19-Global-Dashboard/static/css/main.784e524c.chunk.css.map",
@@ -24,6 +24,6 @@
     "static/css/2.94a79f0b.chunk.css",
     "static/js/2.824a94bf.chunk.js",
     "static/css/main.784e524c.chunk.css",
-    "static/js/main.ac96e0ca.chunk.js"
+    "static/js/main.b811832b.chunk.js"
   ]
 }
