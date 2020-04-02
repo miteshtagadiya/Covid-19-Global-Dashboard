@@ -50,7 +50,8 @@ class App extends Component {
       locationLoader: true
     });
     window.addEventListener("focus", () => {
-      fetch(`https://thevirustracker.com/free-api?global=stats`, {
+      fetch(`https://cors-anywhere.herokuapp.com/https://thevirustracker.com/free-api?global=stats`, {
+        header: { "Access-Control-Allow-Origin": "*" },
         method: "GET"
       })
         .then(res => res.json())
@@ -89,7 +90,7 @@ class App extends Component {
         this.chunkArray(Object.keys(Countrys), 9)[this.state.currentCardPage]
       );
     });
-    fetch(`https://thevirustracker.com/free-api?global=stats`, {
+    fetch(`https://cors-anywhere.herokuapp.com/https://thevirustracker.com/free-api?global=stats`, {
       method: "GET"
     })
       .then(res => res.json())
@@ -128,7 +129,7 @@ class App extends Component {
 
   renderCards(cardId) {
     cardId.map(location => {
-      fetch(`https://thevirustracker.com/free-api?countryTotal=${location}`, {
+      fetch(`https://cors-anywhere.herokuapp.com/https://thevirustracker.com/free-api?countryTotal=${location}`, {
         method: "GET"
       })
         .then(res => res.json())
@@ -150,7 +151,7 @@ class App extends Component {
     this.renderCards(data);
     data.map(location => {
       fetch(
-        `https://thevirustracker.com/free-api?countryTimeline=${location}`,
+        `https://cors-anywhere.herokuapp.com/https://thevirustracker.com/free-api?countryTimeline=${location}`,
         {
           method: "GET"
         }
