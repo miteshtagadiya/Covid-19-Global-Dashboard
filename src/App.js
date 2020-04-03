@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import "./App.css";
 import Select from "react-select";
+import ReactTable from "react-table-6";
 import SimpleLineChart from "./SimpleLineChart/SimpleLineChart";
+import "react-table-6/react-table.css";
 import Pagination from "./Pagination";
 import IndiaIcon from "./assets/india.png";
 import World from "./assets/world.png";
@@ -50,10 +52,13 @@ class App extends Component {
       locationLoader: true
     });
     window.addEventListener("focus", () => {
-      fetch(`https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?global=stats`, {
-        header: { "Access-Control-Allow-Origin": "*" },
-        method: "GET"
-      })
+      fetch(
+        `https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?global=stats`,
+        {
+          header: { "Access-Control-Allow-Origin": "*" },
+          method: "GET"
+        }
+      )
         .then(res => res.json())
         .then(response => {
           this.setState({
@@ -83,16 +88,14 @@ class App extends Component {
           });
         });
 
-      this.setState({
-        cards: []
-      });
-      this.renderCards(
-        this.chunkArray(Object.keys(Countrys), 9)[this.state.currentCardPage]
-      );
+      this.renderCards([1]);
     });
-    fetch(`https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?global=stats`, {
-      method: "GET"
-    })
+    fetch(
+      `https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?global=stats`,
+      {
+        method: "GET"
+      }
+    )
       .then(res => res.json())
       .then(response => {
         this.setState({
@@ -122,21 +125,27 @@ class App extends Component {
         });
       });
 
-    this.renderCards(
-      this.chunkArray(Object.keys(Countrys), 9)[this.state.currentCardPage]
-    );
+    this.renderCards([1]);
   }
 
   renderCards(cardId) {
+    let cards = [];
+    this.setState({
+      cards: [],
+      locationLoader: true
+    });
     cardId.map(location => {
-      fetch(`https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?countryTotal=${location}`, {
-        method: "GET"
-      })
+      fetch(
+        `https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?countryTotals=ALL`,
+        {
+          method: "GET"
+        }
+      )
         .then(res => res.json())
         .then(response => {
           this.setState({
             locationLoader: false,
-            cards: this.state.cards.concat(response)
+            cards: cards.concat(response)
           });
         })
         .catch(error => {
@@ -148,7 +157,6 @@ class App extends Component {
   }
 
   renderCharts(data) {
-    this.renderCards(data);
     data.map(location => {
       fetch(
         `https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?countryTimeline=${location}`,
@@ -207,27 +215,27 @@ class App extends Component {
     });
   };
 
-  onCardPageChanged = data1 => {
-    this.setState({
-      locationLoader: data1.locationLoader
-    });
-    const { currentPage } = data1;
+  // onCardPageChanged = data1 => {
+  //   this.setState({
+  //     locationLoader: data1.locationLoader
+  //   });
+  //   const { currentPage } = data1;
 
-    this.setState({
-      cards: [],
-      locationLoader: true
-    });
+  //   this.setState({
+  //     cards: [],
+  //     locationLoader: true
+  //   });
 
-    if (this.state.loadDefaultCards === false && !this.state.selectedCountry) {
-      this.renderCards(_.chunk(Object.keys(Countrys), 9)[currentPage - 1]);
-    }
-    this.setState({
-      currentCardPage: currentPage - 1,
-      locationLoader: false,
-      loadDefaultCards: false,
-      selectedCountry: false
-    });
-  };
+  //   if (this.state.loadDefaultCards === false && !this.state.selectedCountry) {
+  //     this.renderCards(_.chunk(Object.keys(Countrys), 9)[currentPage - 1]);
+  //   }
+  //   this.setState({
+  //     currentCardPage: currentPage - 1,
+  //     locationLoader: false,
+  //     loadDefaultCards: false,
+  //     selectedCountry: false
+  //   });
+  // };
 
   render() {
     const colourStyles = {
@@ -303,6 +311,105 @@ class App extends Component {
     let date = new Date();
     let todayDate =
       date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+
+    const data =
+      this.state.cards.length !== 0
+        ? Object.values(this.state.cards[0].countryitems[0])
+            .filter(country => typeof country.title !== "undefined")
+            .map(country => {
+              return {
+                country: country.title,
+                confirmed: Number(country.total_cases),
+                active: Number(country.total_active_cases),
+                recovered: Number(country.total_recovered),
+                deaths: Number(country.total_deaths),
+                deltaConfirmed: Number(country.total_new_cases_today),
+                deltaDeaths: Number(country.total_new_deaths_today)
+              };
+            })
+        : [];
+
+    const columns =
+      this.state.cards.length !== 0
+        ? [
+            {
+              Header: "Country",
+              accessor: "country" // String-based value accessors!
+            },
+            {
+              Header: "Confirmed",
+              accessor: "confirmed",
+              Cell: props => {
+                return (
+                  <>
+                    {props.original.deltaConfirmed === 0 ? null : (
+                      <span
+                        style={{
+                          fontSize: 15,
+                          fontWeight: "bold",
+                          color: "#e43339"
+                        }}
+                      >
+                        <span style={{ fontSize: 15, fontWeight: "bold" }}>
+                          &#9650;
+                        </span>
+                        {props.original.deltaConfirmed}
+                      </span>
+                    )}{" "}
+                    <span className="number">{props.value}</span>
+                  </>
+                );
+              }
+            },
+            {
+              Header: "Active",
+              accessor: "active",
+              Cell: props => {
+                return (
+                  <>
+                    <span className="number">{props.value}</span>
+                  </>
+                );
+              }
+            },
+            {
+              Header: "Recovered",
+              accessor: "recovered",
+              Cell: props => {
+                return (
+                  <>
+                    <span className="number">{props.value}</span>
+                  </>
+                );
+              }
+            },
+            {
+              Header: "Deaths",
+              accessor: "deaths",
+              Cell: props => {
+                return (
+                  <>
+                    {props.original.deltaDeaths === 0 ? null : (
+                      <span
+                        style={{
+                          fontSize: 15,
+                          fontWeight: "bold",
+                          color: "#535c68"
+                        }}
+                      >
+                        <span style={{ fontSize: 15, fontWeight: "bold" }}>
+                          &#9650;
+                        </span>
+                        {props.original.deltaDeaths}
+                      </span>
+                    )}{" "}
+                    <span className="number">{props.value}</span>
+                  </>
+                );
+              }
+            }
+          ]
+        : [];
 
     return (
       <ErrorBoundary>
@@ -475,32 +582,47 @@ class App extends Component {
                   colors={["#e43339", "#192a56", "#535c68"]}
                 />
               </div>
-              <div>
-                <Select
-                  isClearable={true}
-                  onChange={selectedOption => {
-                    this.setState({
-                      timelines: [],
-                      cards: [],
-                      selectedCountry: true
-                    });
-                    this.state.isChart === 0
-                      ? this.renderCards(
-                          selectedOption === null
-                            ? _.chunk(Object.keys(Countrys), 9)[0]
-                            : [selectedOption.value.toUpperCase()]
-                        )
-                      : this.renderCharts(
-                          selectedOption === null
-                            ? _.chunk(Object.keys(Countrys), 9)[0]
-                            : [selectedOption.value.toUpperCase()]
-                        );
-                  }}
-                  styles={colourStyles}
-                  options={options}
-                />
-              </div>
-
+              {this.state.isChart === 1 ? (
+                <div>
+                  <Select
+                    isClearable={true}
+                    onChange={selectedOption => {
+                      this.setState({
+                        timelines: [],
+                        selectedCountry: true
+                      });
+                      this.state.isChart === 0
+                        ? this.renderCards(
+                            selectedOption === null
+                              ? _.chunk(Object.keys(Countrys), 9)[0]
+                              : [selectedOption.value.toUpperCase()]
+                          )
+                        : this.renderCharts(
+                            selectedOption === null
+                              ? _.chunk(Object.keys(Countrys), 9)[0]
+                              : [selectedOption.value.toUpperCase()]
+                          );
+                    }}
+                    styles={colourStyles}
+                    options={options}
+                  />
+                </div>
+              ) : null}
+              {this.state.isChart === 0 ? (
+                <div style={{ marginTop: 20 }}>
+                  <input
+                    defaultValue={this.state.searchString}
+                    type="text"
+                    placeholder="Search"
+                    onChange={e =>
+                      this.setState({
+                        searchString: e.target.value.toLowerCase(),
+                        selectedCountry: false
+                      })
+                    }
+                  />
+                </div>
+              ) : null}
               <div
                 style={{
                   textAlign: "right",
@@ -541,6 +663,33 @@ class App extends Component {
                 <span
                   onClick={() =>
                     this.setState({
+                      isChart: 2,
+                      selectedCountry: false
+                    })
+                  }
+                  style={
+                    this.state.isChart === 2
+                      ? {
+                          background: "#f6565b",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          color: "white",
+                          padding: "10px 30px"
+                        }
+                      : {
+                          background: "white",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          color: "black",
+                          padding: "10px 30px"
+                        }
+                  }
+                >
+                  Table
+                </span>
+                <span
+                  onClick={() =>
+                    this.setState({
                       isChart: 0,
                       selectedCountry: false
                     })
@@ -568,6 +717,39 @@ class App extends Component {
                   Card
                 </span>
               </div>
+              {this.state.isChart === 2 ? (
+                <div
+                  className="row"
+                  style={{ marginTop: 20, marginBottom: 15 }}
+                >
+                  <div className="col-sm-12">
+                    <div
+                      style={{
+                        background: "white",
+                        color: "black",
+                        borderRadius: 10
+                      }}
+                    >
+                      <ReactTable
+                        style={{ minHeight: 500 }}
+                        data={data}
+                        columns={columns}
+                        defaultPageSize={10}
+                        className="-striped -highlight"
+                        noDataText={<b>No data found</b>}
+                        getTheadProps={(state, rowInfo, column) => {
+                          return {
+                            style: {
+                              fontWeight: "bold"
+                            }
+                          };
+                        }}
+                        filterable
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : null}
               {this.state.isChart === 0 ? (
                 this.state.locationLoader === true ? (
                   <div>
@@ -576,168 +758,144 @@ class App extends Component {
                 ) : (
                   <div className="row">
                     {this.state.cards.length !== 0
-                      ? this.state.cards.map((location, index) => {
-                          return (
-                            <div
-                              key={index}
-                              className="col-sm-4"
-                              style={{ padding: 15 }}
-                            >
+                      ? Object.values(this.state.cards[0].countryitems[0])
+                          .filter(
+                            location =>
+                              typeof location.title !== "undefined" &&
+                              location.title
+                                .toLowerCase()
+                                .includes(this.state.searchString)
+                          )
+                          .map((location, index) => {
+                            return (
                               <div
-                                style={{
-                                  textAlign: "center",
-                                  borderRadius: 10,
-                                  background: "white",
-                                  color: "black"
-                                }}
+                                key={index}
+                                className="col-sm-4"
+                                style={{ padding: 15 }}
                               >
-                                <label
+                                <div
                                   style={{
-                                    borderTopLeftRadius: 10,
-                                    borderTopRightRadius: 10,
-                                    color: "white",
-                                    width: "100%",
-                                    fontSize: 18,
-                                    fontWeight: "bold",
-                                    padding: 10,
-                                    background: "#f6565b"
+                                    textAlign: "center",
+                                    borderRadius: 10,
+                                    background: "white",
+                                    color: "black"
                                   }}
                                 >
-                                  {location.countrydata[0].info.title}
-                                </label>
-                                <br />
-                                <div className="row justify-content-center">
-                                  <div
+                                  <label
                                     style={{
-                                      padding: 20,
-                                      fontWeight: "bold"
+                                      borderTopLeftRadius: 10,
+                                      borderTopRightRadius: 10,
+                                      color: "white",
+                                      width: "100%",
+                                      fontSize: 18,
+                                      fontWeight: "bold",
+                                      padding: 10,
+                                      background: "#f6565b"
                                     }}
                                   >
-                                    <div>
-                                      {location.countrydata[0].total_cases}
-                                      {location.countrydata[0]
-                                        .total_new_cases_today === 0 ? null : (
-                                        <span
-                                          style={{
-                                            fontSize: 12,
-                                            color: "#e43339"
-                                          }}
-                                        >
-                                          {"  "}
+                                    {location.title}
+                                  </label>
+                                  <br />
+                                  <div className="row justify-content-center">
+                                    <div
+                                      style={{
+                                        padding: 20,
+                                        fontWeight: "bold"
+                                      }}
+                                    >
+                                      <div>
+                                        {location.total_cases}
+                                        {location.total_new_cases_today ===
+                                        0 ? null : (
                                           <span
                                             style={{
-                                              fontSize: 17,
-                                              fontWeight: "bold"
+                                              fontSize: 12,
+                                              color: "#e43339"
                                             }}
                                           >
-                                            &#9650;
+                                            {"  "}
+                                            <span
+                                              style={{
+                                                fontSize: 17,
+                                                fontWeight: "bold"
+                                              }}
+                                            >
+                                              &#9650;
+                                            </span>
+                                            {location.total_new_cases_today}
                                           </span>
-                                          {
-                                            location.countrydata[0]
-                                              .total_new_cases_today
-                                          }
-                                        </span>
-                                      )}
+                                        )}
+                                      </div>
+                                      <div>Confirmed</div>
                                     </div>
-                                    <div>Confirmed</div>
-                                  </div>
-                                  <div
-                                    style={{
-                                      padding: 20,
-                                      fontWeight: "bold"
-                                    }}
-                                  >
-                                    <div>
-                                      {
-                                        location.countrydata[0]
-                                          .total_active_cases
-                                      }
+                                    <div
+                                      style={{
+                                        padding: 20,
+                                        fontWeight: "bold"
+                                      }}
+                                    >
+                                      <div>{location.total_active_cases}</div>
+                                      <div>Active</div>
                                     </div>
-                                    <div>Active</div>
-                                  </div>
-                                  <div
-                                    style={{
-                                      padding: 20,
-                                      fontWeight: "bold"
-                                    }}
-                                  >
-                                    <div>
-                                      {location.countrydata[0].total_deaths}
-                                      {location.countrydata[0]
-                                        .total_new_deaths_today === 0 ? null : (
-                                        <span
-                                          style={{
-                                            fontSize: 12,
-                                            color: "#535c68"
-                                          }}
-                                        >
-                                          {"  "}
+                                    <div
+                                      style={{
+                                        padding: 20,
+                                        fontWeight: "bold"
+                                      }}
+                                    >
+                                      <div>
+                                        {location.total_deaths}
+                                        {location.total_new_deaths_today ===
+                                        0 ? null : (
                                           <span
                                             style={{
-                                              fontSize: 17,
-                                              fontWeight: "bold"
+                                              fontSize: 12,
+                                              color: "#535c68"
                                             }}
                                           >
-                                            &#9650;
+                                            {"  "}
+                                            <span
+                                              style={{
+                                                fontSize: 17,
+                                                fontWeight: "bold"
+                                              }}
+                                            >
+                                              &#9650;
+                                            </span>
+                                            {location.total_new_deaths_today}
                                           </span>
-                                          {
-                                            location.countrydata[0]
-                                              .total_new_deaths_today
-                                          }
-                                        </span>
-                                      )}
+                                        )}
+                                      </div>
+                                      <div>Deaths</div>
                                     </div>
-                                    <div>Deaths</div>
-                                  </div>
-                                  <div
-                                    style={{
-                                      padding: 20,
-                                      fontWeight: "bold"
-                                    }}
-                                  >
-                                    <div>
-                                      {location.countrydata[0].total_recovered}
+                                    <div
+                                      style={{
+                                        padding: 20,
+                                        fontWeight: "bold"
+                                      }}
+                                    >
+                                      <div>{location.total_recovered}</div>
+                                      <div>Recovered</div>
                                     </div>
-                                    <div>Recovered</div>
-                                  </div>
-                                  <div
-                                    style={{
-                                      padding: 20,
-                                      fontWeight: "bold"
-                                    }}
-                                  >
-                                    <div>
-                                      {
-                                        location.countrydata[0]
-                                          .total_serious_cases
-                                      }
+                                    <div
+                                      style={{
+                                        padding: 20,
+                                        fontWeight: "bold"
+                                      }}
+                                    >
+                                      <div>{location.total_serious_cases}</div>
+                                      <div>Serious</div>
                                     </div>
-                                    <div>Serious</div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          );
-                        })
+                            );
+                          })
                       : null}
-                    {!this.state.selectedCountry ? (
-                      <div
-                        className="row"
-                        style={{ width: "100%", padding: 30 }}
-                      >
-                        <Pagination
-                          totalRecords={Object.keys(Countrys).length}
-                          pageLimit={9}
-                          pageNeighbours={1}
-                          onPageChanged={data => {
-                            this.onCardPageChanged(data);
-                          }}
-                        />
-                      </div>
-                    ) : null}
                   </div>
                 )
-              ) : (
+              ) : null}{" "}
+              {this.state.isChart === 1 ? (
                 <div className="row">
                   {this.state.locationLoader === true ? (
                     <div style={{ width: "100%" }}>
@@ -766,114 +924,163 @@ class App extends Component {
                           };
                         });
                       let confirmed =
-                        typeof this.state.cards.filter(
+                        this.state.cards.length !== 0 &&
+                        typeof Object.values(
+                          this.state.cards[0].countryitems[0]
+                        ).filter(
                           country =>
-                            country.countrydata[0].info.title ===
-                            timeline.countrytimelinedata[0].info.title
+                            country !== "ok" &&
+                            country.title ===
+                              timeline.countrytimelinedata[0].info.title
                         )[0] !== "undefined"
-                          ? this.state.cards.filter(
+                          ? Object.values(
+                              this.state.cards[0].countryitems[0]
+                            ).filter(
                               country =>
-                                country.countrydata[0].info.title ===
-                                timeline.countrytimelinedata[0].info.title
-                            )[0].countrydata[0].total_cases
+                                country !== "ok" &&
+                                country.title ===
+                                  timeline.countrytimelinedata[0].info.title
+                            )[0].total_cases
                           : Object.values(timeline.timelineitems[0])[
                               Object.values(timeline.timelineitems[0]).length -
                                 2
                             ].total_cases;
                       let deaths =
-                        typeof this.state.cards.filter(
+                        this.state.cards.length !== 0 &&
+                        typeof Object.values(
+                          this.state.cards[0].countryitems[0]
+                        ).filter(
                           country =>
-                            country.countrydata[0].info.title ===
-                            timeline.countrytimelinedata[0].info.title
+                            country !== "ok" &&
+                            country.title ===
+                              timeline.countrytimelinedata[0].info.title
                         )[0] !== "undefined"
-                          ? this.state.cards.filter(
+                          ? Object.values(
+                              this.state.cards[0].countryitems[0]
+                            ).filter(
                               country =>
-                                country.countrydata[0].info.title ===
-                                timeline.countrytimelinedata[0].info.title
-                            )[0].countrydata[0].total_deaths
+                                country !== "ok" &&
+                                country.title ===
+                                  timeline.countrytimelinedata[0].info.title
+                            )[0].total_deaths
                           : Object.values(timeline.timelineitems[0])[
                               Object.values(timeline.timelineitems[0]).length -
                                 2
                             ].total_deaths;
                       let recovered =
-                        typeof this.state.cards.filter(
+                        this.state.cards.length !== 0 &&
+                        typeof Object.values(
+                          this.state.cards[0].countryitems[0]
+                        ).filter(
                           country =>
-                            country.countrydata[0].info.title ===
-                            timeline.countrytimelinedata[0].info.title
+                            country !== "ok" &&
+                            country.title ===
+                              timeline.countrytimelinedata[0].info.title
                         )[0] !== "undefined"
-                          ? this.state.cards.filter(
+                          ? Object.values(
+                              this.state.cards[0].countryitems[0]
+                            ).filter(
                               country =>
-                                country.countrydata[0].info.title ===
-                                timeline.countrytimelinedata[0].info.title
-                            )[0].countrydata[0].total_recovered
+                                country !== "ok" &&
+                                country.title ===
+                                  timeline.countrytimelinedata[0].info.title
+                            )[0].total_recovered
                           : Object.values(timeline.timelineitems[0])[
                               Object.values(timeline.timelineitems[0]).length -
                                 2
                             ].total_recoveries;
                       let NewConfirmed =
-                        typeof this.state.cards.filter(
+                        this.state.cards.length !== 0 &&
+                        typeof Object.values(
+                          this.state.cards[0].countryitems[0]
+                        ).filter(
                           country =>
-                            country.countrydata[0].info.title ===
-                            timeline.countrytimelinedata[0].info.title
+                            country !== "ok" &&
+                            country.title ===
+                              timeline.countrytimelinedata[0].info.title
                         )[0] !== "undefined"
-                          ? this.state.cards.filter(
+                          ? Object.values(
+                              this.state.cards[0].countryitems[0]
+                            ).filter(
                               country =>
-                                country.countrydata[0].info.title ===
-                                timeline.countrytimelinedata[0].info.title
-                            )[0].countrydata[0].total_new_cases_today
+                                country !== "ok" &&
+                                country.title ===
+                                  timeline.countrytimelinedata[0].info.title
+                            )[0].total_new_cases_today
                           : Object.values(timeline.timelineitems[0])[
                               Object.values(timeline.timelineitems[0]).length -
                                 2
                             ].new_daily_cases;
                       let NewDeaths =
-                        typeof this.state.cards.filter(
+                        this.state.cards.length !== 0 &&
+                        typeof Object.values(
+                          this.state.cards[0].countryitems[0]
+                        ).filter(
                           country =>
-                            country.countrydata[0].info.title ===
-                            timeline.countrytimelinedata[0].info.title
+                            country !== "ok" &&
+                            country.title ===
+                              timeline.countrytimelinedata[0].info.title
                         )[0] !== "undefined"
-                          ? this.state.cards.filter(
+                          ? Object.values(
+                              this.state.cards[0].countryitems[0]
+                            ).filter(
                               country =>
-                                country.countrydata[0].info.title ===
-                                timeline.countrytimelinedata[0].info.title
-                            )[0].countrydata[0].total_new_deaths_today
+                                country !== "ok" &&
+                                country.title ===
+                                  timeline.countrytimelinedata[0].info.title
+                            )[0].total_new_deaths_today
                           : Object.values(timeline.timelineitems[0])[
                               Object.values(timeline.timelineitems[0]).length -
                                 2
                             ].new_daily_deaths;
                       if (
-                        typeof this.state.cards.filter(
+                        this.state.cards.length !== 0 &&
+                        typeof Object.values(
+                          this.state.cards[0].countryitems[0]
+                        ).filter(
                           country =>
-                            country.countrydata[0].info.title ===
-                            timeline.countrytimelinedata[0].info.title
+                            country !== "ok" &&
+                            country.title ===
+                              timeline.countrytimelinedata[0].info.title
                         )[0] !== "undefined"
                       ) {
                         data.push({
                           name: todayDate,
-                          Confirmed: this.state.cards.filter(
+                          Confirmed: Object.values(
+                            this.state.cards[0].countryitems[0]
+                          ).filter(
                             country =>
-                              country.countrydata[0].info.title ===
+                              country.title ===
                               timeline.countrytimelinedata[0].info.title
-                          )[0].countrydata[0].total_cases,
-                          Deaths: this.state.cards.filter(
+                          )[0].total_cases,
+                          Deaths: Object.values(
+                            this.state.cards[0].countryitems[0]
+                          ).filter(
                             country =>
-                              country.countrydata[0].info.title ===
+                              country.title ===
                               timeline.countrytimelinedata[0].info.title
-                          )[0].countrydata[0].total_deaths,
-                          Recovered: this.state.cards.filter(
+                          )[0].total_deaths,
+                          Recovered: Object.values(
+                            this.state.cards[0].countryitems[0]
+                          ).filter(
                             country =>
-                              country.countrydata[0].info.title ===
+                              country.title ===
                               timeline.countrytimelinedata[0].info.title
-                          )[0].countrydata[0].total_recovered,
-                          ["New Conf."]: this.state.cards.filter(
+                          )[0].total_recovered,
+                          ["New Conf."]: Object.values(
+                            this.state.cards[0].countryitems[0]
+                          ).filter(
                             country =>
-                              country.countrydata[0].info.title ===
+                              country.title ===
                               timeline.countrytimelinedata[0].info.title
-                          )[0].countrydata[0].total_new_cases_today,
-                          ["New Deaths"]: this.state.cards.filter(
+                          )[0].total_new_cases_today,
+                          ["New Deaths"]: Object.values(
+                            this.state.cards[0].countryitems[0]
+                          ).filter(
                             country =>
-                              country.countrydata[0].info.title ===
+                              country.title ===
                               timeline.countrytimelinedata[0].info.title
-                          )[0].countrydata[0].total_new_deaths_today
+                          )[0].total_new_deaths_today
                         });
                       }
                       return (
@@ -1001,7 +1208,7 @@ class App extends Component {
                     </div>
                   ) : null}
                 </div>
-              )}
+              ) : null}
             </div>
             <div style={{ padding: 15 }}>
               Designed and Developed by{"  "}
