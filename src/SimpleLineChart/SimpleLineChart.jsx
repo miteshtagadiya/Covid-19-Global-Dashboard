@@ -7,11 +7,11 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  CartesianGrid
+  CartesianGrid,
 } from "recharts";
 import "./SimpleLineChart.css";
 
-const SimpleLineChart = props => {
+const SimpleLineChart = (props) => {
   const data =
     props.data === undefined
       ? [
@@ -21,11 +21,11 @@ const SimpleLineChart = props => {
           { name: "April", uv: 2780, pv: 3908, amt: 2000 },
           { name: "May", uv: 1890, pv: 4800, amt: 2181 },
           { name: "June", uv: 2390, pv: 3800, amt: 2500 },
-          { name: "July", uv: 3490, pv: 4300, amt: 2100 }
+          { name: "July", uv: 3490, pv: 4300, amt: 2100 },
         ]
       : props.data;
 
-  const getIntroOfPage = label => {
+  const getIntroOfPage = (label) => {
     if (label === "Page A") {
       return "Page A is about men's clothing";
     }
@@ -68,14 +68,22 @@ const SimpleLineChart = props => {
                   </span>
                   <span style={{ color: item.color, fontWeight: "bold" }}>
                     {item.value}
-                    {" [+"}
+                    {typeof props.data.filter(
+                      (data) => data?.name === item.payload.name
+                    )[0][`daily${item.name}`] === "undefined"
+                      ? null
+                      : " [+"}
                     {
                       props.data.filter(
-                        data => data?.name === item.payload.name
+                        (data) => data?.name === item.payload.name
                       )[0][`daily${item.name}`]
                     }
                     {/* {props.data[payload.payload.name][`daily${payload.name}`]} */}
-                    {"]"}
+                    {typeof props.data.filter(
+                      (data) => data?.name === item.payload.name
+                    )[0][`daily${item.name}`] === "undefined"
+                      ? null
+                      : "]"}
                   </span>
                   <br />
                 </div>
