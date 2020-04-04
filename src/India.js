@@ -1043,7 +1043,8 @@ class India extends Component {
                     <div className="row" style={{ justifyContent: "center" }}>
                       <div className="col-sm-4">
                         <Select
-                          isClearable={true}
+                          isClearable={false}
+                          isSearchable={false}
                           onChange={(selectedOption) => {
                             this.setState({
                               filterByCases:
@@ -1068,7 +1069,7 @@ class India extends Component {
                       </div>
                       <div className="col-sm-4">
                         <Select
-                          isClearable={true}
+                          isClearable={false}
                           onChange={(selectedOption) => {
                             this.setState({
                               displayBySort:
@@ -1077,8 +1078,10 @@ class India extends Component {
                                   : selectedOption.value,
                             });
                           }}
+                          isSearchable={false}
                           styles={colourStyles}
                           placeholder="All"
+                          defaultValue={{ value: "All", label: "All" }}
                           options={[
                             { value: "All", label: "All" },
                             {
