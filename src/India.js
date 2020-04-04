@@ -11,6 +11,8 @@ import { withRouter } from "react-router-dom";
 import Virus from "./assets/virus.gif";
 import Popover from "react-popover";
 import ErrorBoundary from "./ErrorBoundry";
+import Select from "react-select";
+import CustomChart from "./PieChart/CustomChart";
 
 class India extends Component {
   constructor(props) {
@@ -21,6 +23,9 @@ class India extends Component {
       selectedCity: "",
       confirmedOpen: false,
       activeOpen: false,
+      filterByCases: "confirmed",
+      changeChart: "cumulative",
+      displayBySort: "All",
       deathsOpen: false,
       totalPages: 0,
       activePage: 0,
@@ -41,70 +46,70 @@ class India extends Component {
           data: [65, 59, 80, 81, 56],
           data1: [65, 59, 80, 81, 56],
           data2: [65, 59, 80, 81, 56],
-          data3: [65, 59, 80, 81, 56]
-        }
-      ]
+          data3: [65, 59, 80, 81, 56],
+        },
+      ],
     };
   }
 
   componentDidMount() {
     window.addEventListener("focus", () => {
       fetch(`https://api.covid19india.org/data.json`, {
-        method: "GET"
+        method: "GET",
       })
-        .then(res => res.json())
-        .then(response => {
+        .then((res) => res.json())
+        .then((response) => {
           this.setState({
             india: response,
-            locationLoader: false
+            locationLoader: false,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           this.setState({
-            locationLoader: false
+            locationLoader: false,
           });
         });
       fetch("https://api.covid19india.org/state_district_wise.json", {
-        method: "GET"
+        method: "GET",
       })
-        .then(res => res.json())
-        .then(response => {
+        .then((res) => res.json())
+        .then((response) => {
           this.setState({
-            stateWiseCity: response
+            stateWiseCity: response,
           });
         })
-        .catch(error => {});
+        .catch((error) => {});
     });
 
     this.setState({
-      locationLoader: true
+      locationLoader: true,
     });
     fetch(`https://api.covid19india.org/data.json`, {
-      method: "GET"
+      method: "GET",
     })
-      .then(res => res.json())
-      .then(response => {
+      .then((res) => res.json())
+      .then((response) => {
         this.setState({
           india: response,
-          locationLoader: false
+          locationLoader: false,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({
-          locationLoader: false
+          locationLoader: false,
         });
       });
 
     fetch("https://api.covid19india.org/state_district_wise.json", {
-      method: "GET"
+      method: "GET",
     })
-      .then(res => res.json())
-      .then(response => {
+      .then((res) => res.json())
+      .then((response) => {
         this.setState({
-          stateWiseCity: response
+          stateWiseCity: response,
         });
       })
-      .catch(error => {});
+      .catch((error) => {});
   }
 
   chunkArray = (array, size) => {
@@ -119,11 +124,11 @@ class India extends Component {
   render() {
     let confirmedTinyChartData =
       this.state.india.length !== 0
-        ? this.state.india.cases_time_series.map(cases => {
+        ? this.state.india.cases_time_series.map((cases) => {
             return cases.totalconfirmed !== ""
               ? {
                   name: cases.date,
-                  confirmed: Number(cases.totalconfirmed)
+                  confirmed: Number(cases.totalconfirmed),
                 }
               : null;
           })
@@ -131,36 +136,36 @@ class India extends Component {
 
     let activeTinyChartData =
       this.state.india.length !== 0
-        ? this.state.india.cases_time_series.map(cases => {
+        ? this.state.india.cases_time_series.map((cases) => {
             return cases.totalconfirmed !== ""
               ? {
                   name: cases.date,
                   confirmed:
                     Number(cases.totalconfirmed) -
                     Number(cases.totaldeceased) -
-                    Number(cases.totalrecovered)
+                    Number(cases.totalrecovered),
                 }
               : null;
           })
         : null;
     let deathTinyChartData =
       this.state.india.length !== 0
-        ? this.state.india.cases_time_series.map(cases => {
+        ? this.state.india.cases_time_series.map((cases) => {
             return cases.totaldeceased !== ""
               ? {
                   name: cases.date,
-                  confirmed: Number(cases.totaldeceased)
+                  confirmed: Number(cases.totaldeceased),
                 }
               : null;
           })
         : null;
     let recoveredTinyChartData =
       this.state.india.length !== 0
-        ? this.state.india.cases_time_series.map(cases => {
+        ? this.state.india.cases_time_series.map((cases) => {
             return cases.totalrecovered !== ""
               ? {
                   name: cases.date,
-                  confirmed: Number(cases.totalrecovered)
+                  confirmed: Number(cases.totalrecovered),
                 }
               : null;
           })
@@ -168,7 +173,7 @@ class India extends Component {
 
     let totalDataDaily =
       this.state.india.length !== 0
-        ? this.state.india.cases_time_series.map(cases => {
+        ? this.state.india.cases_time_series.map((cases) => {
             return cases.dailyrecovered !== ""
               ? {
                   name: cases.date,
@@ -178,7 +183,7 @@ class India extends Component {
                     Number(cases.dailyrecovered) -
                     Number(cases.dailydeceased),
                   Recovered: Number(cases.dailyrecovered),
-                  Deaths: Number(cases.dailydeceased)
+                  Deaths: Number(cases.dailydeceased),
                 }
               : null;
           })
@@ -186,7 +191,7 @@ class India extends Component {
 
     let totalData =
       this.state.india.length !== 0
-        ? this.state.india.cases_time_series.map(cases => {
+        ? this.state.india.cases_time_series.map((cases) => {
             return cases.totalrecovered !== ""
               ? {
                   name: cases.date,
@@ -203,7 +208,7 @@ class India extends Component {
                     Number(cases.dailyrecovered) -
                     Number(cases.dailydeceased),
                   dailyRecovered: Number(cases.dailyrecovered),
-                  dailyDeaths: Number(cases.dailydeceased)
+                  dailyDeaths: Number(cases.dailydeceased),
                 }
               : null;
           })
@@ -212,8 +217,8 @@ class India extends Component {
     const data =
       this.state.india.length !== 0
         ? this.state.india.statewise
-            .filter(state => state.state !== "Total")
-            .map(state => {
+            .filter((state) => state.state !== "Total")
+            .map((state) => {
               return {
                 state: state.state,
                 confirmed: Number(state.confirmed),
@@ -223,7 +228,7 @@ class India extends Component {
                 deltaConfirmed: Number(state.delta.confirmed),
                 deltaActive: Number(state.delta.active),
                 deltaRecovered: Number(state.delta.recovered),
-                deltaDeaths: Number(state.delta.deaths)
+                deltaDeaths: Number(state.delta.deaths),
               };
             })
         : [];
@@ -233,12 +238,12 @@ class India extends Component {
         ? [
             {
               Header: "State/UT",
-              accessor: "state" // String-based value accessors!
+              accessor: "state", // String-based value accessors!
             },
             {
               Header: "Confirmed",
               accessor: "confirmed",
-              Cell: props => {
+              Cell: (props) => {
                 return (
                   <>
                     {props.original.deltaConfirmed === 0 ? null : (
@@ -246,7 +251,7 @@ class India extends Component {
                         style={{
                           fontSize: 15,
                           fontWeight: "bold",
-                          color: "#e43339"
+                          color: "#e43339",
                         }}
                       >
                         <span style={{ fontSize: 15, fontWeight: "bold" }}>
@@ -258,12 +263,12 @@ class India extends Component {
                     <span className="number">{props.value}</span>
                   </>
                 );
-              }
+              },
             },
             {
               Header: "Active",
               accessor: "active",
-              Cell: props => {
+              Cell: (props) => {
                 return (
                   <>
                     {props.original.deltaActive === 0 ? null : (
@@ -271,7 +276,7 @@ class India extends Component {
                         style={{
                           fontSize: 15,
                           fontWeight: "bold",
-                          color: "#192a56"
+                          color: "#192a56",
                         }}
                       >
                         <span style={{ fontSize: 15, fontWeight: "bold" }}>
@@ -283,12 +288,12 @@ class India extends Component {
                     <span className="number">{props.value}</span>
                   </>
                 );
-              }
+              },
             },
             {
               Header: "Recovered",
               accessor: "recovered",
-              Cell: props => {
+              Cell: (props) => {
                 return (
                   <>
                     {props.original.deltaRecovered === 0 ? null : (
@@ -296,7 +301,7 @@ class India extends Component {
                         style={{
                           fontSize: 15,
                           fontWeight: "bold",
-                          color: "#006266"
+                          color: "#006266",
                         }}
                       >
                         <span style={{ fontSize: 15, fontWeight: "bold" }}>
@@ -308,12 +313,12 @@ class India extends Component {
                     <span className="number">{props.value}</span>
                   </>
                 );
-              }
+              },
             },
             {
               Header: "Deaths",
               accessor: "deaths",
-              Cell: props => {
+              Cell: (props) => {
                 return (
                   <>
                     {props.original.deltaDeaths === 0 ? null : (
@@ -321,7 +326,7 @@ class India extends Component {
                         style={{
                           fontSize: 15,
                           fontWeight: "bold",
-                          color: "#535c68"
+                          color: "#535c68",
                         }}
                       >
                         <span style={{ fontSize: 15, fontWeight: "bold" }}>
@@ -333,18 +338,18 @@ class India extends Component {
                     <span className="number">{props.value}</span>
                   </>
                 );
-              }
-            }
+              },
+            },
           ]
         : [];
 
     const cityData =
       this.state.stateWiseCity.length !== 0
-        ? Object.keys(this.state.stateWiseCity).map(city => {
+        ? Object.keys(this.state.stateWiseCity).map((city) => {
             return {
               [city]: Object.keys(
                 this.state.stateWiseCity[city].districtData
-              ).map(key => {
+              ).map((key) => {
                 return {
                   city: key,
                   confirmed: this.state.stateWiseCity[city].districtData[key]
@@ -354,9 +359,9 @@ class India extends Component {
                   recovered: this.state.stateWiseCity[city].districtData[key]
                     .recovered,
                   deaths: this.state.stateWiseCity[city].districtData[key]
-                    .deaths
+                    .deaths,
                 };
-              })
+              }),
             };
           })
         : [];
@@ -366,75 +371,130 @@ class India extends Component {
         ? [
             {
               Header: "District",
-              accessor: "city" // String-based value accessors!
+              accessor: "city", // String-based value accessors!
             },
             {
               Header: "Confirmed",
-              accessor: "confirmed"
+              accessor: "confirmed",
             },
             {
               Header: "Active",
-              accessor: "active"
+              accessor: "active",
             },
             {
               Header: "Recovered",
-              accessor: "recovered"
+              accessor: "recovered",
             },
             {
               Header: "Deaths",
-              accessor: "deaths"
-            }
+              accessor: "deaths",
+            },
           ]
         : [];
 
     const totalConformedToday =
       this.state.india.length !== 0
         ? this.state.india.statewise.filter(
-            record => record.state === "Total"
+            (record) => record.state === "Total"
           )[0].delta.confirmed
         : 0;
 
     const totalActiveToday =
       this.state.india.length !== 0
         ? this.state.india.statewise.filter(
-            record => record.state === "Total"
+            (record) => record.state === "Total"
           )[0].delta.active
         : 0;
 
     const totalDeathsToday =
       this.state.india.length !== 0
         ? this.state.india.statewise.filter(
-            record => record.state === "Total"
+            (record) => record.state === "Total"
           )[0].delta.deaths
         : 0;
 
     const confirmedPopover =
       this.state.india.length !== 0
         ? this.state.india.statewise
-            .filter(record => record.state !== "Total")
-            .filter(state => state.delta.confirmed !== 0)
-            .map(state => {
+            .filter((record) => record.state !== "Total")
+            .filter((state) => state.delta.confirmed !== 0)
+            .map((state) => {
               return { [state.state]: state.delta.confirmed };
             })
         : [];
     const activePopover =
       this.state.india.length !== 0
         ? this.state.india.statewise
-            .filter(record => record.state !== "Total")
-            .filter(state => state.delta.active !== 0)
-            .map(state => {
+            .filter((record) => record.state !== "Total")
+            .filter((state) => state.delta.active !== 0)
+            .map((state) => {
               return { [state.state]: state.delta.active };
             })
         : [];
     const deathsPopover =
       this.state.india.length !== 0
         ? this.state.india.statewise
-            .filter(record => record.state !== "Total")
-            .filter(state => state.delta.deaths !== 0)
-            .map(state => {
+            .filter((record) => record.state !== "Total")
+            .filter((state) => state.delta.deaths !== 0)
+            .map((state) => {
               return { [state.state]: state.delta.deaths };
             })
         : [];
+
+    var sortable =
+      this.state.india.length !== 0 ? this.state.india.statewise : [];
+
+    const Comparator = (a, b) => {
+      if (Number(a[1]) > Number(b[1])) return -1;
+      if (Number(a[1]) < Number(b[1])) return 1;
+      return 0;
+    };
+
+    var pieChartData =
+      this.state.india.length !== 0
+        ? sortable
+            .filter((record) => record.state !== "Total")
+            .map((state) => {
+              return [state.state, Number(state[this.state.filterByCases])];
+            })
+        : [];
+
+    if (this.state.displayBySort !== "All") {
+      pieChartData = pieChartData.sort(Comparator).slice(0, 10);
+    }
+
+    let Columns = [
+      { type: "string", label: "name" },
+      { type: "number", label: "value" },
+    ];
+
+    const colourStyles = {
+      control: (styles) => ({
+        ...styles,
+        backgroundColor: "white",
+        marginRight: 15,
+        marginBottom: 15,
+      }),
+      option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+        return {
+          ...styles,
+          backgroundColor: isDisabled
+            ? null
+            : isSelected
+            ? "#f6565b"
+            : isFocused
+            ? "#f6565b"
+            : null,
+          color: isDisabled ? "#ccc" : isSelected ? "white" : "black",
+          cursor: isDisabled ? "not-allowed" : "default",
+
+          ":active": {
+            ...styles[":active"],
+            backgroundColor: !isDisabled && (isSelected ? "#f6565b" : "white"),
+          },
+        };
+      },
+    };
 
     return (
       <ErrorBoundary>
@@ -444,7 +504,7 @@ class India extends Component {
             background: "#172852",
             color: "white",
             height: "100vh",
-            overflowY: "scroll"
+            overflowY: "scroll",
           }}
         >
           <div className="container">
@@ -457,7 +517,7 @@ class India extends Component {
                   fontWeight: "bold",
                   marginTop: 30,
                   paddingBottom: 30,
-                  borderBottom: "2px solid white"
+                  borderBottom: "2px solid white",
                 }}
               >
                 Covid-19 India Dashboard
@@ -489,27 +549,27 @@ class India extends Component {
                     marginLeft: 15,
                     height: 50,
                     width: 50,
-                    cursor: "pointer"
+                    cursor: "pointer",
                   }}
                 />
               </div>
             </div>
             <div style={{ minHeight: "90vh" }}>
               <div className="row" style={{ padding: "10px 0px 30px 0px" }}>
-                <div className="col-sm-3" style={{ padding: 15 }}>
+                <div className="col-sm-3 col-6" style={{ padding: 15 }}>
                   <div
                     style={{
                       padding: 20,
                       fontWeight: "bold",
                       background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
                       color: "#e43339",
-                      borderRadius: 10
+                      borderRadius: 10,
                     }}
                   >
-                    <div style={{ fontSize: 35 }}>
+                    <div style={{ fontSize: 30 }}>
                       {this.state.india.length !== 0
                         ? this.state.india.statewise.filter(
-                            record => record.state === "Total"
+                            (record) => record.state === "Total"
                           )[0].confirmed
                         : 0}
                     </div>
@@ -518,7 +578,7 @@ class India extends Component {
                         fontSize: 15,
                         marginBottom: 10,
                         display: "flex",
-                        justifyContent: "center"
+                        justifyContent: "center",
                       }}
                     >
                       <span style={{ fontSize: 17, fontWeight: "bold" }}>
@@ -526,13 +586,13 @@ class India extends Component {
                       </span>
                       {this.state.india.length !== 0
                         ? typeof this.state.india.statewise.filter(
-                            record => record.state === "Total"
+                            (record) => record.state === "Total"
                           )[0].delta.confirmed !== "undefined" &&
                           this.state.india.statewise.filter(
-                            record => record.state === "Total"
+                            (record) => record.state === "Total"
                           )[0].delta.confirmed !== null
                           ? this.state.india.statewise.filter(
-                              record => record.state === "Total"
+                              (record) => record.state === "Total"
                             )[0].delta.confirmed
                           : 0
                         : 0}
@@ -545,7 +605,7 @@ class India extends Component {
                                 borderRadius: 10,
                                 padding: 15,
                                 color: "#192a56",
-                                fontWeight: "bold"
+                                fontWeight: "bold",
                               }}
                             >
                               {confirmedPopover.map((state, index) => {
@@ -562,14 +622,14 @@ class India extends Component {
                           isOpen={this.state.confirmedOpen}
                           onOuterAction={() =>
                             this.setState({
-                              confirmedOpen: !this.state.confirmedOpen
+                              confirmedOpen: !this.state.confirmedOpen,
                             })
                           }
                         >
                           <div
                             onClick={() =>
                               this.setState({
-                                confirmedOpen: !this.state.confirmedOpen
+                                confirmedOpen: !this.state.confirmedOpen,
                               })
                             }
                             className="report-tile"
@@ -582,28 +642,32 @@ class India extends Component {
                     </div>
                     <div style={{ fontSize: 18 }}>Confirmed</div>
                     {this.state.india.length !== 0 ? (
-                      <TinyChart
-                        data={confirmedTinyChartData}
-                        label="confirmed"
-                        color="#e43339"
-                      />
+                      <div
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <TinyChart
+                          data={confirmedTinyChartData}
+                          label="confirmed"
+                          color="#e43339"
+                        />
+                      </div>
                     ) : null}
                   </div>
                 </div>
-                <div className="col-sm-3" style={{ padding: 15 }}>
+                <div className="col-sm-3 col-6" style={{ padding: 15 }}>
                   <div
                     style={{
                       padding: 20,
                       fontWeight: "bold",
                       background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
                       color: "#192a56",
-                      borderRadius: 10
+                      borderRadius: 10,
                     }}
                   >
-                    <div style={{ fontSize: 35 }}>
+                    <div style={{ fontSize: 30 }}>
                       {this.state.india.length !== 0
                         ? this.state.india.statewise.filter(
-                            record => record.state === "Total"
+                            (record) => record.state === "Total"
                           )[0].active
                         : 0}
                     </div>
@@ -612,7 +676,7 @@ class India extends Component {
                         fontSize: 15,
                         marginBottom: 10,
                         display: "flex",
-                        justifyContent: "center"
+                        justifyContent: "center",
                       }}
                     >
                       <span style={{ fontSize: 17, fontWeight: "bold" }}>
@@ -620,13 +684,13 @@ class India extends Component {
                       </span>
                       {this.state.india.length !== 0
                         ? typeof this.state.india.statewise.filter(
-                            record => record.state === "Total"
+                            (record) => record.state === "Total"
                           )[0].delta.active !== "undefined" &&
                           this.state.india.statewise.filter(
-                            record => record.state === "Total"
+                            (record) => record.state === "Total"
                           )[0].delta.active !== null
                           ? this.state.india.statewise.filter(
-                              record => record.state === "Total"
+                              (record) => record.state === "Total"
                             )[0].delta.active
                           : 0
                         : 0}
@@ -639,7 +703,7 @@ class India extends Component {
                                 borderRadius: 10,
                                 padding: 15,
                                 color: "#192a56",
-                                fontWeight: "bold"
+                                fontWeight: "bold",
                               }}
                             >
                               {activePopover.map((state, index) => {
@@ -656,14 +720,14 @@ class India extends Component {
                           isOpen={this.state.activeOpen}
                           onOuterAction={() =>
                             this.setState({
-                              activeOpen: !this.state.activeOpen
+                              activeOpen: !this.state.activeOpen,
                             })
                           }
                         >
                           <div
                             onClick={() =>
                               this.setState({
-                                activeOpen: !this.state.activeOpen
+                                activeOpen: !this.state.activeOpen,
                               })
                             }
                             className="report-tile"
@@ -676,28 +740,32 @@ class India extends Component {
                     </div>
                     <div style={{ fontSize: 18 }}>Active</div>
                     {this.state.india.length !== 0 ? (
-                      <TinyChart
-                        data={activeTinyChartData}
-                        label="confirmed"
-                        color="#192a56"
-                      />
+                      <div
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <TinyChart
+                          data={activeTinyChartData}
+                          label="confirmed"
+                          color="#192a56"
+                        />
+                      </div>
                     ) : null}
                   </div>
                 </div>
-                <div className="col-sm-3" style={{ padding: 15 }}>
+                <div className="col-sm-3 col-6" style={{ padding: 15 }}>
                   <div
                     style={{
                       padding: 20,
                       fontWeight: "bold",
                       background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
                       color: "#006266",
-                      borderRadius: 10
+                      borderRadius: 10,
                     }}
                   >
-                    <div style={{ fontSize: 35 }}>
+                    <div style={{ fontSize: 30 }}>
                       {this.state.india.length !== 0
                         ? this.state.india.statewise.filter(
-                            record => record.state === "Total"
+                            (record) => record.state === "Total"
                           )[0].recovered
                         : 0}
                     </div>
@@ -706,7 +774,7 @@ class India extends Component {
                         fontSize: 15,
                         marginBottom: 10,
                         display: "flex",
-                        justifyContent: "center"
+                        justifyContent: "center",
                       }}
                     >
                       <span style={{ fontSize: 17, fontWeight: "bold" }}>
@@ -714,41 +782,45 @@ class India extends Component {
                       </span>
                       {this.state.india.length !== 0
                         ? typeof this.state.india.statewise.filter(
-                            record => record.state === "Total"
+                            (record) => record.state === "Total"
                           )[0].delta.recovered !== "undefined" &&
                           this.state.india.statewise.filter(
-                            record => record.state === "Total"
+                            (record) => record.state === "Total"
                           )[0].delta.recovered !== null
                           ? this.state.india.statewise.filter(
-                              record => record.state === "Total"
+                              (record) => record.state === "Total"
                             )[0].delta.recovered
                           : 0
                         : 0}
                     </div>
                     <div style={{ fontSize: 18 }}>Recovered</div>
                     {this.state.india.length !== 0 ? (
-                      <TinyChart
-                        data={recoveredTinyChartData}
-                        label="confirmed"
-                        color="#006266"
-                      />
+                      <div
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <TinyChart
+                          data={recoveredTinyChartData}
+                          label="confirmed"
+                          color="#006266"
+                        />
+                      </div>
                     ) : null}
                   </div>
                 </div>
-                <div className="col-sm-3" style={{ padding: 15 }}>
+                <div className="col-sm-3 col-6" style={{ padding: 15 }}>
                   <div
                     style={{
                       padding: 20,
                       fontWeight: "bold",
                       background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
                       color: "#535c68",
-                      borderRadius: 10
+                      borderRadius: 10,
                     }}
                   >
-                    <div style={{ fontSize: 35 }}>
+                    <div style={{ fontSize: 30 }}>
                       {this.state.india.length !== 0
                         ? this.state.india.statewise.filter(
-                            record => record.state === "Total"
+                            (record) => record.state === "Total"
                           )[0].deaths
                         : 0}
                     </div>
@@ -757,7 +829,7 @@ class India extends Component {
                         fontSize: 15,
                         marginBottom: 10,
                         display: "flex",
-                        justifyContent: "center"
+                        justifyContent: "center",
                       }}
                     >
                       <span style={{ fontSize: 17, fontWeight: "bold" }}>
@@ -765,13 +837,13 @@ class India extends Component {
                       </span>
                       {this.state.india.length !== 0
                         ? typeof this.state.india.statewise.filter(
-                            record => record.state === "Total"
+                            (record) => record.state === "Total"
                           )[0].delta.deaths !== "undefined" &&
                           this.state.india.statewise.filter(
-                            record => record.state === "Total"
+                            (record) => record.state === "Total"
                           )[0].delta.deaths !== null
                           ? this.state.india.statewise.filter(
-                              record => record.state === "Total"
+                              (record) => record.state === "Total"
                             )[0].delta.deaths
                           : 0
                         : 0}
@@ -784,7 +856,7 @@ class India extends Component {
                                 borderRadius: 10,
                                 padding: 15,
                                 color: "#192a56",
-                                fontWeight: "bold"
+                                fontWeight: "bold",
                               }}
                             >
                               {deathsPopover.map((state, index) => {
@@ -801,14 +873,14 @@ class India extends Component {
                           isOpen={this.state.deathsOpen}
                           onOuterAction={() =>
                             this.setState({
-                              deathsOpen: !this.state.deathsOpen
+                              deathsOpen: !this.state.deathsOpen,
                             })
                           }
                         >
                           <div
                             onClick={() =>
                               this.setState({
-                                deathsOpen: !this.state.deathsOpen
+                                deathsOpen: !this.state.deathsOpen,
                               })
                             }
                             className="report-tile"
@@ -821,32 +893,213 @@ class India extends Component {
                     </div>
                     <div style={{ fontSize: 18 }}>Deaths</div>
                     {this.state.india.length !== 0 ? (
-                      <TinyChart
-                        data={deathTinyChartData}
-                        label="confirmed"
-                        color="#535c68"
-                      />
+                      <div
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <TinyChart
+                          data={deathTinyChartData}
+                          label="confirmed"
+                          color="#535c68"
+                        />
+                      </div>
                     ) : null}
                   </div>
                 </div>
               </div>
-              <div
-                style={{
-                  background: "linear-gradient(to right, #d9a7c7, #fffcdc)",
-                  paddingBottom: 15,
-                  paddingLeft: 15,
-                  paddingTop: 30,
-                  borderRadius: 15,
-                  marginBottom: 15
-                }}
-              >
-                <SimpleLineChart
-                  customTooltip={true}
-                  grid={false}
-                  data={totalData}
-                  labels={["Confirmed", "Active", "Recovered", "Deaths"]}
-                  colors={["#e43339", "#192a56", "#006266", "#535c68"]}
-                />
+              <div className="row">
+                <div className="col-sm-6 col-12">
+                  <div
+                    style={{
+                      background: "linear-gradient(to right, #d9a7c7, #fffcdc)",
+                      paddingBottom: 15,
+                      minHeight: 368,
+                      paddingLeft: 15,
+                      paddingTop: 30,
+                      borderRadius: 15,
+                      marginBottom: 15,
+                    }}
+                  >
+                    <div className="row" style={{ justifyContent: "center" }}>
+                      <div
+                        onClick={() => {
+                          this.setState({
+                            changeChart: "cumulative",
+                          });
+                        }}
+                        style={
+                          this.state.changeChart === "cumulative"
+                            ? {
+                                padding: "5px 15px 5px 15px",
+                                color: "white",
+                                background: "rgb(246, 86, 91)",
+                                border: "2px solid rgb(246, 86, 91)",
+                                borderRadius: 5,
+                                cursor: "pointer",
+                              }
+                            : {
+                                padding: "5px 15px 5px 15px",
+                                color: "black",
+                                background: "white",
+                                border: "2px solid black",
+                                borderRadius: 5,
+                                cursor: "pointer",
+                              }
+                        }
+                      >
+                        <label
+                          style={{
+                            marginBottom: 0,
+                            cursor: "pointer",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Cumulative
+                        </label>
+                      </div>
+                      <div
+                        onClick={() => {
+                          this.setState({
+                            changeChart: "daily",
+                          });
+                        }}
+                        style={
+                          this.state.changeChart === "daily"
+                            ? {
+                                padding: "5px 15px 5px 15px",
+                                color: "white",
+                                background: "rgb(246, 86, 91)",
+                                border: "2px solid rgb(246, 86, 91)",
+                                borderRadius: 5,
+                                marginLeft: 15,
+                                cursor: "pointer",
+                              }
+                            : {
+                                padding: "5px 15px 5px 15px",
+                                color: "black",
+                                background: "white",
+                                border: "2px solid black",
+                                borderRadius: 5,
+                                marginLeft: 15,
+                                cursor: "pointer",
+                              }
+                        }
+                      >
+                        <label
+                          style={{
+                            marginBottom: 0,
+                            cursor: "pointer",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Daily
+                        </label>
+                      </div>
+                      {/* <div className="col-sm-5">
+                        <Select
+                          isClearable={true}
+                          onChange={(selectedOption) => {
+                            this.setState({
+                              changeChart: selectedOption.value,
+                            });
+                          }}
+                          defaultValue={{
+                            value: "cumulative",
+                            label: "Cumulative",
+                          }}
+                          styles={colourStyles}
+                          options={[
+                            { value: "cumulative", label: "Cumulative" },
+                            { value: "daily", label: "Daily" },
+                          ]}
+                          placeholder="comulative"
+                        />
+                      </div> */}
+                    </div>
+                    <SimpleLineChart
+                      customTooltip={true}
+                      grid={false}
+                      data={
+                        this.state.changeChart === "daily"
+                          ? totalDataDaily
+                          : totalData
+                      }
+                      labels={["Confirmed", "Active", "Recovered", "Deaths"]}
+                      colors={["#e43339", "#192a56", "#006266", "#535c68"]}
+                    />
+                  </div>
+                </div>
+                <div className="col-sm-6 col-12">
+                  <div
+                    style={{
+                      minHeight: 368,
+                      background: "linear-gradient(to right, #d9a7c7, #fffcdc)",
+                      paddingBottom: 15,
+                      paddingLeft: 15,
+                      paddingTop: 30,
+                      borderRadius: 15,
+                      marginBottom: 15,
+                    }}
+                  >
+                    <div className="row" style={{ justifyContent: "center" }}>
+                      <div className="col-sm-4">
+                        <Select
+                          isClearable={true}
+                          onChange={(selectedOption) => {
+                            this.setState({
+                              filterByCases:
+                                selectedOption === null
+                                  ? "confirmed"
+                                  : selectedOption.value,
+                            });
+                          }}
+                          styles={colourStyles}
+                          placeholder="confirmed"
+                          defaultValue={{
+                            value: "confirmed",
+                            label: "Confirmed",
+                          }}
+                          options={[
+                            { value: "confirmed", label: "Confirmed" },
+                            { value: "active", label: "Active" },
+                            { value: "deaths", label: "Deaths" },
+                            { value: "recovered", label: "Recovered" },
+                          ]}
+                        />
+                      </div>
+                      <div className="col-sm-4">
+                        <Select
+                          isClearable={true}
+                          onChange={(selectedOption) => {
+                            this.setState({
+                              displayBySort:
+                                selectedOption === null
+                                  ? "All"
+                                  : selectedOption.value,
+                            });
+                          }}
+                          styles={colourStyles}
+                          placeholder="All"
+                          options={[
+                            { value: "All", label: "All" },
+                            {
+                              value: "Top 10",
+                              label: "Top 10",
+                            },
+                          ]}
+                        />
+                      </div>
+                    </div>
+                    <CustomChart
+                      placeholder={false}
+                      emptyClassName={"m-t-40"}
+                      chartArea={{ left: 10, top: 15, right: 10, bottom: 15 }}
+                      rows={pieChartData}
+                      columns={Columns}
+                      chartType={"PieChart"}
+                      height={"270px"}
+                    />
+                  </div>
+                </div>
               </div>
               {this.state.isTable === 1 ? null : this.state.locationLoader ===
                 true ? (
@@ -858,9 +1111,9 @@ class India extends Component {
                   <input
                     type="text"
                     placeholder="Search"
-                    onChange={e =>
+                    onChange={(e) =>
                       this.setState({
-                        searchString: e.target.value
+                        searchString: e.target.value,
                       })
                     }
                   />
@@ -870,13 +1123,13 @@ class India extends Component {
                 style={{
                   textAlign: "right",
                   padding: "15px 0px",
-                  marginTop: 15
+                  marginTop: 15,
                 }}
               >
                 <span
                   onClick={() =>
                     this.setState({
-                      isTable: 1
+                      isTable: 1,
                     })
                   }
                   style={
@@ -887,7 +1140,7 @@ class India extends Component {
                           cursor: "pointer",
                           color: "white",
                           padding: "10px 30px",
-                          borderRadius: "20px 0px 0px 20px"
+                          borderRadius: "20px 0px 0px 20px",
                         }
                       : {
                           background: "white",
@@ -895,7 +1148,7 @@ class India extends Component {
                           cursor: "pointer",
                           color: "black",
                           padding: "10px 30px",
-                          borderRadius: "20px 0px 0px 20px"
+                          borderRadius: "20px 0px 0px 20px",
                         }
                   }
                 >
@@ -913,7 +1166,7 @@ class India extends Component {
                           cursor: "pointer",
                           color: "white",
                           padding: "10px 30px",
-                          borderRadius: "0px 20px 20px 0px"
+                          borderRadius: "0px 20px 20px 0px",
                         }
                       : {
                           background: "white",
@@ -921,7 +1174,7 @@ class India extends Component {
                           cursor: "pointer",
                           color: "black",
                           padding: "10px 30px",
-                          borderRadius: "0px 20px 20px 0px"
+                          borderRadius: "0px 20px 20px 0px",
                         }
                   }
                 >
@@ -936,7 +1189,7 @@ class India extends Component {
                     </div>
                   ) : this.state.india.length !== 0 ? (
                     this.state.india.statewise
-                      .filter(location =>
+                      .filter((location) =>
                         location.state
                           .toLowerCase()
                           .includes(this.state.searchString.toLowerCase())
@@ -953,7 +1206,7 @@ class India extends Component {
                                 textAlign: "center",
                                 borderRadius: 10,
                                 background: "white",
-                                color: "black"
+                                color: "black",
                               }}
                             >
                               <label
@@ -965,7 +1218,7 @@ class India extends Component {
                                   fontSize: 18,
                                   fontWeight: "bold",
                                   padding: 10,
-                                  background: "#f6565b"
+                                  background: "#f6565b",
                                 }}
                               >
                                 {location.state}
@@ -1013,7 +1266,7 @@ class India extends Component {
                       style={{
                         background: "white",
                         color: "black",
-                        borderRadius: 10
+                        borderRadius: 10,
                       }}
                     >
                       <ReactTable
@@ -1025,8 +1278,8 @@ class India extends Component {
                         getTheadProps={(state, rowInfo, column) => {
                           return {
                             style: {
-                              fontWeight: "bold"
-                            }
+                              fontWeight: "bold",
+                            },
                           };
                         }}
                         getTdProps={(state, rowInfo, column, instance) => {
@@ -1035,19 +1288,19 @@ class India extends Component {
                               if (handleOriginal) {
                                 handleOriginal();
                               }
-                            }
+                            },
                           };
                         }}
                         filterable
-                        SubComponent={row => {
-                          return (
+                        SubComponent={(row) => {
+                          return row.original.confirmed === 0 ? null : (
                             <div style={{ padding: "20px" }}>
                               <div style={{ borderRadius: 10 }}>
                                 <ReactTable
                                   data={
                                     Object.values(
                                       cityData.filter(
-                                        state =>
+                                        (state) =>
                                           Object.keys(state)[0] ===
                                           row.original.state
                                       )[0]
@@ -1073,7 +1326,7 @@ class India extends Component {
                 style={{
                   color: "#f6565b",
                   fontWeight: "bold",
-                  textDecoration: "none"
+                  textDecoration: "none",
                 }}
                 href="https://miteshtagadiya.js.org"
                 rel="noopener noreferrer"
