@@ -58,27 +58,29 @@ const SimpleLineChart = props => {
           >
             {label}
           </p>
-          {payload.map((item, index) => {
-            return (
-              <div key={index}>
-                <span style={{ color: item.color, fontWeight: "bold" }}>
-                  {item.name}:{" "}
-                </span>
-                <span style={{ color: item.color, fontWeight: "bold" }}>
-                  {item.value}
-                  {" [+"}
-                  {
-                    props.data.filter(
-                      data => data?.name === item.payload.name
-                    )[0][`daily${item.name}`]
-                  }
-                  {/* {props.data[payload.payload.name][`daily${payload.name}`]} */}
-                  {"]"}
-                </span>
-                <br />
-              </div>
-            );
-          })}
+          {typeof payload !== "undefined" &&
+            payload !== null &&
+            payload.map((item, index) => {
+              return (
+                <div key={index}>
+                  <span style={{ color: item.color, fontWeight: "bold" }}>
+                    {item.name}:{" "}
+                  </span>
+                  <span style={{ color: item.color, fontWeight: "bold" }}>
+                    {item.value}
+                    {" [+"}
+                    {
+                      props.data.filter(
+                        data => data?.name === item.payload.name
+                      )[0][`daily${item.name}`]
+                    }
+                    {/* {props.data[payload.payload.name][`daily${payload.name}`]} */}
+                    {"]"}
+                  </span>
+                  <br />
+                </div>
+              );
+            })}
         </div>
       );
     }
