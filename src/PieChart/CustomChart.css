@@ -1,0 +1,9 @@
+.custom-charts .reactgooglegraph-4 {
+  height: 70% !important;
+}
+.goog-tooltip {
+  margin-left: -125px !important;
+}
+svg > g > g:last-child {
+  pointer-events: none;
+}
