@@ -428,7 +428,7 @@ class App extends Component {
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  fontSize: 40,
+                  fontSize: "2.1em",
                   fontWeight: "bold",
                   marginTop: 30,
                   paddingBottom: 30,
