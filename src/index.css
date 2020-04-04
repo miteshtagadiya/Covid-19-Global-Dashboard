@@ -7,6 +7,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.App {
+  background-color: #27293d !important;
+}
+
 .focus-visible {
   outline: none !important;
 }
