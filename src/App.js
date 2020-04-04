@@ -19,6 +19,8 @@ class App extends Component {
     this.state = {
       searchString: "",
       cards: [],
+      width: 0,
+      height: 0,
       globalTimelines: [],
       currentPage: 0,
       currentCardPage: 0,
@@ -48,6 +50,8 @@ class App extends Component {
   }
 
   componentDidMount() {
+    window.addEventListener("resize", this.updateDimensions);
+
     this.setState({
       locationLoader: true,
     });
@@ -214,6 +218,14 @@ class App extends Component {
       locationLoader: true,
     });
   };
+
+  updateDimensions = () => {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
+  };
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions);
+  }
 
   // onCardPageChanged = data1 => {
   //   this.setState({
@@ -435,7 +447,7 @@ class App extends Component {
                   borderBottom: "2px solid white",
                 }}
               >
-                Covid-19 Global Dashboard
+                Covid-19 Global {this.state.width < 1024 ? "" : "Dashboard"}
                 <img
                   onClick={() =>
                     window.open(
@@ -509,7 +521,7 @@ class App extends Component {
                       borderRadius: 10,
                     }}
                   >
-                    <div style={{ fontSize: 35, marginBottom: 37 }}>
+                    <div style={{ fontSize: 30, marginBottom: 42 }}>
                       {this.state.globalData.length !== 0
                         ? this.state.globalData.total_active_cases
                         : 0}
@@ -528,7 +540,7 @@ class App extends Component {
                       borderRadius: 10,
                     }}
                   >
-                    <div style={{ fontSize: 35, marginBottom: 37 }}>
+                    <div style={{ fontSize: 30, marginBottom: 42 }}>
                       {this.state.globalData.length !== 0
                         ? this.state.globalData.total_recovered
                         : 0}

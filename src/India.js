@@ -20,6 +20,8 @@ class India extends Component {
     this.state = {
       searchString: "",
       currentPage: 0,
+      width: 0,
+      height: 0,
       selectedCity: "",
       confirmedOpen: false,
       activeOpen: false,
@@ -53,6 +55,8 @@ class India extends Component {
   }
 
   componentDidMount() {
+    window.addEventListener("resize", this.updateDimensions);
+
     window.addEventListener("focus", () => {
       fetch(`https://api.covid19india.org/data.json`, {
         method: "GET",
@@ -120,6 +124,14 @@ class India extends Component {
     }
     return result;
   };
+
+  updateDimensions = () => {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
+  };
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions);
+  }
 
   render() {
     let confirmedTinyChartData =
@@ -520,7 +532,7 @@ class India extends Component {
                   borderBottom: "2px solid white",
                 }}
               >
-                Covid-19 India Dashboard
+                Covid-19 India {this.state.width < 1024 ? "" : "Dashboard"}
                 <img
                   onClick={() =>
                     window.open(
@@ -994,26 +1006,6 @@ class India extends Component {
                           Daily
                         </label>
                       </div>
-                      {/* <div className="col-sm-5">
-                        <Select
-                          isClearable={true}
-                          onChange={(selectedOption) => {
-                            this.setState({
-                              changeChart: selectedOption.value,
-                            });
-                          }}
-                          defaultValue={{
-                            value: "cumulative",
-                            label: "Cumulative",
-                          }}
-                          styles={colourStyles}
-                          options={[
-                            { value: "cumulative", label: "Cumulative" },
-                            { value: "daily", label: "Daily" },
-                          ]}
-                          placeholder="comulative"
-                        />
-                      </div> */}
                     </div>
                     <SimpleLineChart
                       customTooltip={true}
@@ -1055,10 +1047,6 @@ class India extends Component {
                           }}
                           styles={colourStyles}
                           placeholder="confirmed"
-                          defaultValue={{
-                            value: "confirmed",
-                            label: "Confirmed",
-                          }}
                           options={[
                             { value: "confirmed", label: "Confirmed" },
                             { value: "active", label: "Active" },
@@ -1081,7 +1069,6 @@ class India extends Component {
                           isSearchable={false}
                           styles={colourStyles}
                           placeholder="All"
-                          defaultValue={{ value: "All", label: "All" }}
                           options={[
                             { value: "All", label: "All" },
                             {
