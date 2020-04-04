@@ -41,50 +41,50 @@ class App extends Component {
           data: [65, 59, 80, 81, 56],
           data1: [65, 59, 80, 81, 56],
           data2: [65, 59, 80, 81, 56],
-          data3: [65, 59, 80, 81, 56]
-        }
-      ]
+          data3: [65, 59, 80, 81, 56],
+        },
+      ],
     };
   }
 
   componentDidMount() {
     this.setState({
-      locationLoader: true
+      locationLoader: true,
     });
     window.addEventListener("focus", () => {
       fetch(
         `https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?global=stats`,
         {
           header: { "Access-Control-Allow-Origin": "*" },
-          method: "GET"
+          method: "GET",
         }
       )
-        .then(res => res.json())
-        .then(response => {
+        .then((res) => res.json())
+        .then((response) => {
           this.setState({
             globalData: response.results[0],
-            locationLoader: false
+            locationLoader: false,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           this.setState({
-            locationLoader: false
+            locationLoader: false,
           });
         });
 
       fetch(`https://covid19.mathdro.id/api/daily`, {
-        method: "GET"
+        method: "GET",
       })
-        .then(res => res.json())
-        .then(response => {
+        .then((res) => res.json())
+        .then((response) => {
           this.setState({
             globalTimelines: response,
-            locationLoader: false
+            locationLoader: false,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           this.setState({
-            locationLoader: false
+            locationLoader: false,
           });
         });
 
@@ -93,35 +93,35 @@ class App extends Component {
     fetch(
       `https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?global=stats`,
       {
-        method: "GET"
+        method: "GET",
       }
     )
-      .then(res => res.json())
-      .then(response => {
+      .then((res) => res.json())
+      .then((response) => {
         this.setState({
           globalData: response.results[0],
-          locationLoader: false
+          locationLoader: false,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({
-          locationLoader: false
+          locationLoader: false,
         });
       });
 
     fetch(`https://covid19.mathdro.id/api/daily`, {
-      method: "GET"
+      method: "GET",
     })
-      .then(res => res.json())
-      .then(response => {
+      .then((res) => res.json())
+      .then((response) => {
         this.setState({
           globalTimelines: response,
-          locationLoader: false
+          locationLoader: false,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({
-          locationLoader: false
+          locationLoader: false,
         });
       });
 
@@ -132,52 +132,52 @@ class App extends Component {
     let cards = [];
     this.setState({
       cards: [],
-      locationLoader: true
+      locationLoader: true,
     });
-    cardId.map(location => {
+    cardId.map((location) => {
       fetch(
         `https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?countryTotals=ALL`,
         {
-          method: "GET"
+          method: "GET",
         }
       )
-        .then(res => res.json())
-        .then(response => {
+        .then((res) => res.json())
+        .then((response) => {
           this.setState({
             locationLoader: false,
-            cards: cards.concat(response)
+            cards: cards.concat(response),
           });
         })
-        .catch(error => {
+        .catch((error) => {
           this.setState({
-            locationLoader: false
+            locationLoader: false,
           });
         });
     });
   }
 
   renderCharts(data) {
-    data.map(location => {
+    data.map((location) => {
       fetch(
         `https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?countryTimeline=${location}`,
         {
-          method: "GET"
+          method: "GET",
         }
       )
-        .then(res => res.json())
-        .then(response => {
-          this.setState(state => {
+        .then((res) => res.json())
+        .then((response) => {
+          this.setState((state) => {
             const timelines = state.timelines.concat(response);
             const locationLoader = false;
             return {
               timelines,
-              locationLoader
+              locationLoader,
             };
           });
         })
-        .catch(error => {
+        .catch((error) => {
           this.setState({
-            locationLoader: false
+            locationLoader: false,
           });
         });
     });
@@ -192,12 +192,12 @@ class App extends Component {
     return result;
   };
 
-  onPageChanged = data1 => {
+  onPageChanged = (data1) => {
     const { currentPage, totalPages } = data1;
 
     this.setState({
       timelines: [],
-      locationLoader: true
+      locationLoader: true,
     });
     if (!this.state.selectedCountry) {
       this.renderCharts(_.chunk(Object.keys(Countrys), 9)[currentPage - 1]);
@@ -205,13 +205,13 @@ class App extends Component {
 
     this.setState({
       currentPage: currentPage - 1,
-      totalPages: totalPages
+      totalPages: totalPages,
     });
   };
 
   changeState = () => {
     this.setState({
-      locationLoader: true
+      locationLoader: true,
     });
   };
 
@@ -239,7 +239,7 @@ class App extends Component {
 
   render() {
     const colourStyles = {
-      control: styles => ({ ...styles, backgroundColor: "white" }),
+      control: (styles) => ({ ...styles, backgroundColor: "white" }),
       option: (styles, { data, isDisabled, isFocused, isSelected }) => {
         return {
           ...styles,
@@ -255,16 +255,16 @@ class App extends Component {
 
           ":active": {
             ...styles[":active"],
-            backgroundColor: !isDisabled && (isSelected ? "#f6565b" : "white")
-          }
+            backgroundColor: !isDisabled && (isSelected ? "#f6565b" : "white"),
+          },
         };
-      }
+      },
     };
 
-    const options = Object.keys(Countrys).map(location => {
+    const options = Object.keys(Countrys).map((location) => {
       return {
         value: location,
-        label: Countrys[location]
+        label: Countrys[location],
       };
     });
 
@@ -303,7 +303,7 @@ class App extends Component {
                 index === 0
                   ? Number(cases.deaths.total)
                   : Number(cases.deaths.total) -
-                    Number(this.state.globalTimelines[index - 1].deaths.total)
+                    Number(this.state.globalTimelines[index - 1].deaths.total),
             };
           })
         : null;
@@ -315,8 +315,8 @@ class App extends Component {
     const data =
       this.state.cards.length !== 0
         ? Object.values(this.state.cards[0].countryitems[0])
-            .filter(country => typeof country.title !== "undefined")
-            .map(country => {
+            .filter((country) => typeof country.title !== "undefined")
+            .map((country) => {
               return {
                 country: country.title,
                 confirmed: Number(country.total_cases),
@@ -324,7 +324,7 @@ class App extends Component {
                 recovered: Number(country.total_recovered),
                 deaths: Number(country.total_deaths),
                 deltaConfirmed: Number(country.total_new_cases_today),
-                deltaDeaths: Number(country.total_new_deaths_today)
+                deltaDeaths: Number(country.total_new_deaths_today),
               };
             })
         : [];
@@ -334,12 +334,12 @@ class App extends Component {
         ? [
             {
               Header: "Country",
-              accessor: "country" // String-based value accessors!
+              accessor: "country", // String-based value accessors!
             },
             {
               Header: "Confirmed",
               accessor: "confirmed",
-              Cell: props => {
+              Cell: (props) => {
                 return (
                   <>
                     {props.original.deltaConfirmed === 0 ? null : (
@@ -347,7 +347,7 @@ class App extends Component {
                         style={{
                           fontSize: 15,
                           fontWeight: "bold",
-                          color: "#e43339"
+                          color: "#e43339",
                         }}
                       >
                         <span style={{ fontSize: 15, fontWeight: "bold" }}>
@@ -359,34 +359,34 @@ class App extends Component {
                     <span className="number">{props.value}</span>
                   </>
                 );
-              }
+              },
             },
             {
               Header: "Active",
               accessor: "active",
-              Cell: props => {
+              Cell: (props) => {
                 return (
                   <>
                     <span className="number">{props.value}</span>
                   </>
                 );
-              }
+              },
             },
             {
               Header: "Recovered",
               accessor: "recovered",
-              Cell: props => {
+              Cell: (props) => {
                 return (
                   <>
                     <span className="number">{props.value}</span>
                   </>
                 );
-              }
+              },
             },
             {
               Header: "Deaths",
               accessor: "deaths",
-              Cell: props => {
+              Cell: (props) => {
                 return (
                   <>
                     {props.original.deltaDeaths === 0 ? null : (
@@ -394,7 +394,7 @@ class App extends Component {
                         style={{
                           fontSize: 15,
                           fontWeight: "bold",
-                          color: "#535c68"
+                          color: "#535c68",
                         }}
                       >
                         <span style={{ fontSize: 15, fontWeight: "bold" }}>
@@ -406,8 +406,8 @@ class App extends Component {
                     <span className="number">{props.value}</span>
                   </>
                 );
-              }
-            }
+              },
+            },
           ]
         : [];
 
@@ -419,7 +419,7 @@ class App extends Component {
             background: "#172852",
             color: "white",
             height: "100vh",
-            overflowY: "scroll"
+            overflowY: "scroll",
           }}
         >
           <div className="container">
@@ -432,7 +432,7 @@ class App extends Component {
                   fontWeight: "bold",
                   marginTop: 30,
                   paddingBottom: 30,
-                  borderBottom: "2px solid white"
+                  borderBottom: "2px solid white",
                 }}
               >
                 Covid-19 Global Dashboard
@@ -465,13 +465,13 @@ class App extends Component {
                   marginLeft: 15,
                   height: 50,
                   width: 50,
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
               />
             </div>
             <div style={{ minHeight: "90vh" }}>
               <div className="row" style={{ padding: "30px 0px" }}>
-                <div className="col-sm-3" style={{ padding: 15 }}>
+                <div className="col-sm-3 col-6" style={{ padding: 15 }}>
                   <div
                     style={{
                       padding: 20,
@@ -479,10 +479,10 @@ class App extends Component {
                       minHeight: 156,
                       background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
                       color: "#530803",
-                      borderRadius: 10
+                      borderRadius: 10,
                     }}
                   >
-                    <div style={{ fontSize: 35 }}>
+                    <div style={{ fontSize: 30 }}>
                       {this.state.globalData.length !== 0
                         ? this.state.globalData.total_cases
                         : 0}
@@ -498,7 +498,7 @@ class App extends Component {
                     <div style={{ fontSize: 18 }}>Confirmed</div>
                   </div>
                 </div>
-                <div className="col-sm-3" style={{ padding: 15 }}>
+                <div className="col-sm-3 col-6" style={{ padding: 15 }}>
                   <div
                     style={{
                       padding: 20,
@@ -506,7 +506,7 @@ class App extends Component {
                       fontWeight: "bold",
                       background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
                       color: "#192a56",
-                      borderRadius: 10
+                      borderRadius: 10,
                     }}
                   >
                     <div style={{ fontSize: 35, marginBottom: 37 }}>
@@ -517,7 +517,7 @@ class App extends Component {
                     <div style={{ fontSize: 18 }}>Active</div>
                   </div>
                 </div>
-                <div className="col-sm-3" style={{ padding: 15 }}>
+                <div className="col-sm-3 col-6" style={{ padding: 15 }}>
                   <div
                     style={{
                       padding: 20,
@@ -525,7 +525,7 @@ class App extends Component {
                       fontWeight: "bold",
                       background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
                       color: "#006266",
-                      borderRadius: 10
+                      borderRadius: 10,
                     }}
                   >
                     <div style={{ fontSize: 35, marginBottom: 37 }}>
@@ -536,7 +536,7 @@ class App extends Component {
                     <div style={{ fontSize: 18 }}>Recovered</div>
                   </div>
                 </div>
-                <div className="col-sm-3" style={{ padding: 15 }}>
+                <div className="col-sm-3 col-6" style={{ padding: 15 }}>
                   <div
                     style={{
                       padding: 20,
@@ -544,10 +544,10 @@ class App extends Component {
                       minHeight: 156,
                       background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
                       color: "#535c68",
-                      borderRadius: 10
+                      borderRadius: 10,
                     }}
                   >
-                    <div style={{ fontSize: 35 }}>
+                    <div style={{ fontSize: 30 }}>
                       {this.state.globalData.length !== 0
                         ? this.state.globalData.total_deaths
                         : 0}
@@ -571,7 +571,7 @@ class App extends Component {
                   paddingLeft: 15,
                   borderRadius: 15,
                   marginBottom: 15,
-                  paddingTop: 30
+                  paddingTop: 30,
                 }}
               >
                 <SimpleLineChart
@@ -586,10 +586,10 @@ class App extends Component {
                 <div>
                   <Select
                     isClearable={true}
-                    onChange={selectedOption => {
+                    onChange={(selectedOption) => {
                       this.setState({
                         timelines: [],
-                        selectedCountry: true
+                        selectedCountry: true,
                       });
                       this.state.isChart === 0
                         ? this.renderCards(
@@ -614,10 +614,10 @@ class App extends Component {
                     defaultValue={this.state.searchString}
                     type="text"
                     placeholder="Search"
-                    onChange={e =>
+                    onChange={(e) =>
                       this.setState({
                         searchString: e.target.value.toLowerCase(),
-                        selectedCountry: false
+                        selectedCountry: false,
                       })
                     }
                   />
@@ -627,7 +627,7 @@ class App extends Component {
                 style={{
                   textAlign: "right",
                   padding: "15px 0px",
-                  marginTop: 15
+                  marginTop: 15,
                 }}
               >
                 <span
@@ -635,7 +635,7 @@ class App extends Component {
                     this.setState({
                       isChart: 1,
                       selectedCountry: false,
-                      locationLoader: true
+                      locationLoader: true,
                     })
                   }
                   style={
@@ -646,7 +646,7 @@ class App extends Component {
                           cursor: "pointer",
                           color: "white",
                           padding: "10px 30px",
-                          borderRadius: "20px 0px 0px 20px"
+                          borderRadius: "20px 0px 0px 20px",
                         }
                       : {
                           background: "white",
@@ -654,7 +654,7 @@ class App extends Component {
                           cursor: "pointer",
                           color: "black",
                           padding: "10px 30px",
-                          borderRadius: "20px 0px 0px 20px"
+                          borderRadius: "20px 0px 0px 20px",
                         }
                   }
                 >
@@ -664,7 +664,7 @@ class App extends Component {
                   onClick={() =>
                     this.setState({
                       isChart: 2,
-                      selectedCountry: false
+                      selectedCountry: false,
                     })
                   }
                   style={
@@ -674,14 +674,14 @@ class App extends Component {
                           fontWeight: "bold",
                           cursor: "pointer",
                           color: "white",
-                          padding: "10px 30px"
+                          padding: "10px 30px",
                         }
                       : {
                           background: "white",
                           fontWeight: "bold",
                           cursor: "pointer",
                           color: "black",
-                          padding: "10px 30px"
+                          padding: "10px 30px",
                         }
                   }
                 >
@@ -691,7 +691,7 @@ class App extends Component {
                   onClick={() =>
                     this.setState({
                       isChart: 0,
-                      selectedCountry: false
+                      selectedCountry: false,
                     })
                   }
                   style={
@@ -702,7 +702,7 @@ class App extends Component {
                           cursor: "pointer",
                           color: "white",
                           padding: "10px 30px",
-                          borderRadius: "0px 20px 20px 0px"
+                          borderRadius: "0px 20px 20px 0px",
                         }
                       : {
                           background: "white",
@@ -710,7 +710,7 @@ class App extends Component {
                           cursor: "pointer",
                           color: "black",
                           padding: "10px 30px",
-                          borderRadius: "0px 20px 20px 0px"
+                          borderRadius: "0px 20px 20px 0px",
                         }
                   }
                 >
@@ -727,7 +727,7 @@ class App extends Component {
                       style={{
                         background: "white",
                         color: "black",
-                        borderRadius: 10
+                        borderRadius: 10,
                       }}
                     >
                       <ReactTable
@@ -740,8 +740,8 @@ class App extends Component {
                         getTheadProps={(state, rowInfo, column) => {
                           return {
                             style: {
-                              fontWeight: "bold"
-                            }
+                              fontWeight: "bold",
+                            },
                           };
                         }}
                         filterable
@@ -760,7 +760,7 @@ class App extends Component {
                     {this.state.cards.length !== 0
                       ? Object.values(this.state.cards[0].countryitems[0])
                           .filter(
-                            location =>
+                            (location) =>
                               typeof location.title !== "undefined" &&
                               location.title
                                 .toLowerCase()
@@ -778,7 +778,7 @@ class App extends Component {
                                     textAlign: "center",
                                     borderRadius: 10,
                                     background: "white",
-                                    color: "black"
+                                    color: "black",
                                   }}
                                 >
                                   <label
@@ -790,7 +790,7 @@ class App extends Component {
                                       fontSize: 18,
                                       fontWeight: "bold",
                                       padding: 10,
-                                      background: "#f6565b"
+                                      background: "#f6565b",
                                     }}
                                   >
                                     {location.title}
@@ -800,7 +800,7 @@ class App extends Component {
                                     <div
                                       style={{
                                         padding: 20,
-                                        fontWeight: "bold"
+                                        fontWeight: "bold",
                                       }}
                                     >
                                       <div>
@@ -810,14 +810,14 @@ class App extends Component {
                                           <span
                                             style={{
                                               fontSize: 12,
-                                              color: "#e43339"
+                                              color: "#e43339",
                                             }}
                                           >
                                             {"  "}
                                             <span
                                               style={{
                                                 fontSize: 17,
-                                                fontWeight: "bold"
+                                                fontWeight: "bold",
                                               }}
                                             >
                                               &#9650;
@@ -831,7 +831,7 @@ class App extends Component {
                                     <div
                                       style={{
                                         padding: 20,
-                                        fontWeight: "bold"
+                                        fontWeight: "bold",
                                       }}
                                     >
                                       <div>{location.total_active_cases}</div>
@@ -840,7 +840,7 @@ class App extends Component {
                                     <div
                                       style={{
                                         padding: 20,
-                                        fontWeight: "bold"
+                                        fontWeight: "bold",
                                       }}
                                     >
                                       <div>
@@ -850,14 +850,14 @@ class App extends Component {
                                           <span
                                             style={{
                                               fontSize: 12,
-                                              color: "#535c68"
+                                              color: "#535c68",
                                             }}
                                           >
                                             {"  "}
                                             <span
                                               style={{
                                                 fontSize: 17,
-                                                fontWeight: "bold"
+                                                fontWeight: "bold",
                                               }}
                                             >
                                               &#9650;
@@ -871,7 +871,7 @@ class App extends Component {
                                     <div
                                       style={{
                                         padding: 20,
-                                        fontWeight: "bold"
+                                        fontWeight: "bold",
                                       }}
                                     >
                                       <div>{location.total_recovered}</div>
@@ -880,7 +880,7 @@ class App extends Component {
                                     <div
                                       style={{
                                         padding: 20,
-                                        fontWeight: "bold"
+                                        fontWeight: "bold",
                                       }}
                                     >
                                       <div>{location.total_serious_cases}</div>
@@ -904,7 +904,7 @@ class App extends Component {
                   ) : this.state.timelines.length !== 0 ? (
                     this.state.timelines.map((timeline, index1) => {
                       let data = Object.keys(timeline.timelineitems[0])
-                        .filter(data => data !== "stat" && data !== todayDate)
+                        .filter((data) => data !== "stat" && data !== todayDate)
                         .map((dataKey, index) => {
                           return {
                             name: dataKey,
@@ -920,7 +920,7 @@ class App extends Component {
                                 .new_daily_cases,
                             ["New Deaths"]:
                               timeline.timelineitems[0][dataKey]
-                                .new_daily_deaths
+                                .new_daily_deaths,
                           };
                         });
                       let confirmed =
@@ -928,7 +928,7 @@ class App extends Component {
                         typeof Object.values(
                           this.state.cards[0].countryitems[0]
                         ).filter(
-                          country =>
+                          (country) =>
                             country !== "ok" &&
                             country.title ===
                               timeline.countrytimelinedata[0].info.title
@@ -936,7 +936,7 @@ class App extends Component {
                           ? Object.values(
                               this.state.cards[0].countryitems[0]
                             ).filter(
-                              country =>
+                              (country) =>
                                 country !== "ok" &&
                                 country.title ===
                                   timeline.countrytimelinedata[0].info.title
@@ -950,7 +950,7 @@ class App extends Component {
                         typeof Object.values(
                           this.state.cards[0].countryitems[0]
                         ).filter(
-                          country =>
+                          (country) =>
                             country !== "ok" &&
                             country.title ===
                               timeline.countrytimelinedata[0].info.title
@@ -958,7 +958,7 @@ class App extends Component {
                           ? Object.values(
                               this.state.cards[0].countryitems[0]
                             ).filter(
-                              country =>
+                              (country) =>
                                 country !== "ok" &&
                                 country.title ===
                                   timeline.countrytimelinedata[0].info.title
@@ -972,7 +972,7 @@ class App extends Component {
                         typeof Object.values(
                           this.state.cards[0].countryitems[0]
                         ).filter(
-                          country =>
+                          (country) =>
                             country !== "ok" &&
                             country.title ===
                               timeline.countrytimelinedata[0].info.title
@@ -980,7 +980,7 @@ class App extends Component {
                           ? Object.values(
                               this.state.cards[0].countryitems[0]
                             ).filter(
-                              country =>
+                              (country) =>
                                 country !== "ok" &&
                                 country.title ===
                                   timeline.countrytimelinedata[0].info.title
@@ -994,7 +994,7 @@ class App extends Component {
                         typeof Object.values(
                           this.state.cards[0].countryitems[0]
                         ).filter(
-                          country =>
+                          (country) =>
                             country !== "ok" &&
                             country.title ===
                               timeline.countrytimelinedata[0].info.title
@@ -1002,7 +1002,7 @@ class App extends Component {
                           ? Object.values(
                               this.state.cards[0].countryitems[0]
                             ).filter(
-                              country =>
+                              (country) =>
                                 country !== "ok" &&
                                 country.title ===
                                   timeline.countrytimelinedata[0].info.title
@@ -1016,7 +1016,7 @@ class App extends Component {
                         typeof Object.values(
                           this.state.cards[0].countryitems[0]
                         ).filter(
-                          country =>
+                          (country) =>
                             country !== "ok" &&
                             country.title ===
                               timeline.countrytimelinedata[0].info.title
@@ -1024,7 +1024,7 @@ class App extends Component {
                           ? Object.values(
                               this.state.cards[0].countryitems[0]
                             ).filter(
-                              country =>
+                              (country) =>
                                 country !== "ok" &&
                                 country.title ===
                                   timeline.countrytimelinedata[0].info.title
@@ -1038,7 +1038,7 @@ class App extends Component {
                         typeof Object.values(
                           this.state.cards[0].countryitems[0]
                         ).filter(
-                          country =>
+                          (country) =>
                             country !== "ok" &&
                             country.title ===
                               timeline.countrytimelinedata[0].info.title
@@ -1049,38 +1049,38 @@ class App extends Component {
                           Confirmed: Object.values(
                             this.state.cards[0].countryitems[0]
                           ).filter(
-                            country =>
+                            (country) =>
                               country.title ===
                               timeline.countrytimelinedata[0].info.title
                           )[0].total_cases,
                           Deaths: Object.values(
                             this.state.cards[0].countryitems[0]
                           ).filter(
-                            country =>
+                            (country) =>
                               country.title ===
                               timeline.countrytimelinedata[0].info.title
                           )[0].total_deaths,
                           Recovered: Object.values(
                             this.state.cards[0].countryitems[0]
                           ).filter(
-                            country =>
+                            (country) =>
                               country.title ===
                               timeline.countrytimelinedata[0].info.title
                           )[0].total_recovered,
                           ["New Conf."]: Object.values(
                             this.state.cards[0].countryitems[0]
                           ).filter(
-                            country =>
+                            (country) =>
                               country.title ===
                               timeline.countrytimelinedata[0].info.title
                           )[0].total_new_cases_today,
                           ["New Deaths"]: Object.values(
                             this.state.cards[0].countryitems[0]
                           ).filter(
-                            country =>
+                            (country) =>
                               country.title ===
                               timeline.countrytimelinedata[0].info.title
-                          )[0].total_new_deaths_today
+                          )[0].total_new_deaths_today,
                         });
                       }
                       return (
@@ -1092,7 +1092,7 @@ class App extends Component {
                           <div
                             style={{
                               background: "white",
-                              borderRadius: 10
+                              borderRadius: 10,
                             }}
                           >
                             <label
@@ -1104,7 +1104,7 @@ class App extends Component {
                                 fontSize: 18,
                                 fontWeight: "bold",
                                 padding: 10,
-                                background: "#f6565b"
+                                background: "#f6565b",
                               }}
                             >
                               {timeline.countrytimelinedata[0].info.title}
@@ -1115,7 +1115,7 @@ class App extends Component {
                                 style={{
                                   padding: 20,
                                   fontWeight: "bold",
-                                  color: "#92063e"
+                                  color: "#92063e",
                                 }}
                               >
                                 <div>
@@ -1126,7 +1126,7 @@ class App extends Component {
                                       <span
                                         style={{
                                           fontSize: 17,
-                                          fontWeight: "bold"
+                                          fontWeight: "bold",
                                         }}
                                       >
                                         &#9650;
@@ -1141,7 +1141,7 @@ class App extends Component {
                                 style={{
                                   padding: 20,
                                   fontWeight: "bold",
-                                  color: "black"
+                                  color: "black",
                                 }}
                               >
                                 <div>
@@ -1152,7 +1152,7 @@ class App extends Component {
                                       <span
                                         style={{
                                           fontSize: 17,
-                                          fontWeight: "bold"
+                                          fontWeight: "bold",
                                         }}
                                       >
                                         &#9650;
@@ -1167,7 +1167,7 @@ class App extends Component {
                                 style={{
                                   padding: 20,
                                   fontWeight: "bold",
-                                  color: "#2F847C"
+                                  color: "#2F847C",
                                 }}
                               >
                                 <div>{recovered}</div>
@@ -1180,14 +1180,14 @@ class App extends Component {
                                 "Recovered",
                                 "Deaths",
                                 "New Conf.",
-                                "New Deaths"
+                                "New Deaths",
                               ]}
                               colors={[
                                 "#e43339",
                                 "#006266",
                                 "#535c68",
                                 "#192a56",
-                                "#192a56"
+                                "#192a56",
                               ]}
                               data={data}
                             />
@@ -1216,7 +1216,7 @@ class App extends Component {
                 style={{
                   color: "#f6565b",
                   fontWeight: "bold",
-                  textDecoration: "none"
+                  textDecoration: "none",
                 }}
                 href="https://miteshtagadiya.js.org"
                 rel="noopener noreferrer"
