@@ -25,7 +25,7 @@ body {
 }
 
 .ReactTable .rt-thead .rt-th {
-  background-color: rgb(246, 86, 91);
+  background-color: #404b69;
   color: #ffffff;
 }
 
@@ -39,26 +39,26 @@ body {
 }
 
 .ReactTable .-pagination .-btn {
-  background-color: rgb(246, 86, 91) !important;
+  background-color: #404b69 !important;
   color: white !important;
 }
 
 .page-item.active .page-link {
-  background-color: rgb(246, 86, 91) !important;
-  border-color: rgb(246, 86, 91) !important;
+  background-color: #404b69 !important;
+  border-color: #404b69 !important;
   color: white !important;
   font-weight: bold !important;
 }
 
 .page-link:hover {
-  color: black !important;
+  color: #404b69 !important;
   font-weight: bold !important;
 }
 
 .page-link {
   border-radius: 40px !important;
   font-weight: bold !important;
-  color: black !important;
+  color: #404b69 !important;
   margin-left: 4px !important;
   margin-right: 4px !important;
 }
@@ -88,10 +88,10 @@ code {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: rgb(246, 86, 91);
+  background: #404b69;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(246, 86, 91);
+  background: #404b69;
 }

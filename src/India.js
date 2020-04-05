@@ -12,6 +12,7 @@ import Virus from "./assets/virus.gif";
 import Popover from "react-popover";
 import ErrorBoundary from "./ErrorBoundry";
 import Select from "react-select";
+import ReactGA from "react-ga";
 import CustomChart from "./PieChart/CustomChart";
 
 class India extends Component {
@@ -237,10 +238,14 @@ class India extends Component {
                 active: Number(state.active),
                 recovered: Number(state.recovered),
                 deaths: Number(state.deaths),
-                deltaConfirmed: Number(state.delta.confirmed),
-                deltaActive: Number(state.delta.active),
-                deltaRecovered: Number(state.delta.recovered),
-                deltaDeaths: Number(state.delta.deaths),
+                deltaConfirmed: Number(state.deltaconfirmed),
+                deltaActive: Number(
+                  state.deltaconfirmed -
+                    state.deltarecovered -
+                    state.deltadeaths
+                ),
+                deltaRecovered: Number(state.deltarecovered),
+                deltaDeaths: Number(state.deltadeaths),
               };
             })
         : [];
@@ -408,48 +413,49 @@ class India extends Component {
       this.state.india.length !== 0
         ? this.state.india.statewise.filter(
             (record) => record.state === "Total"
-          )[0].delta.confirmed
+          )[0].deltaconfirmed
         : 0;
 
-    const totalActiveToday =
+    const totalRecoveredToday =
       this.state.india.length !== 0
         ? this.state.india.statewise.filter(
             (record) => record.state === "Total"
-          )[0].delta.active
+          )[0].deltarecovered
         : 0;
 
     const totalDeathsToday =
       this.state.india.length !== 0
         ? this.state.india.statewise.filter(
             (record) => record.state === "Total"
-          )[0].delta.deaths
+          )[0].deltadeaths
         : 0;
 
     const confirmedPopover =
       this.state.india.length !== 0
         ? this.state.india.statewise
             .filter((record) => record.state !== "Total")
-            .filter((state) => state.delta.confirmed !== 0)
+            .filter((state) => Number(state.deltaconfirmed) !== 0)
             .map((state) => {
-              return { [state.state]: state.delta.confirmed };
+              return { [state.state]: state.deltaconfirmed };
             })
         : [];
-    const activePopover =
+
+    const recoveredPopover =
       this.state.india.length !== 0
         ? this.state.india.statewise
             .filter((record) => record.state !== "Total")
-            .filter((state) => state.delta.active !== 0)
+            .filter((state) => state.deltarecovered !== 0)
             .map((state) => {
-              return { [state.state]: state.delta.active };
+              return { [state.state]: Number(state.deltarecovered) };
             })
         : [];
     const deathsPopover =
       this.state.india.length !== 0
         ? this.state.india.statewise
             .filter((record) => record.state !== "Total")
-            .filter((state) => state.delta.deaths !== 0)
+            .filter((state) => state.deltadeaths !== 0)
             .map((state) => {
-              return { [state.state]: state.delta.deaths };
+              return { [state.state]: Number(state.deltadeaths) };
             })
         : [];
 
@@ -493,16 +499,16 @@ class India extends Component {
           backgroundColor: isDisabled
             ? null
             : isSelected
-            ? "#f6565b"
+            ? "#404b69"
             : isFocused
-            ? "#f6565b"
+            ? "#ffffff"
             : null,
-          color: isDisabled ? "#ccc" : isSelected ? "white" : "black",
+          color: isDisabled ? "#ccc" : isSelected ? "white" : "#404b69",
           cursor: isDisabled ? "not-allowed" : "default",
 
           ":active": {
             ...styles[":active"],
-            backgroundColor: !isDisabled && (isSelected ? "#f6565b" : "white"),
+            backgroundColor: !isDisabled && (isSelected ? "#404b69" : "white"),
           },
         };
       },
@@ -547,7 +553,9 @@ class India extends Component {
               </div>
               <div style={{ padding: 15 }}>
                 <img
-                  onClick={() => this.props.history.push("/india")}
+                  onClick={() => {
+                    this.props.history.push("/india");
+                  }}
                   src={IndiaIcon}
                   alt="India"
                   style={{ height: 50, width: 70, cursor: "pointer" }}
@@ -573,8 +581,8 @@ class India extends Component {
                     style={{
                       padding: 20,
                       fontWeight: "bold",
-                      background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
-                      color: "#e43339",
+                      background: "#448AFF",
+                      color: "white",
                       borderRadius: 10,
                     }}
                   >
@@ -599,16 +607,16 @@ class India extends Component {
                       {this.state.india.length !== 0
                         ? typeof this.state.india.statewise.filter(
                             (record) => record.state === "Total"
-                          )[0].delta.confirmed !== "undefined" &&
+                          )[0].deltaconfirmed !== "undefined" &&
                           this.state.india.statewise.filter(
                             (record) => record.state === "Total"
-                          )[0].delta.confirmed !== null
+                          )[0].deltaconfirmed !== null
                           ? this.state.india.statewise.filter(
                               (record) => record.state === "Total"
-                            )[0].delta.confirmed
+                            )[0].deltaconfirmed
                           : 0
                         : 0}
-                      {totalConformedToday !== 0 ? (
+                      {Number(totalConformedToday) !== 0 ? (
                         <Popover
                           body={
                             <div
@@ -639,11 +647,16 @@ class India extends Component {
                           }
                         >
                           <div
-                            onClick={() =>
+                            onClick={() => {
+                              ReactGA.event({
+                                category: "India Info",
+                                action: "Confirmed Info Clicked",
+                                label: "Confirm Info",
+                              });
                               this.setState({
                                 confirmedOpen: !this.state.confirmedOpen,
-                              })
-                            }
+                              });
+                            }}
                             className="report-tile"
                             style={{ marginLeft: 5, cursor: "pointer" }}
                           >
@@ -660,7 +673,7 @@ class India extends Component {
                         <TinyChart
                           data={confirmedTinyChartData}
                           label="confirmed"
-                          color="#e43339"
+                          color="#ffffff"
                         />
                       </div>
                     ) : null}
@@ -671,85 +684,19 @@ class India extends Component {
                     style={{
                       padding: 20,
                       fontWeight: "bold",
-                      background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
-                      color: "#192a56",
+                      background: "#F9A825",
+                      color: "#ffffff",
                       borderRadius: 10,
                     }}
                   >
-                    <div style={{ fontSize: 30 }}>
+                    <div style={{ fontSize: 30, marginBottom: 35 }}>
                       {this.state.india.length !== 0
                         ? this.state.india.statewise.filter(
                             (record) => record.state === "Total"
                           )[0].active
                         : 0}
                     </div>
-                    <div
-                      style={{
-                        fontSize: 15,
-                        marginBottom: 10,
-                        display: "flex",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <span style={{ fontSize: 17, fontWeight: "bold" }}>
-                        &#9650;
-                      </span>
-                      {this.state.india.length !== 0
-                        ? typeof this.state.india.statewise.filter(
-                            (record) => record.state === "Total"
-                          )[0].delta.active !== "undefined" &&
-                          this.state.india.statewise.filter(
-                            (record) => record.state === "Total"
-                          )[0].delta.active !== null
-                          ? this.state.india.statewise.filter(
-                              (record) => record.state === "Total"
-                            )[0].delta.active
-                          : 0
-                        : 0}
-                      {totalActiveToday !== 0 ? (
-                        <Popover
-                          body={
-                            <div
-                              style={{
-                                background: "white",
-                                borderRadius: 10,
-                                padding: 15,
-                                color: "#192a56",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              {activePopover.map((state, index) => {
-                                return (
-                                  <div key={index}>
-                                    {Object.keys(state)[0]}:{" "}
-                                    {Object.values(state)[0]}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          }
-                          preferPlace={"below"}
-                          isOpen={this.state.activeOpen}
-                          onOuterAction={() =>
-                            this.setState({
-                              activeOpen: !this.state.activeOpen,
-                            })
-                          }
-                        >
-                          <div
-                            onClick={() =>
-                              this.setState({
-                                activeOpen: !this.state.activeOpen,
-                              })
-                            }
-                            className="report-tile"
-                            style={{ marginLeft: 5, cursor: "pointer" }}
-                          >
-                            ?
-                          </div>
-                        </Popover>
-                      ) : null}
-                    </div>
+
                     <div style={{ fontSize: 18 }}>Active</div>
                     {this.state.india.length !== 0 ? (
                       <div
@@ -758,7 +705,7 @@ class India extends Component {
                         <TinyChart
                           data={activeTinyChartData}
                           label="confirmed"
-                          color="#192a56"
+                          color="#ffffff"
                         />
                       </div>
                     ) : null}
@@ -769,8 +716,8 @@ class India extends Component {
                     style={{
                       padding: 20,
                       fontWeight: "bold",
-                      background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
-                      color: "#006266",
+                      background: "#4CAF50",
+                      color: "#ffffff",
                       borderRadius: 10,
                     }}
                   >
@@ -795,15 +742,63 @@ class India extends Component {
                       {this.state.india.length !== 0
                         ? typeof this.state.india.statewise.filter(
                             (record) => record.state === "Total"
-                          )[0].delta.recovered !== "undefined" &&
+                          )[0].deltarecovered !== "undefined" &&
                           this.state.india.statewise.filter(
                             (record) => record.state === "Total"
-                          )[0].delta.recovered !== null
+                          )[0].deltarecovered !== null
                           ? this.state.india.statewise.filter(
                               (record) => record.state === "Total"
-                            )[0].delta.recovered
+                            )[0].deltarecovered
                           : 0
                         : 0}
+                      {Number(totalRecoveredToday) !== 0 ? (
+                        <Popover
+                          body={
+                            <div
+                              style={{
+                                background: "white",
+                                borderRadius: 10,
+                                padding: 15,
+                                color: "#192a56",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {recoveredPopover.map((state, index) => {
+                                return (
+                                  <div key={index}>
+                                    {Object.keys(state)[0]}:{" "}
+                                    {Object.values(state)[0]}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          }
+                          preferPlace={"below"}
+                          isOpen={this.state.activeOpen}
+                          onOuterAction={() =>
+                            this.setState({
+                              activeOpen: !this.state.activeOpen,
+                            })
+                          }
+                        >
+                          <div
+                            onClick={() => {
+                              ReactGA.event({
+                                category: "India Info",
+                                action: "Active Info Clicked",
+                                label: "Active Info",
+                              });
+                              this.setState({
+                                activeOpen: !this.state.activeOpen,
+                              });
+                            }}
+                            className="report-tile"
+                            style={{ marginLeft: 5, cursor: "pointer" }}
+                          >
+                            ?
+                          </div>
+                        </Popover>
+                      ) : null}
                     </div>
                     <div style={{ fontSize: 18 }}>Recovered</div>
                     {this.state.india.length !== 0 ? (
@@ -813,7 +808,7 @@ class India extends Component {
                         <TinyChart
                           data={recoveredTinyChartData}
                           label="confirmed"
-                          color="#006266"
+                          color="#ffffff"
                         />
                       </div>
                     ) : null}
@@ -824,8 +819,8 @@ class India extends Component {
                     style={{
                       padding: 20,
                       fontWeight: "bold",
-                      background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
-                      color: "#535c68",
+                      background: "#FF5252",
+                      color: "#ffffff",
                       borderRadius: 10,
                     }}
                   >
@@ -850,16 +845,16 @@ class India extends Component {
                       {this.state.india.length !== 0
                         ? typeof this.state.india.statewise.filter(
                             (record) => record.state === "Total"
-                          )[0].delta.deaths !== "undefined" &&
+                          )[0].deltadeaths !== "undefined" &&
                           this.state.india.statewise.filter(
                             (record) => record.state === "Total"
-                          )[0].delta.deaths !== null
+                          )[0].deltadeaths !== null
                           ? this.state.india.statewise.filter(
                               (record) => record.state === "Total"
-                            )[0].delta.deaths
+                            )[0].deltadeaths
                           : 0
                         : 0}
-                      {totalDeathsToday !== 0 ? (
+                      {Number(totalDeathsToday) !== 0 ? (
                         <Popover
                           body={
                             <div
@@ -890,11 +885,16 @@ class India extends Component {
                           }
                         >
                           <div
-                            onClick={() =>
+                            onClick={() => {
+                              ReactGA.event({
+                                category: "India Info",
+                                action: "Deaths Info Clicked",
+                                label: "Deaths Info",
+                              });
                               this.setState({
                                 deathsOpen: !this.state.deathsOpen,
-                              })
-                            }
+                              });
+                            }}
                             className="report-tile"
                             style={{ marginLeft: 5, cursor: "pointer" }}
                           >
@@ -911,7 +911,7 @@ class India extends Component {
                         <TinyChart
                           data={deathTinyChartData}
                           label="confirmed"
-                          color="#535c68"
+                          color="#ffffff"
                         />
                       </div>
                     ) : null}
@@ -934,6 +934,11 @@ class India extends Component {
                     <div className="row" style={{ justifyContent: "center" }}>
                       <div
                         onClick={() => {
+                          ReactGA.event({
+                            category: "India Line Chart",
+                            action: "Cumulative Button Clicked",
+                            label: "Cumulative",
+                          });
                           this.setState({
                             changeChart: "cumulative",
                           });
@@ -943,16 +948,16 @@ class India extends Component {
                             ? {
                                 padding: "5px 15px 5px 15px",
                                 color: "white",
-                                background: "rgb(246, 86, 91)",
-                                border: "2px solid rgb(246, 86, 91)",
+                                background: "#404b69",
+                                border: "2px solid #404b69",
                                 borderRadius: 5,
                                 cursor: "pointer",
                               }
                             : {
                                 padding: "5px 15px 5px 15px",
-                                color: "black",
+                                color: "#404b69",
                                 background: "white",
-                                border: "2px solid black",
+                                border: "2px solid #404b69",
                                 borderRadius: 5,
                                 cursor: "pointer",
                               }
@@ -970,6 +975,11 @@ class India extends Component {
                       </div>
                       <div
                         onClick={() => {
+                          ReactGA.event({
+                            category: "India Line Chart",
+                            action: "Daily Button Clicked",
+                            label: "Daily",
+                          });
                           this.setState({
                             changeChart: "daily",
                           });
@@ -979,17 +989,17 @@ class India extends Component {
                             ? {
                                 padding: "5px 15px 5px 15px",
                                 color: "white",
-                                background: "rgb(246, 86, 91)",
-                                border: "2px solid rgb(246, 86, 91)",
+                                background: "#404b69",
+                                border: "2px solid #404b69",
                                 borderRadius: 5,
                                 marginLeft: 15,
                                 cursor: "pointer",
                               }
                             : {
                                 padding: "5px 15px 5px 15px",
-                                color: "black",
+                                color: "#404b69",
                                 background: "white",
-                                border: "2px solid black",
+                                border: "2px solid #404b69",
                                 borderRadius: 5,
                                 marginLeft: 15,
                                 cursor: "pointer",
@@ -1046,7 +1056,7 @@ class India extends Component {
                             });
                           }}
                           styles={colourStyles}
-                          placeholder="confirmed"
+                          placeholder="Confirmed"
                           options={[
                             { value: "confirmed", label: "Confirmed" },
                             { value: "active", label: "Active" },
@@ -1117,15 +1127,20 @@ class India extends Component {
                 }}
               >
                 <span
-                  onClick={() =>
+                  onClick={() => {
+                    ReactGA.event({
+                      category: "India View",
+                      action: "Table View Clicked",
+                      label: "Table View",
+                    });
                     this.setState({
                       isTable: 1,
-                    })
-                  }
+                    });
+                  }}
                   style={
                     this.state.isTable === 1
                       ? {
-                          background: "#f6565b",
+                          background: "#404b69",
                           fontWeight: "bold",
                           cursor: "pointer",
                           color: "white",
@@ -1136,7 +1151,7 @@ class India extends Component {
                           background: "white",
                           fontWeight: "bold",
                           cursor: "pointer",
-                          color: "black",
+                          color: "#404b69",
                           padding: "10px 30px",
                           borderRadius: "20px 0px 0px 20px",
                         }
@@ -1145,13 +1160,18 @@ class India extends Component {
                   Table
                 </span>
                 <span
-                  onClick={() =>
-                    this.setState({ isTable: 0, selectedCountry: false })
-                  }
+                  onClick={() => {
+                    ReactGA.event({
+                      category: "India View",
+                      action: "Card View Clicked",
+                      label: "Card View",
+                    });
+                    this.setState({ isTable: 0, selectedCountry: false });
+                  }}
                   style={
                     this.state.isTable === 0
                       ? {
-                          background: "#f6565b",
+                          background: "#404b69",
                           fontWeight: "bold",
                           cursor: "pointer",
                           color: "white",
@@ -1162,7 +1182,7 @@ class India extends Component {
                           background: "white",
                           fontWeight: "bold",
                           cursor: "pointer",
-                          color: "black",
+                          color: "#404b69",
                           padding: "10px 30px",
                           borderRadius: "0px 20px 20px 0px",
                         }
@@ -1196,7 +1216,7 @@ class India extends Component {
                                 textAlign: "center",
                                 borderRadius: 10,
                                 background: "white",
-                                color: "black",
+                                color: "#404b69",
                               }}
                             >
                               <label
@@ -1208,7 +1228,7 @@ class India extends Component {
                                   fontSize: 18,
                                   fontWeight: "bold",
                                   padding: 10,
-                                  background: "#f6565b",
+                                  background: "#404b69",
                                 }}
                               >
                                 {location.state}
@@ -1255,7 +1275,7 @@ class India extends Component {
                     <div
                       style={{
                         background: "white",
-                        color: "black",
+                        color: "#404b69",
                         borderRadius: 10,
                       }}
                     >
