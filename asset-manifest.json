@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/Covid-19-Global-Dashboard/static/css/main.fdef6b17.chunk.css",
-    "main.js": "/Covid-19-Global-Dashboard/static/js/main.54de5fc0.chunk.js",
-    "main.js.map": "/Covid-19-Global-Dashboard/static/js/main.54de5fc0.chunk.js.map",
+    "main.css": "/Covid-19-Global-Dashboard/static/css/main.82d01868.chunk.css",
+    "main.js": "/Covid-19-Global-Dashboard/static/js/main.4801c0d9.chunk.js",
+    "main.js.map": "/Covid-19-Global-Dashboard/static/js/main.4801c0d9.chunk.js.map",
     "runtime-main.js": "/Covid-19-Global-Dashboard/static/js/runtime-main.d35f93d7.js",
     "runtime-main.js.map": "/Covid-19-Global-Dashboard/static/js/runtime-main.d35f93d7.js.map",
     "static/css/2.861f4f67.chunk.css": "/Covid-19-Global-Dashboard/static/css/2.861f4f67.chunk.css",
     "static/js/2.11cd60c2.chunk.js": "/Covid-19-Global-Dashboard/static/js/2.11cd60c2.chunk.js",
     "static/js/2.11cd60c2.chunk.js.map": "/Covid-19-Global-Dashboard/static/js/2.11cd60c2.chunk.js.map",
     "index.html": "/Covid-19-Global-Dashboard/index.html",
-    "precache-manifest.b9a055a951a642a4ee2909087065c08e.js": "/Covid-19-Global-Dashboard/precache-manifest.b9a055a951a642a4ee2909087065c08e.js",
+    "precache-manifest.ca56264eca38cb7cc37371402f63640e.js": "/Covid-19-Global-Dashboard/precache-manifest.ca56264eca38cb7cc37371402f63640e.js",
     "service-worker.js": "/Covid-19-Global-Dashboard/service-worker.js",
     "static/css/2.861f4f67.chunk.css.map": "/Covid-19-Global-Dashboard/static/css/2.861f4f67.chunk.css.map",
-    "static/css/main.fdef6b17.chunk.css.map": "/Covid-19-Global-Dashboard/static/css/main.fdef6b17.chunk.css.map",
+    "static/css/main.82d01868.chunk.css.map": "/Covid-19-Global-Dashboard/static/css/main.82d01868.chunk.css.map",
     "static/js/2.11cd60c2.chunk.js.LICENSE.txt": "/Covid-19-Global-Dashboard/static/js/2.11cd60c2.chunk.js.LICENSE.txt",
     "static/media/github1.png": "/Covid-19-Global-Dashboard/static/media/github1.0ba2aa20.png",
     "static/media/india.png": "/Covid-19-Global-Dashboard/static/media/india.b9bb7cd7.png",
@@ -23,7 +23,7 @@
     "static/js/runtime-main.d35f93d7.js",
     "static/css/2.861f4f67.chunk.css",
     "static/js/2.11cd60c2.chunk.js",
-    "static/css/main.fdef6b17.chunk.css",
-    "static/js/main.54de5fc0.chunk.js"
+    "static/css/main.82d01868.chunk.css",
+    "static/js/main.4801c0d9.chunk.js"
   ]
 }
