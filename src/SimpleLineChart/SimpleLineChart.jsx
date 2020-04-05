@@ -54,7 +54,7 @@ const SimpleLineChart = (props) => {
           style={{ background: "white", padding: 15, borderRadius: 10 }}
         >
           <p
-            style={{ textAlign: "center", fontWeight: "bold", color: "black" }}
+            style={{ textAlign: "center", fontWeight: "bold", color: "#404b69" }}
           >
             {label}
           </p>
@@ -114,9 +114,7 @@ const SimpleLineChart = (props) => {
           //     bottom: 5
           //   }}
         >
-          {props.grid === false ? null : (
-            <CartesianGrid strokeDasharray="3 3" />
-          )}
+          <CartesianGrid strokeDasharray="3 3" />
 
           <XAxis hide={false} dataKey={props.axis ? props.axis : "name"} />
 

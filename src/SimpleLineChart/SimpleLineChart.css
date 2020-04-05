@@ -13,13 +13,13 @@
 
 .recharts-text .recharts-cartesian-axis-tick-value{
     font-weight: bold !important;
-    color: black !important;
+    color: #404b69 !important;
 }
 .container-Linechart .recharts-default-legend{
         margin-bottom: 10px !important;
 }
 .recharts-legend-item-text{
-    color: black;
+    color: #404b69;
     font-size: 14px !important;
 }
 
@@ -32,9 +32,9 @@
 .recharts-cartesian-axis {
     font-family: 'Work Sans' !important;
     font-size: 11px !important;
-    color: black !important;
+    color: #404b69 !important;
     font-weight: bold !important;
 }
 .recharts-tooltip-label{
-    color: black !important;
+    color: #404b69 !important;
 }
