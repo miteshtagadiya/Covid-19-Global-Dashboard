@@ -11,6 +11,8 @@ import Github from "./assets/github1.png";
 import Virus from "./assets/virus.gif";
 import ErrorBoundary from "./ErrorBoundry";
 import Countrys from "./CountryList.json";
+import ReactGA from "react-ga";
+import CustomChart from "./PieChart/CustomChart";
 import _ from "lodash";
 
 class App extends Component {
@@ -22,6 +24,8 @@ class App extends Component {
       width: 0,
       height: 0,
       globalTimelines: [],
+      filterByCases: "total_cases",
+      displayBySort: "All",
       currentPage: 0,
       currentCardPage: 0,
       totalCardPages: 0,
@@ -258,16 +262,16 @@ class App extends Component {
           backgroundColor: isDisabled
             ? null
             : isSelected
-            ? "#f6565b"
+            ? "#404b69"
             : isFocused
-            ? "#f6565b"
+            ? "white"
             : null,
-          color: isDisabled ? "#ccc" : isSelected ? "white" : "black",
+          color: isDisabled ? "#ccc" : isSelected ? "white" : "#404b69",
           cursor: isDisabled ? "not-allowed" : "default",
 
           ":active": {
             ...styles[":active"],
-            backgroundColor: !isDisabled && (isSelected ? "#f6565b" : "white"),
+            backgroundColor: !isDisabled && (isSelected ? "#404b69" : "white"),
           },
         };
       },
@@ -423,6 +427,30 @@ class App extends Component {
           ]
         : [];
 
+    const Comparator = (a, b) => {
+      if (Number(a[1]) > Number(b[1])) return -1;
+      if (Number(a[1]) < Number(b[1])) return 1;
+      return 0;
+    };
+
+    var pieChartData =
+      this.state.cards.length !== 0
+        ? Object.values(this.state.cards[0].countryitems[0])
+            .filter((country) => typeof country.title !== "undefined")
+            .map((state) => {
+              return [state.title, Number(state[this.state.filterByCases])];
+            })
+        : [];
+
+    if (this.state.displayBySort !== "All") {
+      pieChartData = pieChartData.sort(Comparator).slice(0, 10);
+    }
+
+    let Columns = [
+      { type: "string", label: "name" },
+      { type: "number", label: "value" },
+    ];
+
     return (
       <ErrorBoundary>
         <div
@@ -489,8 +517,8 @@ class App extends Component {
                       padding: 20,
                       fontWeight: "bold",
                       minHeight: 156,
-                      background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
-                      color: "#530803",
+                      background: "#448AFF",
+                      color: "white",
                       borderRadius: 10,
                     }}
                   >
@@ -516,8 +544,8 @@ class App extends Component {
                       padding: 20,
                       minHeight: 156,
                       fontWeight: "bold",
-                      background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
-                      color: "#192a56",
+                      background: "#F9A825",
+                      color: "white",
                       borderRadius: 10,
                     }}
                   >
@@ -535,8 +563,8 @@ class App extends Component {
                       padding: 20,
                       minHeight: 156,
                       fontWeight: "bold",
-                      background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
-                      color: "#006266",
+                      background: "#4CAF50",
+                      color: "#ffffff",
                       borderRadius: 10,
                     }}
                   >
@@ -554,8 +582,8 @@ class App extends Component {
                       padding: 20,
                       fontWeight: "bold",
                       minHeight: 156,
-                      background: "linear-gradient(to right, #ee9ca7, #ffdde1)",
-                      color: "#535c68",
+                      background: "#FF5252",
+                      color: "#ffffff",
                       borderRadius: 10,
                     }}
                   >
@@ -576,23 +604,98 @@ class App extends Component {
                   </div>
                 </div>
               </div>
-              <div
-                style={{
-                  background: "linear-gradient(to right, #d9a7c7, #fffcdc)",
-                  paddingBottom: 15,
-                  paddingLeft: 15,
-                  borderRadius: 15,
-                  marginBottom: 15,
-                  paddingTop: 30,
-                }}
-              >
-                <SimpleLineChart
-                  customTooltip={true}
-                  grid={false}
-                  data={totalData}
-                  labels={["Confirmed", "Active", "Deaths"]}
-                  colors={["#e43339", "#192a56", "#535c68"]}
-                />
+              <div className="row">
+                <div className="col-sm-6 col-12">
+                  <div
+                    style={{
+                      minHeight: 368,
+                      background: "linear-gradient(to right, #d9a7c7, #fffcdc)",
+                      paddingBottom: 15,
+                      paddingLeft: 15,
+                      borderRadius: 15,
+                      marginBottom: 15,
+                      paddingTop: 30,
+                    }}
+                  >
+                    <SimpleLineChart
+                      customTooltip={true}
+                      grid={false}
+                      data={totalData}
+                      labels={["Confirmed", "Active", "Deaths"]}
+                      colors={["#e43339", "#192a56", "#535c68"]}
+                    />
+                  </div>
+                </div>
+                <div className="col-sm-6 col-12">
+                  <div
+                    style={{
+                      minHeight: 368,
+                      background: "linear-gradient(to right, #d9a7c7, #fffcdc)",
+                      paddingBottom: 15,
+                      paddingLeft: 15,
+                      paddingTop: 30,
+                      borderRadius: 15,
+                      marginBottom: 15,
+                    }}
+                  >
+                    <div className="row" style={{ justifyContent: "center" }}>
+                      <div className="col-sm-4">
+                        <Select
+                          isClearable={false}
+                          isSearchable={false}
+                          onChange={(selectedOption) => {
+                            this.setState({
+                              filterByCases:
+                                selectedOption === null
+                                  ? "confirmed"
+                                  : selectedOption.value,
+                            });
+                          }}
+                          styles={colourStyles}
+                          placeholder="Confirmed"
+                          options={[
+                            { value: "total_cases", label: "Confirmed" },
+                            { value: "total_active_cases", label: "Active" },
+                            { value: "total_deaths", label: "Deaths" },
+                            { value: "total_recovered", label: "Recovered" },
+                          ]}
+                        />
+                      </div>
+                      <div className="col-sm-4">
+                        <Select
+                          isClearable={false}
+                          onChange={(selectedOption) => {
+                            this.setState({
+                              displayBySort:
+                                selectedOption === null
+                                  ? "All"
+                                  : selectedOption.value,
+                            });
+                          }}
+                          isSearchable={false}
+                          styles={colourStyles}
+                          placeholder="All"
+                          options={[
+                            { value: "All", label: "All" },
+                            {
+                              value: "Top 10",
+                              label: "Top 10",
+                            },
+                          ]}
+                        />
+                      </div>
+                    </div>
+                    <CustomChart
+                      placeholder={false}
+                      emptyClassName={"m-t-40"}
+                      chartArea={{ left: 10, top: 15, right: 10, bottom: 15 }}
+                      rows={pieChartData}
+                      columns={Columns}
+                      chartType={"PieChart"}
+                      height={"270px"}
+                    />
+                  </div>
+                </div>
               </div>
               {this.state.isChart === 1 ? (
                 <div>
@@ -643,17 +746,22 @@ class App extends Component {
                 }}
               >
                 <span
-                  onClick={() =>
+                  onClick={() => {
+                    ReactGA.event({
+                      category: "Global",
+                      action: "Chart selected",
+                      label: "Chart",
+                    });
                     this.setState({
                       isChart: 1,
                       selectedCountry: false,
                       locationLoader: true,
-                    })
-                  }
+                    });
+                  }}
                   style={
                     this.state.isChart === 1
                       ? {
-                          background: "#f6565b",
+                          background: "#404b69",
                           fontWeight: "bold",
                           cursor: "pointer",
                           color: "white",
@@ -664,7 +772,7 @@ class App extends Component {
                           background: "white",
                           fontWeight: "bold",
                           cursor: "pointer",
-                          color: "black",
+                          color: "#404b69",
                           padding: "10px 30px",
                           borderRadius: "20px 0px 0px 20px",
                         }
@@ -673,16 +781,21 @@ class App extends Component {
                   Chart
                 </span>
                 <span
-                  onClick={() =>
+                  onClick={() => {
+                    ReactGA.event({
+                      category: "Global",
+                      action: "Table selected",
+                      label: "Table",
+                    });
                     this.setState({
                       isChart: 2,
                       selectedCountry: false,
-                    })
-                  }
+                    });
+                  }}
                   style={
                     this.state.isChart === 2
                       ? {
-                          background: "#f6565b",
+                          background: "#404b69",
                           fontWeight: "bold",
                           cursor: "pointer",
                           color: "white",
@@ -692,7 +805,7 @@ class App extends Component {
                           background: "white",
                           fontWeight: "bold",
                           cursor: "pointer",
-                          color: "black",
+                          color: "#404b69",
                           padding: "10px 30px",
                         }
                   }
@@ -700,16 +813,21 @@ class App extends Component {
                   Table
                 </span>
                 <span
-                  onClick={() =>
+                  onClick={() => {
+                    ReactGA.event({
+                      category: "Global",
+                      action: "Card selected",
+                      label: "Card",
+                    });
                     this.setState({
                       isChart: 0,
                       selectedCountry: false,
-                    })
-                  }
+                    });
+                  }}
                   style={
                     this.state.isChart === 0
                       ? {
-                          background: "#f6565b",
+                          background: "#404b69",
                           fontWeight: "bold",
                           cursor: "pointer",
                           color: "white",
@@ -720,7 +838,7 @@ class App extends Component {
                           background: "white",
                           fontWeight: "bold",
                           cursor: "pointer",
-                          color: "black",
+                          color: "#404b69",
                           padding: "10px 30px",
                           borderRadius: "0px 20px 20px 0px",
                         }
@@ -738,7 +856,7 @@ class App extends Component {
                     <div
                       style={{
                         background: "white",
-                        color: "black",
+                        color: "#404b69",
                         borderRadius: 10,
                       }}
                     >
@@ -790,7 +908,7 @@ class App extends Component {
                                     textAlign: "center",
                                     borderRadius: 10,
                                     background: "white",
-                                    color: "black",
+                                    color: "#404b69",
                                   }}
                                 >
                                   <label
@@ -802,7 +920,7 @@ class App extends Component {
                                       fontSize: 18,
                                       fontWeight: "bold",
                                       padding: 10,
-                                      background: "#f6565b",
+                                      background: "#404b69",
                                     }}
                                   >
                                     {location.title}
@@ -1116,7 +1234,7 @@ class App extends Component {
                                 fontSize: 18,
                                 fontWeight: "bold",
                                 padding: 10,
-                                background: "#f6565b",
+                                background: "#404b69",
                               }}
                             >
                               {timeline.countrytimelinedata[0].info.title}
@@ -1153,7 +1271,7 @@ class App extends Component {
                                 style={{
                                   padding: 20,
                                   fontWeight: "bold",
-                                  color: "black",
+                                  color: "#404b69",
                                 }}
                               >
                                 <div>
