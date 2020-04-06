@@ -13,6 +13,8 @@ import ErrorBoundary from "./ErrorBoundry";
 import Countrys from "./CountryList.json";
 import ReactGA from "react-ga";
 import CustomChart from "./PieChart/CustomChart";
+import DataMap from "./DataMap/DataMap";
+import ReactTooltip from "react-tooltip";
 import _ from "lodash";
 
 class App extends Component {
@@ -24,6 +26,8 @@ class App extends Component {
       width: 0,
       height: 0,
       globalTimelines: [],
+      setTooltipContent: "",
+      mapFilter: "total_cases",
       filterByCases: "total_cases",
       displayBySort: "All",
       currentPage: 0,
@@ -59,45 +63,45 @@ class App extends Component {
     this.setState({
       locationLoader: true,
     });
-    window.addEventListener("focus", () => {
-      fetch(
-        `https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?global=stats`,
-        {
-          header: { "Access-Control-Allow-Origin": "*" },
-          method: "GET",
-        }
-      )
-        .then((res) => res.json())
-        .then((response) => {
-          this.setState({
-            globalData: response.results[0],
-            locationLoader: false,
-          });
-        })
-        .catch((error) => {
-          this.setState({
-            locationLoader: false,
-          });
-        });
+    // window.addEventListener("focus", () => {
+    //   fetch(
+    //     `https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?global=stats`,
+    //     {
+    //       header: { "Access-Control-Allow-Origin": "*" },
+    //       method: "GET",
+    //     }
+    //   )
+    //     .then((res) => res.json())
+    //     .then((response) => {
+    //       this.setState({
+    //         globalData: response.results[0],
+    //         locationLoader: false,
+    //       });
+    //     })
+    //     .catch((error) => {
+    //       this.setState({
+    //         locationLoader: false,
+    //       });
+    //     });
 
-      fetch(`https://covid19.mathdro.id/api/daily`, {
-        method: "GET",
-      })
-        .then((res) => res.json())
-        .then((response) => {
-          this.setState({
-            globalTimelines: response,
-            locationLoader: false,
-          });
-        })
-        .catch((error) => {
-          this.setState({
-            locationLoader: false,
-          });
-        });
+    //   fetch(`https://covid19.mathdro.id/api/daily`, {
+    //     method: "GET",
+    //   })
+    //     .then((res) => res.json())
+    //     .then((response) => {
+    //       this.setState({
+    //         globalTimelines: response,
+    //         locationLoader: false,
+    //       });
+    //     })
+    //     .catch((error) => {
+    //       this.setState({
+    //         locationLoader: false,
+    //       });
+    //     });
 
-      this.renderCards([1]);
-    });
+    //   this.renderCards([1]);
+    // });
     fetch(
       `https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?global=stats`,
       {
@@ -231,31 +235,31 @@ class App extends Component {
     window.removeEventListener("resize", this.updateDimensions);
   }
 
-  // onCardPageChanged = data1 => {
-  //   this.setState({
-  //     locationLoader: data1.locationLoader
-  //   });
-  //   const { currentPage } = data1;
+  renderTooltipLabelColor(caseType) {
+    console.log(caseType[0]);
+    switch (caseType[0]) {
+      case "Confirmed":
+        return "rgb(64, 75, 105)";
 
-  //   this.setState({
-  //     cards: [],
-  //     locationLoader: true
-  //   });
+      case "Deaths":
+        return "rgb(255, 82, 82)";
 
-  //   if (this.state.loadDefaultCards === false && !this.state.selectedCountry) {
-  //     this.renderCards(_.chunk(Object.keys(Countrys), 9)[currentPage - 1]);
-  //   }
-  //   this.setState({
-  //     currentCardPage: currentPage - 1,
-  //     locationLoader: false,
-  //     loadDefaultCards: false,
-  //     selectedCountry: false
-  //   });
-  // };
+      case "Recovered":
+        return "rgb(76, 175, 80)";
+
+      default:
+        return "rgb(64, 75, 105)";
+    }
+  }
 
   render() {
     const colourStyles = {
-      control: (styles) => ({ ...styles, backgroundColor: "white" }),
+      control: (styles) => ({
+        ...styles,
+        backgroundColor: "white",
+        marginRight: 15,
+        marginBottom: 15,
+      }),
       option: (styles, { data, isDisabled, isFocused, isSelected }) => {
         return {
           ...styles,
@@ -765,7 +769,7 @@ class App extends Component {
                           fontWeight: "bold",
                           cursor: "pointer",
                           color: "white",
-                          padding: "10px 30px",
+                          padding: "10px 20px",
                           borderRadius: "20px 0px 0px 20px",
                         }
                       : {
@@ -773,12 +777,44 @@ class App extends Component {
                           fontWeight: "bold",
                           cursor: "pointer",
                           color: "#404b69",
-                          padding: "10px 30px",
+                          padding: "10px 20px",
                           borderRadius: "20px 0px 0px 20px",
                         }
                   }
                 >
                   Chart
+                </span>
+                <span
+                  onClick={() => {
+                    ReactGA.event({
+                      category: "Global",
+                      action: "Map selected",
+                      label: "Map",
+                    });
+                    this.setState({
+                      isChart: 3,
+                      selectedCountry: false,
+                    });
+                  }}
+                  style={
+                    this.state.isChart === 3
+                      ? {
+                          background: "#404b69",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          color: "white",
+                          padding: "10px 20px",
+                        }
+                      : {
+                          background: "white",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          color: "#404b69",
+                          padding: "10px 20px",
+                        }
+                  }
+                >
+                  Map
                 </span>
                 <span
                   onClick={() => {
@@ -799,14 +835,14 @@ class App extends Component {
                           fontWeight: "bold",
                           cursor: "pointer",
                           color: "white",
-                          padding: "10px 30px",
+                          padding: "10px 20px",
                         }
                       : {
                           background: "white",
                           fontWeight: "bold",
                           cursor: "pointer",
                           color: "#404b69",
-                          padding: "10px 30px",
+                          padding: "10px 20px",
                         }
                   }
                 >
@@ -831,7 +867,7 @@ class App extends Component {
                           fontWeight: "bold",
                           cursor: "pointer",
                           color: "white",
-                          padding: "10px 30px",
+                          padding: "10px 20px",
                           borderRadius: "0px 20px 20px 0px",
                         }
                       : {
@@ -839,7 +875,7 @@ class App extends Component {
                           fontWeight: "bold",
                           cursor: "pointer",
                           color: "#404b69",
-                          padding: "10px 30px",
+                          padding: "10px 20px",
                           borderRadius: "0px 20px 20px 0px",
                         }
                   }
@@ -847,6 +883,171 @@ class App extends Component {
                   Card
                 </span>
               </div>
+              {this.state.isChart === 3 ? (
+                <div className="row" style={{ marginTop: 20 }}>
+                  <div
+                    className="col-sm-12 col-12"
+                    style={{ minHeight: "368px" }}
+                  >
+                    <div
+                      style={{
+                        minHeight: 368,
+                        background:
+                          "linear-gradient(to right, #d9a7c7, #fffcdc)",
+                        paddingBottom: 15,
+                        paddingLeft: 15,
+                        paddingTop: 30,
+                        borderRadius: 15,
+                        marginBottom: 15,
+                      }}
+                    >
+                      <div
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <div
+                          style={
+                            this.state.mapFilter === "total_cases"
+                              ? {
+                                  background: "rgb(68, 138, 255)",
+                                  color: "white",
+                                  borderRadius: 5,
+                                  padding: "5px 10px",
+                                  fontWeight: "bold",
+                                  margin: "0px 5px",
+                                  cursor: "pointer",
+                                }
+                              : {
+                                  border: "2px solid rgb(68, 138, 255)",
+                                  color: "rgb(68, 138, 255)",
+                                  borderRadius: 5,
+                                  padding: "5px 10px",
+                                  fontWeight: "bold",
+                                  margin: "0px 5px",
+                                  cursor: "pointer",
+                                }
+                          }
+                          onClick={() =>
+                            this.setState({
+                              mapFilter: "total_cases",
+                            })
+                          }
+                        >
+                          Confirmed
+                        </div>
+                        <div
+                          style={
+                            this.state.mapFilter === "total_recovered"
+                              ? {
+                                  background: "rgb(76, 175, 80)",
+                                  color: "white",
+                                  borderRadius: 5,
+                                  padding: "5px 10px",
+                                  fontWeight: "bold",
+                                  margin: "0px 5px",
+                                  cursor: "pointer",
+                                }
+                              : {
+                                  border: "2px solid rgb(76, 175, 80)",
+                                  color: "rgb(76, 175, 80)",
+                                  borderRadius: 5,
+                                  padding: "5px 10px",
+                                  fontWeight: "bold",
+                                  margin: "0px 5px",
+                                  cursor: "pointer",
+                                }
+                          }
+                          onClick={() =>
+                            this.setState({
+                              mapFilter: "total_recovered",
+                            })
+                          }
+                        >
+                          Recovered
+                        </div>
+                        <div
+                          style={
+                            this.state.mapFilter === "total_deaths"
+                              ? {
+                                  background: "rgb(255, 82, 82)",
+                                  color: "white",
+                                  borderRadius: 5,
+                                  padding: "5px 10px",
+                                  fontWeight: "bold",
+                                  margin: "0px 5px",
+                                  cursor: "pointer",
+                                }
+                              : {
+                                  border: "2px solid rgb(255, 82, 82)",
+                                  color: "rgb(255, 82, 82)",
+                                  borderRadius: 5,
+                                  padding: "5px 10px",
+                                  fontWeight: "bold",
+                                  margin: "0px 5px",
+                                  cursor: "pointer",
+                                }
+                          }
+                          onClick={() =>
+                            this.setState({
+                              mapFilter: "total_deaths",
+                            })
+                          }
+                        >
+                          Deaths
+                        </div>
+                      </div>
+                      <DataMap
+                        mapFilter={this.state.mapFilter}
+                        data={
+                          this.state.cards.length !== 0
+                            ? Object.values(
+                                this.state.cards[0].countryitems[0]
+                              ).filter(
+                                (location) =>
+                                  typeof location.title !== "undefined"
+                              )
+                            : []
+                        }
+                        setTooltipContent={(content) =>
+                          this.setState({ setTooltipContent: content })
+                        }
+                      />
+                      <ReactTooltip>
+                        {this.state.setTooltipContent.length !== 0
+                          ? this.state.setTooltipContent
+                              .filter(
+                                (content) => Object.keys(content) !== "title"
+                              )
+                              .map((content, index) => {
+                                return (
+                                  <>
+                                    <span
+                                      style={{
+                                        color: this.renderTooltipLabelColor(
+                                          Object.keys(content)
+                                        ),
+                                        fontWeight: "bold",
+                                        fontSize: 16,
+                                      }}
+                                      key={index}
+                                    >
+                                      {Object.keys(content)[0] === "title"
+                                        ? null
+                                        : Object.keys(content)}
+                                      {Object.keys(content)[0] === "title"
+                                        ? null
+                                        : " : "}
+                                      {Object.values(content)}
+                                    </span>
+                                    <br />
+                                  </>
+                                );
+                              })
+                          : ""}
+                      </ReactTooltip>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
               {this.state.isChart === 2 ? (
                 <div
                   className="row"

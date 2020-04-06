@@ -11,6 +11,11 @@ body {
   background-color: #27293d !important;
 }
 
+.__react_component_tooltip.show{
+  background-color: white !important;
+  opacity: 1 !important;
+}
+
 .focus-visible {
   outline: none !important;
 }
