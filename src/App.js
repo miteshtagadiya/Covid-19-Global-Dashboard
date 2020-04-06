@@ -63,45 +63,45 @@ class App extends Component {
     this.setState({
       locationLoader: true,
     });
-    // window.addEventListener("focus", () => {
-    //   fetch(
-    //     `https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?global=stats`,
-    //     {
-    //       header: { "Access-Control-Allow-Origin": "*" },
-    //       method: "GET",
-    //     }
-    //   )
-    //     .then((res) => res.json())
-    //     .then((response) => {
-    //       this.setState({
-    //         globalData: response.results[0],
-    //         locationLoader: false,
-    //       });
-    //     })
-    //     .catch((error) => {
-    //       this.setState({
-    //         locationLoader: false,
-    //       });
-    //     });
+    window.addEventListener("focus", () => {
+      fetch(
+        `https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?global=stats`,
+        {
+          header: { "Access-Control-Allow-Origin": "*" },
+          method: "GET",
+        }
+      )
+        .then((res) => res.json())
+        .then((response) => {
+          this.setState({
+            globalData: response.results[0],
+            locationLoader: false,
+          });
+        })
+        .catch((error) => {
+          this.setState({
+            locationLoader: false,
+          });
+        });
 
-    //   fetch(`https://covid19.mathdro.id/api/daily`, {
-    //     method: "GET",
-    //   })
-    //     .then((res) => res.json())
-    //     .then((response) => {
-    //       this.setState({
-    //         globalTimelines: response,
-    //         locationLoader: false,
-    //       });
-    //     })
-    //     .catch((error) => {
-    //       this.setState({
-    //         locationLoader: false,
-    //       });
-    //     });
+      fetch(`https://covid19.mathdro.id/api/daily`, {
+        method: "GET",
+      })
+        .then((res) => res.json())
+        .then((response) => {
+          this.setState({
+            globalTimelines: response,
+            locationLoader: false,
+          });
+        })
+        .catch((error) => {
+          this.setState({
+            locationLoader: false,
+          });
+        });
 
-    //   this.renderCards([1]);
-    // });
+      this.renderCards([1]);
+    });
     fetch(
       `https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?global=stats`,
       {
