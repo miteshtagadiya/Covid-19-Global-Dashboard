@@ -70,7 +70,7 @@ export default class TinyChart extends PureComponent {
   render() {
     return (
       <LineChart
-        width={this.state.width < 1439 ? 140 : 250}
+        width={this.state.width < 1439 ? 100 : 250}
         height={this.state.width < 250 ? 30 : 50}
         data={this.props.data}
       >
