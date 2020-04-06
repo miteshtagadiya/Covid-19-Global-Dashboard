@@ -14,6 +14,7 @@ import ErrorBoundary from "./ErrorBoundry";
 import Select from "react-select";
 import ReactGA from "react-ga";
 import CustomChart from "./PieChart/CustomChart";
+import IndiaMap from "./IndiaMap/IndiaMap";
 
 class India extends Component {
   constructor(props) {
@@ -1144,7 +1145,7 @@ class India extends Component {
                           fontWeight: "bold",
                           cursor: "pointer",
                           color: "white",
-                          padding: "10px 30px",
+                          padding: "10px 20px",
                           borderRadius: "20px 0px 0px 20px",
                         }
                       : {
@@ -1152,12 +1153,41 @@ class India extends Component {
                           fontWeight: "bold",
                           cursor: "pointer",
                           color: "#404b69",
-                          padding: "10px 30px",
+                          padding: "10px 20px",
                           borderRadius: "20px 0px 0px 20px",
                         }
                   }
                 >
                   Table
+                </span>
+                <span
+                  onClick={() => {
+                    ReactGA.event({
+                      category: "India View",
+                      action: "Map View Clicked",
+                      label: "Map View",
+                    });
+                    this.setState({ isTable: 2, selectedCountry: false });
+                  }}
+                  style={
+                    this.state.isTable === 2
+                      ? {
+                          background: "#404b69",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          color: "white",
+                          padding: "10px 20px",
+                        }
+                      : {
+                          background: "white",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          color: "#404b69",
+                          padding: "10px 20px",
+                        }
+                  }
+                >
+                  Map
                 </span>
                 <span
                   onClick={() => {
@@ -1175,7 +1205,7 @@ class India extends Component {
                           fontWeight: "bold",
                           cursor: "pointer",
                           color: "white",
-                          padding: "10px 30px",
+                          padding: "10px 20px",
                           borderRadius: "0px 20px 20px 0px",
                         }
                       : {
@@ -1183,7 +1213,7 @@ class India extends Component {
                           fontWeight: "bold",
                           cursor: "pointer",
                           color: "#404b69",
-                          padding: "10px 30px",
+                          padding: "10px 20px",
                           borderRadius: "0px 20px 20px 0px",
                         }
                   }
@@ -1191,6 +1221,33 @@ class India extends Component {
                   Card
                 </span>
               </div>
+              {this.state.isTable === 2 ? (
+                <div
+                  className="row"
+                  style={{
+                    border: "2px solid rgb(255, 252, 220)",
+                    marginRight: 0,
+                    marginTop: 15,
+                    marginLeft: 0,
+                    borderRadius: 10,
+                  }}
+                >
+                  <div
+                    className="col-sm-12"
+                    style={{ marginTop: 60, marginBottom: 80 }}
+                  >
+                    <IndiaMap
+                      data={
+                        this.state.india.length !== 0
+                          ? this.state.india.statewise.filter(
+                              (state) => state.state !== "Total"
+                            )
+                          : []
+                      }
+                    />
+                  </div>
+                </div>
+              ) : null}
               {this.state.isTable === 0 ? (
                 <div className="row">
                   {this.state.locationLoader === true ? (
@@ -1269,7 +1326,8 @@ class India extends Component {
                       })
                   ) : null}
                 </div>
-              ) : (
+              ) : null}{" "}
+              {this.state.isTable === 1 ? (
                 <div className="row" style={{ marginTop: 15 }}>
                   <div className="col-sm-12">
                     <div
@@ -1328,7 +1386,7 @@ class India extends Component {
                     </div>
                   </div>
                 </div>
-              )}
+              ) : null}
             </div>
             <div style={{ padding: 15 }}>
               Designed and Developed by{"  "}
