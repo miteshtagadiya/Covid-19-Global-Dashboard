@@ -892,10 +892,8 @@ class App extends Component {
                     <div
                       style={{
                         minHeight: 368,
-                        background:
-                          "linear-gradient(to right, #d9a7c7, #fffcdc)",
+                        border: "2px solid rgb(255, 252, 220)",
                         paddingBottom: 15,
-                        paddingLeft: 15,
                         paddingTop: 30,
                         borderRadius: 15,
                         marginBottom: 15,

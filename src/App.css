@@ -2,12 +2,6 @@
   text-align: center;
 }
 
-.container-india {
-  width: calc(100% - 32px);
-  height: 500px;
-  padding: 16px;
-}
-
 .no-margin {
   margin: 0;
 }
