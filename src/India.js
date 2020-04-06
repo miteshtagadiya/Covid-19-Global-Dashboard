@@ -444,7 +444,7 @@ class India extends Component {
       this.state.india.length !== 0
         ? this.state.india.statewise
             .filter((record) => record.state !== "Total")
-            .filter((state) => state.deltarecovered !== 0)
+            .filter((state) => Number(state.deltarecovered) !== 0)
             .map((state) => {
               return { [state.state]: Number(state.deltarecovered) };
             })
@@ -453,7 +453,7 @@ class India extends Component {
       this.state.india.length !== 0
         ? this.state.india.statewise
             .filter((record) => record.state !== "Total")
-            .filter((state) => state.deltadeaths !== 0)
+            .filter((state) => Number(state.deltadeaths) !== 0)
             .map((state) => {
               return { [state.state]: Number(state.deltadeaths) };
             })
