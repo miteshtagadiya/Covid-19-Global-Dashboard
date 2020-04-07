@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/Covid-19-Global-Dashboard/static/css/main.5458ef9f.chunk.css",
-    "main.js": "/Covid-19-Global-Dashboard/static/js/main.06ab252c.chunk.js",
-    "main.js.map": "/Covid-19-Global-Dashboard/static/js/main.06ab252c.chunk.js.map",
+    "main.js": "/Covid-19-Global-Dashboard/static/js/main.033ca15a.chunk.js",
+    "main.js.map": "/Covid-19-Global-Dashboard/static/js/main.033ca15a.chunk.js.map",
     "runtime-main.js": "/Covid-19-Global-Dashboard/static/js/runtime-main.d35f93d7.js",
     "runtime-main.js.map": "/Covid-19-Global-Dashboard/static/js/runtime-main.d35f93d7.js.map",
     "static/css/2.94a79f0b.chunk.css": "/Covid-19-Global-Dashboard/static/css/2.94a79f0b.chunk.css",
-    "static/js/2.3dffc0cf.chunk.js": "/Covid-19-Global-Dashboard/static/js/2.3dffc0cf.chunk.js",
-    "static/js/2.3dffc0cf.chunk.js.map": "/Covid-19-Global-Dashboard/static/js/2.3dffc0cf.chunk.js.map",
+    "static/js/2.3990641f.chunk.js": "/Covid-19-Global-Dashboard/static/js/2.3990641f.chunk.js",
+    "static/js/2.3990641f.chunk.js.map": "/Covid-19-Global-Dashboard/static/js/2.3990641f.chunk.js.map",
     "index.html": "/Covid-19-Global-Dashboard/index.html",
-    "precache-manifest.617a823546f9cd910689d52de8a459ce.js": "/Covid-19-Global-Dashboard/precache-manifest.617a823546f9cd910689d52de8a459ce.js",
+    "precache-manifest.6b6a3ae31af850a48e83909ea23c4748.js": "/Covid-19-Global-Dashboard/precache-manifest.6b6a3ae31af850a48e83909ea23c4748.js",
     "service-worker.js": "/Covid-19-Global-Dashboard/service-worker.js",
     "static/css/2.94a79f0b.chunk.css.map": "/Covid-19-Global-Dashboard/static/css/2.94a79f0b.chunk.css.map",
     "static/css/main.5458ef9f.chunk.css.map": "/Covid-19-Global-Dashboard/static/css/main.5458ef9f.chunk.css.map",
-    "static/js/2.3dffc0cf.chunk.js.LICENSE.txt": "/Covid-19-Global-Dashboard/static/js/2.3dffc0cf.chunk.js.LICENSE.txt",
+    "static/js/2.3990641f.chunk.js.LICENSE.txt": "/Covid-19-Global-Dashboard/static/js/2.3990641f.chunk.js.LICENSE.txt",
     "static/media/github1.png": "/Covid-19-Global-Dashboard/static/media/github1.0ba2aa20.png",
     "static/media/india.png": "/Covid-19-Global-Dashboard/static/media/india.b9bb7cd7.png",
     "static/media/virus.gif": "/Covid-19-Global-Dashboard/static/media/virus.2d7d3b99.gif",
@@ -22,8 +22,8 @@
   "entrypoints": [
     "static/js/runtime-main.d35f93d7.js",
     "static/css/2.94a79f0b.chunk.css",
-    "static/js/2.3dffc0cf.chunk.js",
+    "static/js/2.3990641f.chunk.js",
     "static/css/main.5458ef9f.chunk.css",
-    "static/js/main.06ab252c.chunk.js"
+    "static/js/main.033ca15a.chunk.js"
   ]
 }
