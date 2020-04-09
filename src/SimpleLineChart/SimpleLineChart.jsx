@@ -1,7 +1,9 @@
 import React from "react";
 import {
   LineChart,
+  BarChart,
   Line,
+  Bar,
   XAxis,
   YAxis,
   Tooltip,
@@ -54,7 +56,11 @@ const SimpleLineChart = (props) => {
           style={{ background: "white", padding: 15, borderRadius: 10 }}
         >
           <p
-            style={{ textAlign: "center", fontWeight: "bold", color: "#404b69" }}
+            style={{
+              textAlign: "center",
+              fontWeight: "bold",
+              color: "#404b69",
+            }}
           >
             {label}
           </p>
@@ -95,13 +101,20 @@ const SimpleLineChart = (props) => {
 
     return null;
   };
+
+  let Chart = props.chart ? (props.chart === "LineChart" ? Line : Bar) : Line;
+  let Type = props.chart
+    ? props.chart === "LineChart"
+      ? LineChart
+      : BarChart
+    : LineChart;
   return (
     <div
       className="container-Linechart"
       style={props.height ? { height: props.height } : { height: 270 }}
     >
       <ResponsiveContainer>
-        <LineChart
+        <Type
           width={500}
           height={100}
           data={data}
@@ -129,18 +142,30 @@ const SimpleLineChart = (props) => {
             margin={{ top: 0, left: 0, right: 0, bottom: 10 }}
             verticalAlign={props.verticalAlign ? props.verticalAlign : "bottom"}
           />
-          {props.labels.map((label, index) => (
-            <Line
-              key={index}
-              type="monotone"
-              dataKey={label}
-              stroke={props.colors[index]}
-              activeDot={{ r: 8 }}
-              fill={props.colors[index]}
-              dot={false}
-            />
-          ))}
-        </LineChart>
+          {props.labels.map((label, index) =>
+            props.chart === "BarChart" ? (
+              <Chart
+                key={index}
+                stackId={"a"}
+                type="monotone"
+                dataKey={label}
+                stroke={props.colors[index]}
+                fill={props.colors[index]}
+              />
+            ) : (
+              <Chart
+                key={index}
+                stackId={"a"}
+                type="monotone"
+                dataKey={label}
+                stroke={props.colors[index]}
+                activeDot={{ r: 8 }}
+                fill={props.colors[index]}
+                dot={false}
+              />
+            )
+          )}
+        </Type>
       </ResponsiveContainer>
     </div>
   );
