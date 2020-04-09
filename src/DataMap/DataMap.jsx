@@ -1,6 +1,7 @@
 import React from "react";
 import { scaleLog } from "d3-scale";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
+import Countrys from "./ISO2.json";
 
 const geoUrl =
   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
@@ -34,21 +35,57 @@ const MapChart = ({ setTooltipContent, data, mapFilter }) => {
         <Geographies geography={geoUrl}>
           {({ geographies }) =>
             geographies.map((geo) => {
-              const d = data.find((s) => s.code === geo.properties.ISO_A2);
+              const d = data.find(
+                (s) => Countrys[s.title] === geo.properties.ISO_A2
+              );
+              //VirusTracker
+              // const d = data.find((s) => s.code === geo.properties.ISO_A2);
+              //Covid19Info
+              // const d = data.find(
+              //   (s) => Object.keys(s)[0] === geo.properties.ISO_A3
+              // );
               return (
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
                   onMouseEnter={() => {
-                    if (
-                      typeof d !== "undefined" &&
-                      typeof d.title !== "undefined"
-                    ) {
+                    if (typeof d !== "undefined") {
                       setTooltipContent([
-                        { title: d.title },
-                        { Confirmed: d.total_cases },
-                        { Deaths: d.total_deaths },
-                        { Recovered: d.total_recovered },
+                        { title: geo.properties.NAME_LONG },
+                        { Confirmed: d.confirmed === "" ? 0 : d.confirmed },
+                        { Deaths: d.deaths === "" ? 0 : d.deaths },
+                        { Recovered: d.recovered === "" ? 0 : d.recovered },
+                        {
+                          DeathsToday:
+                            d.deaths_today === "" ? 0 : d.deaths_today,
+                        },
+                        {
+                          ConfirmedToday:
+                            d.confirmed_today === "" ? 0 : d.confirmed_today,
+                        },
+                      ]);
+                      // VirusTracker
+                      // setTooltipContent([
+                      //   { title: d.title },
+                      //   { Confirmed: d.total_cases },
+                      //   { Deaths: d.total_deaths },
+                      //   { Recovered: d.total_recovered },
+                      // ]);
+                      // //Covid19Info
+                      // setTooltipContent([
+                      //   { title: Object.keys(d)[0] },
+                      //   { Confirmed: Object.values(d)[0].confirmed },
+                      //   { Deaths: Object.values(d)[0].deaths },
+                      //   { Recovered: Object.values(d)[0].recovered },
+                      // ]);
+                    } else {
+                      setTooltipContent([
+                        { title: geo.properties.NAME },
+                        { Confirmed: 0 },
+                        { Deaths: 0 },
+                        { Recovered: 0 },
+                        { DeathsToday: 0 },
+                        { ConfirmedToday: 0 },
                       ]);
                     }
                   }}
@@ -65,7 +102,12 @@ const MapChart = ({ setTooltipContent, data, mapFilter }) => {
                       outline: "none",
                     },
                   }}
-                  fill={d ? colorScale(Number(d[mapFilter])) : "#F5F4F6"}
+                  fill={
+                    d
+                      ? colorScale(Number(d[mapFilter]))
+                      : // ? colorScale(Number(Object.values(d)[0][mapFilter])) // covid19Info
+                        "#F5F4F6"
+                  }
                 />
               );
             })
