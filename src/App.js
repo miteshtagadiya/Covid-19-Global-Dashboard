@@ -21,20 +21,21 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      showGlobalChartType: "LineChart",
       searchString: "",
       cards: [],
       width: 0,
       height: 0,
       globalTimelines: [],
       setTooltipContent: "",
-      mapFilter: "total_cases",
-      filterByCases: "total_cases",
+      mapFilter: "confirmed",
+      filterByCases: "confirmed",
       displayBySort: "All",
       currentPage: 0,
       currentCardPage: 0,
       totalCardPages: 0,
       totalPages: 0,
-      globalData: 0,
+      globalData: [],
       locationLoader: false,
       selectedCountry: false,
       loadDefaultCards: true,
@@ -64,18 +65,14 @@ class App extends Component {
       locationLoader: true,
     });
     window.addEventListener("focus", () => {
-      fetch(
-        `https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?global=stats`,
-        {
-          header: { "Access-Control-Allow-Origin": "*" },
-          method: "GET",
-        }
-      )
+      fetch(`https://covid19-global-api.herokuapp.com/global.json`, {
+        header: { "Access-Control-Allow-Origin": "*" },
+        method: "GET",
+      })
         .then((res) => res.json())
         .then((response) => {
           this.setState({
-            globalData: response.results[0],
-            locationLoader: false,
+            globalData: response,
           });
         })
         .catch((error) => {
@@ -91,7 +88,6 @@ class App extends Component {
         .then((response) => {
           this.setState({
             globalTimelines: response,
-            locationLoader: false,
           });
         })
         .catch((error) => {
@@ -102,17 +98,13 @@ class App extends Component {
 
       this.renderCards([1]);
     });
-    fetch(
-      `https://cors-proxy-pass.herokuapp.com/https://thevirustracker.com/free-api?global=stats`,
-      {
-        method: "GET",
-      }
-    )
+    fetch(`https://covid19-global-api.herokuapp.com/global.json`, {
+      method: "GET",
+    })
       .then((res) => res.json())
       .then((response) => {
         this.setState({
-          globalData: response.results[0],
-          locationLoader: false,
+          globalData: response,
         });
       })
       .catch((error) => {
@@ -128,7 +120,6 @@ class App extends Component {
       .then((response) => {
         this.setState({
           globalTimelines: response,
-          locationLoader: false,
         });
       })
       .catch((error) => {
@@ -236,7 +227,6 @@ class App extends Component {
   }
 
   renderTooltipLabelColor(caseType) {
-    console.log(caseType[0]);
     switch (caseType[0]) {
       case "Confirmed":
         return "rgb(64, 75, 105)";
@@ -333,24 +323,25 @@ class App extends Component {
       date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
 
     const data =
-      this.state.cards.length !== 0
-        ? Object.values(this.state.cards[0].countryitems[0])
-            .filter((country) => typeof country.title !== "undefined")
+      this.state.globalData.length !== 0
+        ? this.state.globalData
+            .filter((country) => country.title !== "World")
             .map((country) => {
               return {
                 country: country.title,
-                confirmed: Number(country.total_cases),
-                active: Number(country.total_active_cases),
-                recovered: Number(country.total_recovered),
-                deaths: Number(country.total_deaths),
-                deltaConfirmed: Number(country.total_new_cases_today),
-                deltaDeaths: Number(country.total_new_deaths_today),
+                confirmed: Number(country.confirmed),
+                active: Number(country.active),
+                recovered: Number(country.recovered),
+                deaths: Number(country.deaths),
+                deltaConfirmed: Number(country.confirmed_today),
+                deltaDeaths: Number(country.deaths_today),
+                tests: Number(country.totaltests),
               };
             })
         : [];
 
     const columns =
-      this.state.cards.length !== 0
+      this.state.globalData.length !== 0
         ? [
             {
               Header: "Country",
@@ -428,6 +419,17 @@ class App extends Component {
                 );
               },
             },
+            {
+              Header: "Tests",
+              accessor: "tests",
+              Cell: (props) => {
+                return (
+                  <>
+                    <span className="number">{props.value}</span>
+                  </>
+                );
+              },
+            },
           ]
         : [];
 
@@ -438,9 +440,9 @@ class App extends Component {
     };
 
     var pieChartData =
-      this.state.cards.length !== 0
-        ? Object.values(this.state.cards[0].countryitems[0])
-            .filter((country) => typeof country.title !== "undefined")
+      this.state.globalData.length !== 0
+        ? this.state.globalData
+            .filter((country) => country.title !== "World")
             .map((state) => {
               return [state.title, Number(state[this.state.filterByCases])];
             })
@@ -528,7 +530,9 @@ class App extends Component {
                   >
                     <div style={{ fontSize: 30 }}>
                       {this.state.globalData.length !== 0
-                        ? this.state.globalData.total_cases
+                        ? this.state.globalData.filter(
+                            (state) => state.title === "World"
+                          )[0].confirmed
                         : 0}
                     </div>
                     <div style={{ fontSize: 18, marginBottom: 10 }}>
@@ -536,7 +540,9 @@ class App extends Component {
                         &#9650;
                       </span>{" "}
                       {this.state.globalData.length !== 0
-                        ? this.state.globalData.total_new_cases_today
+                        ? this.state.globalData.filter(
+                            (state) => state.title === "World"
+                          )[0].confirmed_today
                         : 0}
                     </div>
                     <div style={{ fontSize: 18 }}>Confirmed</div>
@@ -555,7 +561,9 @@ class App extends Component {
                   >
                     <div style={{ fontSize: 30, marginBottom: 42 }}>
                       {this.state.globalData.length !== 0
-                        ? this.state.globalData.total_active_cases
+                        ? this.state.globalData.filter(
+                            (state) => state.title === "World"
+                          )[0].active
                         : 0}
                     </div>
                     <div style={{ fontSize: 18 }}>Active</div>
@@ -574,7 +582,9 @@ class App extends Component {
                   >
                     <div style={{ fontSize: 30, marginBottom: 42 }}>
                       {this.state.globalData.length !== 0
-                        ? this.state.globalData.total_recovered
+                        ? this.state.globalData.filter(
+                            (state) => state.title === "World"
+                          )[0].recovered
                         : 0}
                     </div>
                     <div style={{ fontSize: 18 }}>Recovered</div>
@@ -593,7 +603,9 @@ class App extends Component {
                   >
                     <div style={{ fontSize: 30 }}>
                       {this.state.globalData.length !== 0
-                        ? this.state.globalData.total_deaths
+                        ? this.state.globalData.filter(
+                            (state) => state.title === "World"
+                          )[0].deaths
                         : 0}
                     </div>
                     <div style={{ fontSize: 18, marginBottom: 10 }}>
@@ -601,7 +613,9 @@ class App extends Component {
                         &#9650;
                       </span>{" "}
                       {this.state.globalData.length !== 0
-                        ? this.state.globalData.total_new_deaths_today
+                        ? this.state.globalData.filter(
+                            (state) => state.title === "World"
+                          )[0].deaths_today
                         : 0}
                     </div>
                     <div style={{ fontSize: 18 }}>Deaths</div>
@@ -621,7 +635,76 @@ class App extends Component {
                       paddingTop: 30,
                     }}
                   >
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                      <div
+                        style={
+                          this.state.showGlobalChartType === "LineChart"
+                            ? {
+                                background: "rgb(64, 75, 105)",
+                                padding: "5px 15px",
+                                cursor: "pointer",
+                                borderTopLeftRadius: 10,
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                borderBottomLeftRadius: 10,
+                                fontWeight: "bold",
+                                color: "white",
+                              }
+                            : {
+                                color: "rgb(64, 75, 105)",
+                                cursor: "pointer",
+                                border: "3px solid rgb(64, 75, 105)",
+                                padding: "5px 15px",
+                                borderTopLeftRadius: 10,
+                                borderBottomLeftRadius: 10,
+                                fontWeight: "bold",
+                              }
+                        }
+                        onClick={() =>
+                          this.setState({
+                            showGlobalChartType: "LineChart",
+                          })
+                        }
+                      >
+                        Line
+                      </div>
+                      <div
+                        style={
+                          this.state.showGlobalChartType === "BarChart"
+                            ? {
+                                background: "rgb(64, 75, 105)",
+                                cursor: "pointer",
+                                padding: "5px 15px",
+                                borderTopRightRadius: 10,
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                borderBottomRightRadius: 10,
+                                fontWeight: "bold",
+                                color: "white",
+                              }
+                            : {
+                                color: "rgb(64, 75, 105)",
+                                cursor: "pointer",
+                                border: "3px solid rgb(64, 75, 105)",
+                                padding: "5px 15px",
+                                borderTopRightRadius: 10,
+                                borderBottomRightRadius: 10,
+                                fontWeight: "bold",
+                              }
+                        }
+                        onClick={() =>
+                          this.setState({
+                            showGlobalChartType: "BarChart",
+                          })
+                        }
+                      >
+                        Bar
+                      </div>
+                    </div>
                     <SimpleLineChart
+                      chart={this.state.showGlobalChartType}
                       customTooltip={true}
                       grid={false}
                       data={totalData}
@@ -658,10 +741,10 @@ class App extends Component {
                           styles={colourStyles}
                           placeholder="Confirmed"
                           options={[
-                            { value: "total_cases", label: "Confirmed" },
-                            { value: "total_active_cases", label: "Active" },
-                            { value: "total_deaths", label: "Deaths" },
-                            { value: "total_recovered", label: "Recovered" },
+                            { value: "confirmed", label: "Confirmed" },
+                            { value: "active", label: "Active" },
+                            { value: "deaths", label: "Deaths" },
+                            { value: "recovered", label: "Recovered" },
                           ]}
                         />
                       </div>
@@ -904,7 +987,7 @@ class App extends Component {
                       >
                         <div
                           style={
-                            this.state.mapFilter === "total_cases"
+                            this.state.mapFilter === "confirmed"
                               ? {
                                   background: "rgb(68, 138, 255)",
                                   color: "white",
@@ -926,7 +1009,7 @@ class App extends Component {
                           }
                           onClick={() =>
                             this.setState({
-                              mapFilter: "total_cases",
+                              mapFilter: "confirmed",
                             })
                           }
                         >
@@ -934,7 +1017,7 @@ class App extends Component {
                         </div>
                         <div
                           style={
-                            this.state.mapFilter === "total_recovered"
+                            this.state.mapFilter === "recovered"
                               ? {
                                   background: "rgb(76, 175, 80)",
                                   color: "white",
@@ -956,7 +1039,7 @@ class App extends Component {
                           }
                           onClick={() =>
                             this.setState({
-                              mapFilter: "total_recovered",
+                              mapFilter: "recovered",
                             })
                           }
                         >
@@ -964,7 +1047,7 @@ class App extends Component {
                         </div>
                         <div
                           style={
-                            this.state.mapFilter === "total_deaths"
+                            this.state.mapFilter === "deaths"
                               ? {
                                   background: "rgb(255, 82, 82)",
                                   color: "white",
@@ -986,7 +1069,7 @@ class App extends Component {
                           }
                           onClick={() =>
                             this.setState({
-                              mapFilter: "total_deaths",
+                              mapFilter: "deaths",
                             })
                           }
                         >
@@ -996,12 +1079,9 @@ class App extends Component {
                       <DataMap
                         mapFilter={this.state.mapFilter}
                         data={
-                          this.state.cards.length !== 0
-                            ? Object.values(
-                                this.state.cards[0].countryitems[0]
-                              ).filter(
-                                (location) =>
-                                  typeof location.title !== "undefined"
+                          this.state.globalData.length !== 0
+                            ? this.state.globalData.filter(
+                                (location) => location.title !== "World"
                               )
                             : []
                         }
@@ -1010,37 +1090,82 @@ class App extends Component {
                         }
                       />
                       <ReactTooltip>
-                        {this.state.setTooltipContent.length !== 0
-                          ? this.state.setTooltipContent
-                              .filter(
-                                (content) => Object.keys(content) !== "title"
-                              )
-                              .map((content, index) => {
-                                return (
-                                  <>
-                                    <span
-                                      style={{
-                                        color: this.renderTooltipLabelColor(
-                                          Object.keys(content)
-                                        ),
-                                        fontWeight: "bold",
-                                        fontSize: 16,
-                                      }}
-                                      key={index}
-                                    >
-                                      {Object.keys(content)[0] === "title"
-                                        ? null
-                                        : Object.keys(content)}
-                                      {Object.keys(content)[0] === "title"
-                                        ? null
-                                        : " : "}
-                                      {Object.values(content)}
-                                    </span>
-                                    <br />
-                                  </>
-                                );
-                              })
-                          : ""}
+                        {this.state.setTooltipContent.length !== 0 ? (
+                          <div>
+                            <span
+                              style={{
+                                color: this.renderTooltipLabelColor(
+                                  Object.keys(this.state.setTooltipContent[0])
+                                ),
+                                fontWeight: "bold",
+                                fontSize: 16,
+                              }}
+                            >
+                              {Object.values(this.state.setTooltipContent[0])}
+                            </span>
+                            <br />
+                            <span
+                              style={{
+                                color: this.renderTooltipLabelColor(
+                                  Object.keys(this.state.setTooltipContent[0])
+                                ),
+                                fontWeight: "bold",
+                                fontSize: 16,
+                              }}
+                            >
+                              {Object.keys(this.state.setTooltipContent[1])}{" "}
+                              {": "}
+                              {Object.values(
+                                this.state.setTooltipContent[1]
+                              )}{" "}
+                              <span
+                                style={{ fontSize: 20, fontWeight: "bold" }}
+                              >
+                                &#9650;
+                              </span>
+                              {Object.values(this.state.setTooltipContent[5])}
+                            </span>
+                            <br />
+                            <span
+                              style={{
+                                color: this.renderTooltipLabelColor(
+                                  Object.keys(this.state.setTooltipContent[2])
+                                ),
+                                fontWeight: "bold",
+                                fontSize: 16,
+                              }}
+                            >
+                              {Object.keys(this.state.setTooltipContent[2])}{" "}
+                              {": "}
+                              {Object.values(
+                                this.state.setTooltipContent[2]
+                              )}{" "}
+                              <span
+                                style={{ fontSize: 20, fontWeight: "bold" }}
+                              >
+                                &#9650;
+                              </span>
+                              {Object.values(this.state.setTooltipContent[4])}
+                            </span>
+                            <br />
+                            <span
+                              style={{
+                                color: this.renderTooltipLabelColor(
+                                  Object.keys(this.state.setTooltipContent[3])
+                                ),
+                                fontWeight: "bold",
+                                fontSize: 16,
+                              }}
+                            >
+                              {Object.keys(this.state.setTooltipContent[3])}{" "}
+                              {": "}
+                              {Object.values(this.state.setTooltipContent[3])}
+                            </span>
+                            <br />
+                          </div>
+                        ) : (
+                          ""
+                        )}
                       </ReactTooltip>
                     </div>
                   </div>
@@ -1086,11 +1211,11 @@ class App extends Component {
                   </div>
                 ) : (
                   <div className="row">
-                    {this.state.cards.length !== 0
-                      ? Object.values(this.state.cards[0].countryitems[0])
+                    {this.state.globalData.length !== 0
+                      ? this.state.globalData
                           .filter(
                             (location) =>
-                              typeof location.title !== "undefined" &&
+                              location.title !== "World" &&
                               location.title
                                 .toLowerCase()
                                 .includes(this.state.searchString)
@@ -1133,9 +1258,9 @@ class App extends Component {
                                       }}
                                     >
                                       <div>
-                                        {location.total_cases}
-                                        {location.total_new_cases_today ===
-                                        0 ? null : (
+                                        {location.confirmed}
+                                        {location.confirmed_today ===
+                                        "" ? null : (
                                           <span
                                             style={{
                                               fontSize: 12,
@@ -1151,7 +1276,7 @@ class App extends Component {
                                             >
                                               &#9650;
                                             </span>
-                                            {location.total_new_cases_today}
+                                            {location.confirmed_today}
                                           </span>
                                         )}
                                       </div>
@@ -1163,7 +1288,7 @@ class App extends Component {
                                         fontWeight: "bold",
                                       }}
                                     >
-                                      <div>{location.total_active_cases}</div>
+                                      <div>{location.active}</div>
                                       <div>Active</div>
                                     </div>
                                     <div
@@ -1173,9 +1298,8 @@ class App extends Component {
                                       }}
                                     >
                                       <div>
-                                        {location.total_deaths}
-                                        {location.total_new_deaths_today ===
-                                        0 ? null : (
+                                        {location.deaths}
+                                        {location.deaths_today === "" ? null : (
                                           <span
                                             style={{
                                               fontSize: 12,
@@ -1191,7 +1315,7 @@ class App extends Component {
                                             >
                                               &#9650;
                                             </span>
-                                            {location.total_new_deaths_today}
+                                            {location.deaths_today}
                                           </span>
                                         )}
                                       </div>
@@ -1203,7 +1327,7 @@ class App extends Component {
                                         fontWeight: "bold",
                                       }}
                                     >
-                                      <div>{location.total_recovered}</div>
+                                      <div>{location.recovered}</div>
                                       <div>Recovered</div>
                                     </div>
                                     <div
@@ -1212,8 +1336,17 @@ class App extends Component {
                                         fontWeight: "bold",
                                       }}
                                     >
-                                      <div>{location.total_serious_cases}</div>
+                                      <div>{location.critical}</div>
                                       <div>Serious</div>
+                                    </div>
+                                    <div
+                                      style={{
+                                        padding: 20,
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      <div>{location.totaltests}</div>
+                                      <div>Tests</div>
                                     </div>
                                   </div>
                                 </div>
