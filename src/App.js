@@ -596,9 +596,9 @@ class App extends Component {
                           <div
                             onClick={() => {
                               ReactGA.event({
-                                category: "India Info",
-                                action: "Confirmed Info Clicked",
-                                label: "Confirm Info",
+                                category: "Global Info",
+                                action: "Global Confirmed Info Clicked",
+                                label: "Global Confirm Info",
                               });
                               this.setState({
                                 confirmedOpen: !this.state.confirmedOpen,
@@ -737,9 +737,9 @@ class App extends Component {
                           <div
                             onClick={() => {
                               ReactGA.event({
-                                category: "India Info",
-                                action: "Confirmed Info Clicked",
-                                label: "Confirm Info",
+                                category: "Global Info",
+                                action: "Global Deaths Info Clicked",
+                                label: "Global Deaths Info",
                               });
                               this.setState({
                                 deathsOpen: !this.state.deathsOpen,
