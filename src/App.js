@@ -448,9 +448,7 @@ class App extends Component {
             })
         : [];
 
-    if (this.state.displayBySort !== "All") {
-      pieChartData = pieChartData.sort(Comparator).slice(0, 10);
-    }
+    pieChartData = pieChartData.sort(Comparator).slice(0, 10);
 
     let Columns = [
       { type: "string", label: "name" },
@@ -726,7 +724,7 @@ class App extends Component {
                     }}
                   >
                     <div className="row" style={{ justifyContent: "center" }}>
-                      <div className="col-sm-4">
+                      <div className="col-sm-6">
                         <Select
                           isClearable={false}
                           isSearchable={false}
@@ -739,35 +737,12 @@ class App extends Component {
                             });
                           }}
                           styles={colourStyles}
-                          placeholder="Confirmed"
+                          placeholder="Top 10 Confirmed"
                           options={[
-                            { value: "confirmed", label: "Confirmed" },
-                            { value: "active", label: "Active" },
-                            { value: "deaths", label: "Deaths" },
-                            { value: "recovered", label: "Recovered" },
-                          ]}
-                        />
-                      </div>
-                      <div className="col-sm-4">
-                        <Select
-                          isClearable={false}
-                          onChange={(selectedOption) => {
-                            this.setState({
-                              displayBySort:
-                                selectedOption === null
-                                  ? "All"
-                                  : selectedOption.value,
-                            });
-                          }}
-                          isSearchable={false}
-                          styles={colourStyles}
-                          placeholder="All"
-                          options={[
-                            { value: "All", label: "All" },
-                            {
-                              value: "Top 10",
-                              label: "Top 10",
-                            },
+                            { value: "confirmed", label: "Top 10 Confirmed" },
+                            { value: "active", label: "Top 10 Active" },
+                            { value: "deaths", label: "Top 10 Deaths" },
+                            { value: "recovered", label: "Top 10 Recovered" },
                           ]}
                         />
                       </div>
