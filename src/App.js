@@ -16,6 +16,7 @@ import CustomChart from "./PieChart/CustomChart";
 import DataMap from "./DataMap/DataMap";
 import ReactTooltip from "react-tooltip";
 import _ from "lodash";
+import Popover from "react-popover";
 
 class App extends Component {
   constructor(props) {
@@ -533,7 +534,14 @@ class App extends Component {
                           )[0].confirmed
                         : 0}
                     </div>
-                    <div style={{ fontSize: 18, marginBottom: 10 }}>
+                    <div
+                      style={{
+                        fontSize: 18,
+                        marginBottom: 10,
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    >
                       <span style={{ fontSize: 20, fontWeight: "bold" }}>
                         &#9650;
                       </span>{" "}
@@ -542,6 +550,67 @@ class App extends Component {
                             (state) => state.title === "World"
                           )[0].confirmed_today
                         : 0}
+                      {this.state.globalData.length !== 0 &&
+                      Number(
+                        this.state.globalData.filter(
+                          (state) => state.title === "World"
+                        )[0].confirmed_today
+                      ) !== 0 ? (
+                        <Popover
+                          body={
+                            <div
+                              style={{
+                                maxHeight: 400,
+                                overflowY: "scroll",
+                                borderRight: 10,
+                                background: "white",
+                                borderRadius: 10,
+                                padding: 15,
+                                color: "#192a56",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {this.state.globalData
+                                .filter(
+                                  (state) =>
+                                    state.title !== "World" &&
+                                    state.confirmed_today !== ""
+                                )
+                                .map((state, index) => {
+                                  return (
+                                    <div key={index}>
+                                      {state.title}: {state.confirmed_today}
+                                    </div>
+                                  );
+                                })}
+                            </div>
+                          }
+                          preferPlace={"below"}
+                          isOpen={this.state.confirmedOpen}
+                          onOuterAction={() =>
+                            this.setState({
+                              confirmedOpen: !this.state.confirmedOpen,
+                            })
+                          }
+                        >
+                          <div
+                            onClick={() => {
+                              ReactGA.event({
+                                category: "India Info",
+                                action: "Confirmed Info Clicked",
+                                label: "Confirm Info",
+                              });
+                              this.setState({
+                                confirmedOpen: !this.state.confirmedOpen,
+                              });
+                            }}
+                            className="report-tile"
+                            style={{ marginLeft: 5, cursor: "pointer" }}
+                          >
+                            ?
+                          </div>
+                        </Popover>
+                      ) : null}
                     </div>
                     <div style={{ fontSize: 18 }}>Confirmed</div>
                   </div>
@@ -606,7 +675,14 @@ class App extends Component {
                           )[0].deaths
                         : 0}
                     </div>
-                    <div style={{ fontSize: 18, marginBottom: 10 }}>
+                    <div
+                      style={{
+                        fontSize: 18,
+                        marginBottom: 10,
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    >
                       <span style={{ fontSize: 20, fontWeight: "bold" }}>
                         &#9650;
                       </span>{" "}
@@ -615,6 +691,67 @@ class App extends Component {
                             (state) => state.title === "World"
                           )[0].deaths_today
                         : 0}
+                      {this.state.globalData.length !== 0 &&
+                      Number(
+                        this.state.globalData.filter(
+                          (state) => state.title === "World"
+                        )[0].deaths_today
+                      ) !== 0 ? (
+                        <Popover
+                          body={
+                            <div
+                              style={{
+                                maxHeight: 400,
+                                overflowY: "scroll",
+                                borderRight: 10,
+                                background: "white",
+                                borderRadius: 10,
+                                padding: 15,
+                                color: "#192a56",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {this.state.globalData
+                                .filter(
+                                  (state) =>
+                                    state.title !== "World" &&
+                                    state.deaths_today !== ""
+                                )
+                                .map((state, index) => {
+                                  return (
+                                    <div key={index}>
+                                      {state.title}: {state.deaths_today}
+                                    </div>
+                                  );
+                                })}
+                            </div>
+                          }
+                          preferPlace={"below"}
+                          isOpen={this.state.deathsOpen}
+                          onOuterAction={() =>
+                            this.setState({
+                              deathsOpen: !this.state.deathsOpen,
+                            })
+                          }
+                        >
+                          <div
+                            onClick={() => {
+                              ReactGA.event({
+                                category: "India Info",
+                                action: "Confirmed Info Clicked",
+                                label: "Confirm Info",
+                              });
+                              this.setState({
+                                deathsOpen: !this.state.deathsOpen,
+                              });
+                            }}
+                            className="report-tile"
+                            style={{ marginLeft: 5, cursor: "pointer" }}
+                          >
+                            ?
+                          </div>
+                        </Popover>
+                      ) : null}
                     </div>
                     <div style={{ fontSize: 18 }}>Deaths</div>
                   </div>
