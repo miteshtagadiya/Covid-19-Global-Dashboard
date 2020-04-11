@@ -2,6 +2,8 @@ import React from "react";
 import {
   LineChart,
   BarChart,
+  AreaChart,
+  Area,
   Line,
   Bar,
   XAxis,
@@ -26,27 +28,6 @@ const SimpleLineChart = (props) => {
           { name: "July", uv: 3490, pv: 4300, amt: 2100 },
         ]
       : props.data;
-
-  const getIntroOfPage = (label) => {
-    if (label === "Page A") {
-      return "Page A is about men's clothing";
-    }
-    if (label === "Page B") {
-      return "Page B is about women's dress";
-    }
-    if (label === "Page C") {
-      return "Page C is about women's bag";
-    }
-    if (label === "Page D") {
-      return "Page D is about household goods";
-    }
-    if (label === "Page E") {
-      return "Page E is about food";
-    }
-    if (label === "Page F") {
-      return "Page F is about baby food";
-    }
-  };
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active) {
@@ -102,31 +83,41 @@ const SimpleLineChart = (props) => {
     return null;
   };
 
-  let Chart = props.chart ? (props.chart === "LineChart" ? Line : Bar) : Line;
-  let Type = props.chart
-    ? props.chart === "LineChart"
-      ? LineChart
-      : BarChart
-    : LineChart;
+  let ChartName = (chart) => {
+    switch (chart) {
+      case "LineChart":
+        return LineChart;
+      case "BarChart":
+        return BarChart;
+      case "AreaChart":
+        return AreaChart;
+      default:
+        return LineChart;
+    }
+  };
+
+  let selectChart = (chart) => {
+    switch (chart) {
+      case "LineChart":
+        return Line;
+      case "BarChart":
+        return Bar;
+      case "AreaChart":
+        return Area;
+      default:
+        return Line;
+    }
+  };
+
+  let Chart = selectChart(props.chart);
+  let Type = ChartName(props.chart);
   return (
     <div
       className="container-Linechart"
       style={props.height ? { height: props.height } : { height: 270 }}
     >
       <ResponsiveContainer>
-        <Type
-          width={500}
-          height={100}
-          data={data}
-
-          //   data={data}
-          //   margin={{
-          //     top: 5,
-          //     right: 30,
-          //     left: 20,
-          //     bottom: 5
-          //   }}
-        >
+        <Type width={500} height={100} data={data}>
           <CartesianGrid strokeDasharray="3 3" />
 
           <XAxis hide={false} dataKey={props.axis ? props.axis : "name"} />
