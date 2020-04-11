@@ -4,7 +4,10 @@ import India from "./India";
 import ReactGA from "react-ga";
 import { createBrowserHistory } from "history";
 import App from "./App";
-
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import brands from "@fortawesome/fontawesome-free-brands";
+library.add(fas, brands);
 const history = createBrowserHistory();
 
 ReactGA.initialize("UA-162840601-1", { debug: true });
