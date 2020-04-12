@@ -1,0 +1,40 @@
+.container-Linechart{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 10px 10px 0px 10px;
+    width: 100%;
+    height: 270px;
+}
+.container-Linechart .recharts-legend-wrapper{
+        position: absolute;
+        left: 0px !important;
+}
+
+.recharts-text .recharts-cartesian-axis-tick-value{
+    font-weight: bold !important;
+    color: #404b69 !important;
+}
+.container-Linechart .recharts-default-legend{
+        margin-bottom: 10px !important;
+}
+.recharts-legend-item-text{
+    color: #404b69;
+    font-size: 14px !important;
+}
+
+.recharts-legend-item{
+    min-width: 90px;
+}
+.recharts-surface{
+    margin-left: -30px !important;
+}
+.recharts-cartesian-axis {
+    font-family: 'Work Sans' !important;
+    font-size: 11px !important;
+    color: #404b69 !important;
+    font-weight: bold !important;
+}
+.recharts-tooltip-label{
+    color: #404b69 !important;
+}
