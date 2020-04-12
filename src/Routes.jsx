@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { Switch, Route, withRouter } from "react-router-dom";
-import India from "./India";
+import India from "./components/container/India/India";
 import ReactGA from "react-ga";
 import { createBrowserHistory } from "history";
-import App from "./App";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import brands from "@fortawesome/fontawesome-free-brands";
+import Global from "./components/container/Global/Global";
 library.add(fas, brands);
 const history = createBrowserHistory();
 
@@ -26,7 +26,7 @@ export class Index extends Component {
         <React.Fragment>
           <Switch>
             <Route path="/india" component={India} />
-            <Route path="/" component={App} />
+            <Route path="/" component={Global} />
           </Switch>
         </React.Fragment>
       </div>
