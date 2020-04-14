@@ -207,8 +207,8 @@ class Global extends Component {
               <NavigationBar
                 type="Global"
                 ui={this.state.ui}
-                options={["Analytics", "Card", "Table", "Map", "Chart"]}
-                optionRoutes={["/", "/card", "/table", "/map", "/chart"]}
+                options={["Analytics", "Card", "Table", "Map"]}
+                optionRoutes={["/", "/card", "/table", "/map"]}
                 onClick={(route) => {
                   this.setState({
                     ui: route,
@@ -267,7 +267,7 @@ class Global extends Component {
                     });
                   }}
                 />
-              ) : null}{" "}
+              ) : null}
               {this.state.ui === "/chart" ? (
                 <ChartsCard
                   locationLoader={this.state.locationLoader}
