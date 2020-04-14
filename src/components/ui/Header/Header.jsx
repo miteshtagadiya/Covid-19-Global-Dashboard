@@ -9,17 +9,13 @@ const Header = (props) => {
     <div>
       <div className="Header">
         Covid-19 Global {props.width < 1024 ? "" : "Dashboard"}
-        <img
-          onClick={() =>
-            window.open(
-              "https://github.com/miteshtagadiya/Covid-19-Global-Dashboard",
-              "_blank"
-            )
-          }
-          src={Github}
-          alt="github"
-          className="github-icon"
-        />
+        <a
+          href="https://github.com/miteshtagadiya/Covid-19-Global-Dashboard"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img src={Github} alt="github" className="github-icon" />
+        </a>
       </div>
       <div className="Switch-dashboard">
         <img
