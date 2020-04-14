@@ -110,7 +110,6 @@ class India extends Component {
     })
       .then((res) => res.json())
       .then((response) => {
-        console.log(response);
         this.setState({
           dailyStatus: response.states_daily,
           locationLoader: false,
@@ -243,6 +242,7 @@ class India extends Component {
                     />
                   </div>
                   <Cards
+                    dailyStatus={this.state.dailyStatus}
                     locationLoader={this.state.locationLoader}
                     india={this.state.india}
                     searchString={this.state.searchString}
