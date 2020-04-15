@@ -200,7 +200,11 @@ class Global extends Component {
         <div className="Global">
           <div className="container">
             <div>
-              <Header history={this.props.history} width={this.state.width} />
+              <Header
+                dashboard={"Global"}
+                history={this.props.history}
+                width={this.state.width}
+              />
             </div>
             <div style={{ minHeight: "90vh" }}>
               <NumberCard globalData={this.state.globalData} />
