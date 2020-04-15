@@ -163,7 +163,11 @@ class India extends Component {
         <div className="App India">
           <div className="container">
             <div>
-              <Header history={this.props.history} width={this.state.width} />
+              <Header
+                dashboard={"India"}
+                history={this.props.history}
+                width={this.state.width}
+              />
             </div>
             <div style={{ minHeight: "90vh" }}>
               <NumbersCard india={this.state.india} />
