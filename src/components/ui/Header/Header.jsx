@@ -8,7 +8,7 @@ const Header = (props) => {
   return (
     <div>
       <div className="Header">
-        Covid-19 Global {props.width < 1024 ? "" : "Dashboard"}
+        Covid-19 {props.dashboard} {props.width < 1024 ? "" : " Dashboard"}
         <a
           href="https://github.com/miteshtagadiya/Covid-19-Global-Dashboard"
           target="_blank"
