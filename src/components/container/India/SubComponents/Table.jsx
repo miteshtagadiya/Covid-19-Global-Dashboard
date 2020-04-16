@@ -153,12 +153,9 @@ class Table extends Component {
                   city: key,
                   confirmed: this.props.stateWiseCity[city].districtData[key]
                     .confirmed,
-                  active: this.props.stateWiseCity[city].districtData[key]
-                    .active,
-                  recovered: this.props.stateWiseCity[city].districtData[key]
-                    .recovered,
-                  deaths: this.props.stateWiseCity[city].districtData[key]
-                    .deaths,
+                  deltaConfirmed: this.props.stateWiseCity[city].districtData[
+                    key
+                  ]["delta"]["confirmed"],
                 };
               }),
             };
@@ -175,18 +172,27 @@ class Table extends Component {
             {
               Header: "Confirmed",
               accessor: "confirmed",
-            },
-            {
-              Header: "Active",
-              accessor: "active",
-            },
-            {
-              Header: "Recovered",
-              accessor: "recovered",
-            },
-            {
-              Header: "Deaths",
-              accessor: "deaths",
+              Cell: (props) => {
+                return (
+                  <>
+                    {props.original.deltaConfirmed === 0 ? null : (
+                      <span
+                        style={{
+                          fontSize: 15,
+                          fontWeight: "bold",
+                          color: "#e43339",
+                        }}
+                      >
+                        <span style={{ fontSize: 15, fontWeight: "bold" }}>
+                          &#9650;
+                        </span>
+                        {props.original.deltaConfirmed}
+                      </span>
+                    )}{" "}
+                    <span className="number">{props.value}</span>
+                  </>
+                );
+              },
             },
           ]
         : [];
