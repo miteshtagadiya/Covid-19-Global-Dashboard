@@ -37,7 +37,7 @@ class Cards extends Component {
     };
 
     return (
-      <div className="row">
+      <div className="row india-state-card">
         {this.props.locationLoader === true ? (
           <div>
             <img src={Virus} alt="Loader" />
@@ -73,28 +73,8 @@ class Cards extends Component {
 
               return location.state !== "Total" ? (
                 <div key={index} className="col-sm-4" style={{ padding: 15 }}>
-                  <div
-                    style={{
-                      textAlign: "center",
-                      borderRadius: 10,
-                      background: "white",
-                      color: "#404b69",
-                    }}
-                  >
-                    <label
-                      style={{
-                        borderTopLeftRadius: 10,
-                        borderTopRightRadius: 10,
-                        color: "white",
-                        width: "100%",
-                        fontSize: 18,
-                        fontWeight: "bold",
-                        padding: 10,
-                        background: "#404b69",
-                      }}
-                    >
-                      {location.state}
-                    </label>
+                  <div className="state-card">
+                    <label className="state-card-label">{location.state}</label>
                     <br />
                     <div
                       className="row justify-content-center"
