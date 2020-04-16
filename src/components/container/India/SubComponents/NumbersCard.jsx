@@ -110,15 +110,15 @@ class NumbersCard extends Component {
         : [];
 
     return (
-      <div className="row" style={{ padding: "50px 0px 30px 0px" }}>
+      <div
+        className="row numeric-card"
+        style={{ padding: "50px 0px 30px 0px" }}
+      >
         <div className="col-sm-3 col-6" style={{ padding: 15 }}>
           <div
+            className="numeric-card-body"
             style={{
-              padding: 20,
-              fontWeight: "bold",
               background: "#448AFF",
-              color: "white",
-              borderRadius: 10,
             }}
           >
             <div style={{ fontSize: 30 }}>
@@ -211,12 +211,9 @@ class NumbersCard extends Component {
         </div>
         <div className="col-sm-3 col-6" style={{ padding: 15 }}>
           <div
+            className="numeric-card-body"
             style={{
-              padding: 20,
-              fontWeight: "bold",
               background: "#F9A825",
-              color: "#ffffff",
-              borderRadius: 10,
             }}
           >
             <div style={{ fontSize: 30, marginBottom: 35 }}>
@@ -241,12 +238,9 @@ class NumbersCard extends Component {
         </div>
         <div className="col-sm-3 col-6" style={{ padding: 15 }}>
           <div
+            className="numeric-card-body"
             style={{
-              padding: 20,
-              fontWeight: "bold",
               background: "#4CAF50",
-              color: "#ffffff",
-              borderRadius: 10,
             }}
           >
             <div style={{ fontSize: 30 }}>
@@ -339,12 +333,9 @@ class NumbersCard extends Component {
         </div>
         <div className="col-sm-3 col-6" style={{ padding: 15 }}>
           <div
+            className="numeric-card-body"
             style={{
-              padding: 20,
-              fontWeight: "bold",
               background: "#FF5252",
-              color: "#ffffff",
-              borderRadius: 10,
             }}
           >
             <div style={{ fontSize: 30 }}>
