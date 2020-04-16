@@ -481,7 +481,7 @@ class Analytics extends Component {
         <div className="col-sm-6 col-12">
           <div
             style={{
-              minHeight: 368,
+              minHeight: 410,
               background: "linear-gradient(to right, #d9a7c7, #fffcdc)",
               paddingBottom: 15,
               paddingLeft: 15,
@@ -500,7 +500,7 @@ class Analytics extends Component {
               colors={["#192a56"]}
             />
             <GradientCardFooter
-              content={`*Awaiting details for ${unknown} patients, as they do NOT represent share of deaths by age group.`}
+              content={`*Awaiting details for ${unknown} patients.`}
             />
           </div>
         </div>
@@ -554,7 +554,7 @@ class Analytics extends Component {
             </div>
             <SimplePieChart data={genderGroup} />
             <GradientCardFooter
-              content={`*Awaiting details for ${unknownGender} patients, as they do NOT represent share of deaths by age group.`}
+              content={`*Awaiting details for ${unknownGender} patients.`}
             />
           </div>
         </div>
@@ -593,7 +593,7 @@ class Analytics extends Component {
                   : countries.filter(
                       (country) => Object.keys(country)[0] === ""
                     )[0]
-              } patients, as they do NOT represent share of deaths by age group.`}
+              } patients.`}
             />
           </div>
         </div>
