@@ -9,6 +9,7 @@ jobs:
       - checkout
       - node/with-cache:
           steps:
+            - unset CI
             - run: npm install
             - run: npm run build
 workflows:
