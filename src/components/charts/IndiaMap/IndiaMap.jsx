@@ -185,7 +185,7 @@ const IndiaMap = ({ data, onStateClick }) => {
                   geography={geo}
                   fill={current ? colorScale(current.active) : DEFAULT_COLOR}
                   style={geographyStyle}
-                  onClick={() => onStateClick(current.state)}
+                  onClick={() => onStateClick(current)}
                   onMouseEnter={onMouseEnter(geo, current)}
                   onMouseLeave={onMouseLeave}
                 />
