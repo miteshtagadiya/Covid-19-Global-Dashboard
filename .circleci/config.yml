@@ -9,10 +9,8 @@ jobs:
       - checkout
       - node/with-cache:
           steps:
-            env:
-              CI: false
             - run: npm install
-            - run: npm run build
+            - run: CI=false npm run build
 workflows:
     build-and-test:
       jobs:
