@@ -185,6 +185,275 @@ const StateWiseMap = ({ data, stateName }) => {
     }
   };
 
+  const getScale = (name) => {
+    switch (name) {
+      case "andamannicobarislands":
+        return 1000;
+      case "arunachalpradesh":
+        return 2200;
+      case "andhrapradesh":
+        return 1300;
+      case "assam":
+        return 2200;
+      case "bihar":
+        return 2700;
+      case "chandigarh":
+        return 3000;
+      case "chhattisgarh":
+        return 1600;
+      case "dadranagarhaveli":
+        return 10000;
+      case "delhi":
+        return 23000;
+      case "karnataka":
+        return 1600;
+      case "kerala":
+        return 2400;
+      case "goa":
+        return 12000;
+      case "gujarat":
+        return 2100;
+      case "haryana":
+        return 3300;
+      case "himachalpradesh":
+        return 3400;
+      case "jammukashmir":
+        return 3700;
+      case "jharkhand":
+        return 2800;
+      case "ladakh":
+        return 3300;
+      case "lakshadweep":
+        return 2000;
+      case "madhyapradesh":
+        return 1400;
+      case "maharashtra":
+        return 1500;
+      case "manipur":
+        return 5000;
+      case "meghalaya":
+        return 4300;
+      case "mizoram":
+        return 4400;
+      case "nagaland":
+        return 5500;
+      case "odisha":
+        return 2100;
+      case "puducherry":
+        return 2000;
+      case "punjab":
+        return 3500;
+      case "rajasthan":
+        return 1400;
+      case "sikkim":
+        return 6000;
+      case "nadu":
+        return 580;
+      case "telangana":
+        return 2600;
+      case "tripura":
+        return 6000;
+      case "uttarakhand":
+        return 3600;
+      case "uttarpradesh":
+        return 1500;
+      case "westbengal":
+        return 2000;
+      default:
+        return 2100;
+    }
+  };
+
+  const getCenter = (name) => {
+    switch (name) {
+      case "andamannicobarislands":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 3,
+          getGeoFile(stateName)["transform"]["translate"][1] + 2,
+        ];
+      case "arunachalpradesh":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 3,
+          getGeoFile(stateName)["transform"]["translate"][1] + 1.5,
+        ];
+      case "andhrapradesh":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 3,
+          getGeoFile(stateName)["transform"]["translate"][1] + 4,
+        ];
+      case "assam":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 3,
+          getGeoFile(stateName)["transform"]["translate"][1] + 2,
+        ];
+      case "bihar":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 2.5,
+          getGeoFile(stateName)["transform"]["translate"][1] + 1.5,
+        ];
+      case "chandigarh":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 3,
+          getGeoFile(stateName)["transform"]["translate"][1] + 2,
+        ];
+      case "chhattisgarh":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 3,
+          getGeoFile(stateName)["transform"]["translate"][1] + 3.2,
+        ];
+      case "dadranagarhaveli":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 0.2,
+          getGeoFile(stateName)["transform"]["translate"][1] + 0.8,
+        ];
+      case "delhi":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 0.2,
+          getGeoFile(stateName)["transform"]["translate"][1] + 0.25,
+        ];
+      case "karnataka":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 3,
+          getGeoFile(stateName)["transform"]["translate"][1] + 3.5,
+        ];
+      case "kerala":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 2,
+          getGeoFile(stateName)["transform"]["translate"][1] + 2,
+        ];
+      case "goa":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 0.5,
+          getGeoFile(stateName)["transform"]["translate"][1] + 0.5,
+        ];
+      case "gujarat":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 3,
+          getGeoFile(stateName)["transform"]["translate"][1] + 2.5,
+        ];
+      case "haryana":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 1.5,
+          getGeoFile(stateName)["transform"]["translate"][1] + 1.7,
+        ];
+      case "himachalpradesh":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 1.6,
+          getGeoFile(stateName)["transform"]["translate"][1] + 1.5,
+        ];
+      case "jammukashmir":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 1.5,
+          getGeoFile(stateName)["transform"]["translate"][1] + 1.5,
+        ];
+      case "jharkhand":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 2.2,
+          getGeoFile(stateName)["transform"]["translate"][1] + 1.7,
+        ];
+      case "ladakh":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 3,
+          getGeoFile(stateName)["transform"]["translate"][1] + 2,
+        ];
+      case "lakshadweep":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] - 2,
+          getGeoFile(stateName)["transform"]["translate"][1] + 1,
+        ];
+      case "madhyapradesh":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 4,
+          getGeoFile(stateName)["transform"]["translate"][1] + 3,
+        ];
+      case "maharashtra":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 3.7,
+          getGeoFile(stateName)["transform"]["translate"][1] + 3.3,
+        ];
+      case "manipur":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 1,
+          getGeoFile(stateName)["transform"]["translate"][1] + 1,
+        ];
+      case "meghalaya":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 1.5,
+          getGeoFile(stateName)["transform"]["translate"][1] + 0.7,
+        ];
+      case "mizoram":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 1,
+          getGeoFile(stateName)["transform"]["translate"][1] + 1.3,
+        ];
+      case "nagaland":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 1,
+          getGeoFile(stateName)["transform"]["translate"][1] + 0.9,
+        ];
+      case "odisha":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 3,
+          getGeoFile(stateName)["transform"]["translate"][1] + 2.5,
+        ];
+      case "puducherry":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 3,
+          getGeoFile(stateName)["transform"]["translate"][1] + 2,
+        ];
+      case "punjab":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 1.4,
+          getGeoFile(stateName)["transform"]["translate"][1] + 1.5,
+        ];
+      case "rajasthan":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 4,
+          getGeoFile(stateName)["transform"]["translate"][1] + 3.5,
+        ];
+      case "sikkim":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 0.3,
+          getGeoFile(stateName)["transform"]["translate"][1] + 0.5,
+        ];
+      case "nadu":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 5,
+          getGeoFile(stateName)["transform"]["translate"][1] + 11,
+        ];
+      case "telangana":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 1.5,
+          getGeoFile(stateName)["transform"]["translate"][1] + 2,
+        ];
+      case "tripura":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 0.6,
+          getGeoFile(stateName)["transform"]["translate"][1] + 0.8,
+        ];
+      case "uttarakhand":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 1.6,
+          getGeoFile(stateName)["transform"]["translate"][1] + 1.4,
+        ];
+      case "uttarpradesh":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 3,
+          getGeoFile(stateName)["transform"]["translate"][1] + 3.4,
+        ];
+      case "westbengal":
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 3,
+          getGeoFile(stateName)["transform"]["translate"][1] + 3,
+        ];
+      default:
+        return [
+          getGeoFile(stateName)["transform"]["translate"][0] + 3,
+          getGeoFile(stateName)["transform"]["translate"][1] + 2.5,
+        ];
+    }
+  };
+
   return (
     <div className="indiamap">
       {tooltipContent !== "" ? (
@@ -225,15 +494,10 @@ const StateWiseMap = ({ data, stateName }) => {
           </div>
         </ReactTooltip>
       ) : null}
-      {console.log(stateName)}
-      {console.log(getGeoFile(stateName)["transform"]["translate"])}
       <ComposableMap
         projectionConfig={{
-          scale: 1000,
-          center: [
-            getGeoFile(stateName)["transform"]["translate"][0] + 3,
-            getGeoFile(stateName)["transform"]["translate"][1] + 2,
-          ],
+          scale: getScale(stateName),
+          center: getCenter(stateName),
         }}
         projection="geoMercator"
         height={
