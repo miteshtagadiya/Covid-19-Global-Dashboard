@@ -2,24 +2,23 @@ import React, { Component } from "react";
 import "./App.css";
 import Select from "react-select";
 import ReactTable from "react-table-6";
-import SimpleLineChart from "./SimpleLineChart/SimpleLineChart";
+import SimpleLineChart from "components/charts/SimpleLineChart/SimpleLineChart";
 import "react-table-6/react-table.css";
-import Pagination from "./Pagination";
-import IndiaIcon from "./assets/india.png";
-import World from "./assets/world.png";
-import Github from "./assets/github1.png";
-import Virus from "./assets/virus.gif";
-import ErrorBoundary from "./ErrorBoundry";
-import Countrys from "./CountryList.json";
+import Pagination from "components/ui/Pagination/Pagination";
+import IndiaIcon from "assets/india.png";
+import World from "assets/world.png";
+import Github from "assets/github1.png";
+import Virus from "assets/virus.gif";
+import ErrorBoundary from "components/ui/ErrorBoundry/ErrorBoundry";
+import Countrys from "utils/CountryList.json";
 import ReactGA from "react-ga";
-import CustomChart from "./PieChart/CustomChart";
-import DataMap from "./DataMap/DataMap";
+import CustomChart from "components/charts/PieChart/CustomChart";
+import DataMap from "components/charts/DataMap/DataMap";
 import ReactTooltip from "react-tooltip";
 import _ from "lodash";
 import Popover from "react-popover";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import "./Navbar.sass";
-import SimplePieChart from "./SimplePieChart/SimplePieChart";
+import SimplePieChart from "components/charts/SimplePieChart/SimplePieChart";
 
 class App extends Component {
   constructor(props) {
