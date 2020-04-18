@@ -12,6 +12,7 @@ import Header from "components/ui/Header/Header";
 import NumbersCard from "components/container/India/SubComponents/NumbersCard";
 import NavigationBar from "components/ui/NavigationBar/NavigationBar";
 import Analytics from "components/container/India/SubComponents/Analytics";
+import StateWiseMap from "../../charts/IndiaMap/StateWiseMap";
 
 class India extends Component {
   constructor(props) {
@@ -157,6 +158,85 @@ class India extends Component {
     window.removeEventListener("resize", this.updateDimensions);
   }
 
+  filterStateName = (name) => {
+    switch (name) {
+      case "Andaman and Nicobar Islands":
+        return "andamannicobarislands";
+      case "Arunachal Pradesh":
+        return "arunachalpradesh";
+      case "Andhra Pradesh":
+        return "andhrapradesh";
+      case "Assam":
+        return "assam";
+      case "Bihar":
+        return "bihar";
+      case "Chandigarh":
+        return "chandigarh";
+      case "Chhattisgarh":
+        return "chhattisgarh";
+      case "Dadara and Nagar Havelli":
+        return "dadranagarhaveli";
+      case "Delhi":
+        return "delhi";
+      case "Karnataka":
+        return "karnataka";
+      case "Kerala":
+        return "kerala";
+      case "Goa":
+        return "goa";
+      case "Gujarat":
+        return "gujarat";
+      case "Haryana":
+        return "haryana";
+      case "Himachal Pradesh":
+        return "himachalpradesh";
+      case "Jammu and Kashmir":
+        return "jammukashmir";
+      case "Jharkhand":
+        return "jharkhand";
+      case "Ladakh":
+        return "ladakh";
+      case "Lakshadweep":
+        return "lakshadweep";
+      case "Madhya Pradesh":
+        return "madhyapradesh";
+      case "Maharashtra":
+        return "maharashtra";
+      case "Manipur":
+        return "manipur";
+      case "Meghalaya":
+        return "meghalaya";
+      case "Mizoram":
+        return "mizoram";
+      case "Nagaland":
+        return "nagaland";
+      case "Odisha":
+        return "odisha";
+      case "Puducherry":
+        return "puducherry";
+      case "Punjab":
+        return "punjab";
+      case "Rajasthan":
+        return "rajasthan";
+      case "Sikkim":
+        return "sikkim";
+      case "Tamil Nadu":
+        return "nadu";
+      case "Telangana":
+        return "telangana";
+      case "Tripura":
+        return "tripura";
+      case "Uttarakhand":
+        return "uttarakhand";
+      case "Uttar Pradesh":
+        return "uttarpradesh";
+      case "West Bengal":
+        return "westbengal";
+      default:
+        return "gujarat";
+    }
+  };
+
   render() {
     return (
       <ErrorBoundary>
@@ -220,15 +300,53 @@ class India extends Component {
                     className="col-sm-12"
                     style={{ marginTop: 60, marginBottom: 80 }}
                   >
-                    <IndiaMap
-                      data={
-                        this.state.india.length !== 0
-                          ? this.state.india.statewise.filter(
-                              (state) => state.state !== "Total"
-                            )
-                          : []
-                      }
-                    />
+                    {console.log(this.state.originalStateName)}
+                    {this.state.showState === true ? (
+                      <div>
+                        {console.log(
+                          this.state.india.statewise.filter(
+                            (state) =>
+                              state.state === this.state.originalStateName
+                          )[0]
+                        )}
+                        <div
+                          onClick={() =>
+                            this.setState({
+                              showState: false,
+                            })
+                          }
+                        >
+                          Back
+                        </div>
+                        <StateWiseMap
+                          stateName={this.state.stateName}
+                          data={
+                            this.state.stateWiseCity.length !== 0
+                              ? this.state.stateWiseCity[
+                                  this.state.originalStateName
+                                ]["districtData"]
+                              : []
+                          }
+                        />
+                      </div>
+                    ) : (
+                      <IndiaMap
+                        onStateClick={(state) =>
+                          this.setState({
+                            showState: true,
+                            stateName: this.filterStateName(state),
+                            originalStateName: state,
+                          })
+                        }
+                        data={
+                          this.state.india.length !== 0
+                            ? this.state.india.statewise.filter(
+                                (state) => state.state !== "Total"
+                              )
+                            : []
+                        }
+                      />
+                    )}
                   </div>
                 </div>
               ) : null}
