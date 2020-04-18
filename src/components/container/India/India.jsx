@@ -9,6 +9,7 @@ import Table from "components/container/India/SubComponents/Table";
 import Cards from "components/container/India/SubComponents/Cards";
 import "components/container/India/India.sass";
 import Header from "components/ui/Header/Header";
+import GradientCardTitle from "components/ui/GradientCardTitle/GradientCardTitle";
 import NumbersCard from "components/container/India/SubComponents/NumbersCard";
 import NavigationBar from "components/ui/NavigationBar/NavigationBar";
 import Analytics from "components/container/India/SubComponents/Analytics";
@@ -28,6 +29,7 @@ class India extends Component {
       activeOpen: false,
       filterByCases: "confirmed",
       changeChart: "cumulative",
+      tooltipContent: "",
       displayBySort: "All",
       deathsOpen: false,
       totalPages: 0,
@@ -174,7 +176,7 @@ class India extends Component {
         return "chandigarh";
       case "Chhattisgarh":
         return "chhattisgarh";
-      case "Dadara and Nagar Havelli":
+      case "Dadra and Nagar Haveli":
         return "dadranagarhaveli";
       case "Delhi":
         return "delhi";
@@ -286,30 +288,115 @@ class India extends Component {
                 />
               ) : null}
               {this.state.ui === "/map" ? (
-                <div
-                  className="row india-map"
-                  style={{
-                    border: "2px solid rgb(255, 252, 220)",
-                    marginRight: 0,
-                    marginTop: 15,
-                    marginLeft: 0,
-                    borderRadius: 10,
-                  }}
-                >
-                  <div
-                    className="col-sm-12"
-                    style={{ marginTop: 60, marginBottom: 80 }}
-                  >
-                    {console.log(this.state.originalStateName)}
-                    {this.state.showState === true ? (
-                      <div>
-                        {console.log(
-                          this.state.india.statewise.filter(
-                            (state) =>
-                              state.state === this.state.originalStateName
-                          )[0]
-                        )}
+                <div>
+                  {this.state.showState === true ? (
+                    <div>
+                      <div
+                        style={{
+                          background:
+                            "linear-gradient(to right, #d9a7c7, #fffcdc)",
+                          paddingBottom: 25,
+                          paddingTop: 30,
+                          borderRadius: 15,
+                          marginBottom: 15,
+                        }}
+                      >
+                        <GradientCardTitle
+                          style={{ textAlign: "center" }}
+                          title={this.state.originalStateName}
+                        />
                         <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-around",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: 16,
+                              color: "rgb(228, 51, 57)",
+                            }}
+                          >
+                            <span>Confirmed</span>
+                            <br />
+                            <span>{this.state.toolTipContent.confirmed}</span>
+                            <br />
+
+                            {this.state.toolTipContent.deltaconfirmed !==
+                            "0" ? (
+                              <span
+                                style={{ fontSize: 17, fontWeight: "bold" }}
+                              >
+                                &#9650;{" "}
+                                {this.state.toolTipContent.deltaconfirmed}
+                              </span>
+                            ) : null}
+                          </div>
+
+                          <div
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: 16,
+                              color: "rgb(25, 42, 86)",
+                            }}
+                          >
+                            <span>Active</span>
+                            <br />
+                            <span>{this.state.toolTipContent.active}</span>
+                          </div>
+                          <div
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: 16,
+                              color: "rgb(0, 98, 102)",
+                            }}
+                          >
+                            <span>Recovered</span>
+                            <br />
+                            <span>{this.state.toolTipContent.recovered}</span>
+                            <br />
+                            {this.state.toolTipContent.deltaconfirmed !==
+                            "0" ? (
+                              <span
+                                style={{ fontSize: 17, fontWeight: "bold" }}
+                              >
+                                &#9650;{" "}
+                                {this.state.toolTipContent.deltarecovered}
+                              </span>
+                            ) : null}
+                          </div>
+                          <div
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: 16,
+                              color: "rgb(83, 92, 104)",
+                            }}
+                          >
+                            <span>Deaths</span>
+                            <br />
+                            <span>{this.state.toolTipContent.deaths}</span>
+                            <br />
+                            {this.state.toolTipContent.deltaconfirmed !==
+                            "0" ? (
+                              <span
+                                style={{ fontSize: 17, fontWeight: "bold" }}
+                              >
+                                &#9650; {this.state.toolTipContent.deltadeaths}
+                              </span>
+                            ) : null}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="d-flex justify-content-center">
+                        <div
+                          style={{
+                            background: "#404b69",
+                            cursor: "pointer",
+                            fontWeight: "bold",
+                            padding: "6px 20px",
+                            borderRadius: 5,
+                          }}
                           onClick={() =>
                             this.setState({
                               showState: false,
@@ -318,35 +405,60 @@ class India extends Component {
                         >
                           Back
                         </div>
-                        <StateWiseMap
-                          stateName={this.state.stateName}
+                      </div>
+                    </div>
+                  ) : null}
+                  <div
+                    className="row india-map"
+                    style={{
+                      border: "2px solid rgb(255, 252, 220)",
+                      marginRight: 0,
+                      marginTop: 15,
+                      marginLeft: 0,
+                      borderRadius: 10,
+                    }}
+                  >
+                    <div
+                      className="col-sm-12"
+                      style={{ marginTop: 60, marginBottom: 80 }}
+                    >
+                      {this.state.showState === true ? (
+                        <div>
+                          <StateWiseMap
+                            stateName={this.state.stateName}
+                            data={
+                              this.state.stateWiseCity.length !== 0
+                                ? typeof this.state.stateWiseCity[
+                                    this.state.originalStateName
+                                  ] !== "undefined"
+                                  ? this.state.stateWiseCity[
+                                      this.state.originalStateName
+                                    ]["districtData"]
+                                  : []
+                                : []
+                            }
+                          />
+                        </div>
+                      ) : (
+                        <IndiaMap
+                          onStateClick={(state) => {
+                            this.setState({
+                              showState: true,
+                              stateName: this.filterStateName(state.state),
+                              originalStateName: state.state,
+                              toolTipContent: state,
+                            });
+                          }}
                           data={
-                            this.state.stateWiseCity.length !== 0
-                              ? this.state.stateWiseCity[
-                                  this.state.originalStateName
-                                ]["districtData"]
+                            this.state.india.length !== 0
+                              ? this.state.india.statewise.filter(
+                                  (state) => state.state !== "Total"
+                                )
                               : []
                           }
                         />
-                      </div>
-                    ) : (
-                      <IndiaMap
-                        onStateClick={(state) =>
-                          this.setState({
-                            showState: true,
-                            stateName: this.filterStateName(state),
-                            originalStateName: state,
-                          })
-                        }
-                        data={
-                          this.state.india.length !== 0
-                            ? this.state.india.statewise.filter(
-                                (state) => state.state !== "Total"
-                              )
-                            : []
-                        }
-                      />
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
               ) : null}
