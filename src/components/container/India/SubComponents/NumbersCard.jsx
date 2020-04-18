@@ -128,14 +128,7 @@ class NumbersCard extends Component {
                   )[0].confirmed
                 : 0}
             </div>
-            <div
-              style={{
-                fontSize: 15,
-                marginBottom: 10,
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
+            <div className="numeric-card-info-icon">
               <span style={{ fontSize: 17, fontWeight: "bold" }}>&#9650;</span>
               {this.props.india.length !== 0
                 ? typeof this.props.india.statewise.filter(
@@ -250,14 +243,7 @@ class NumbersCard extends Component {
                   )[0].recovered
                 : 0}
             </div>
-            <div
-              style={{
-                fontSize: 15,
-                marginBottom: 10,
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
+            <div className="numeric-card-info-icon">
               <span style={{ fontSize: 17, fontWeight: "bold" }}>&#9650;</span>
               {this.props.india.length !== 0
                 ? typeof this.props.india.statewise.filter(
@@ -345,14 +331,7 @@ class NumbersCard extends Component {
                   )[0].deaths
                 : 0}
             </div>
-            <div
-              style={{
-                fontSize: 15,
-                marginBottom: 10,
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
+            <div className="numeric-card-info-icon">
               <span style={{ fontSize: 17, fontWeight: "bold" }}>&#9650;</span>
               {this.props.india.length !== 0
                 ? typeof this.props.india.statewise.filter(

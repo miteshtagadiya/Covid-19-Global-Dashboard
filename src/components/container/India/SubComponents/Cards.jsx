@@ -80,12 +80,11 @@ class Cards extends Component {
                       className="row justify-content-center"
                       style={{ paddingTop: 15, paddingBottom: 15 }}
                     >
-                      <div style={{ padding: 10, fontWeight: "bold" }}>
+                      <div className="state-card-style">
                         <div>{location.confirmed}</div>
                         <div
+                          className="state-card-info"
                           style={{
-                            fontSize: 15,
-                            fontWeight: "bold",
                             color: "#e43339",
                           }}
                         >
@@ -96,18 +95,17 @@ class Cards extends Component {
                         </div>
                         <div>Confirmed</div>
                       </div>
-                      <div style={{ padding: 10, fontWeight: "bold" }}>
+                      <div className="state-card-style">
                         <div style={{ marginBottom: 22 }}>
                           {location.active}
                         </div>
                         <div>Active</div>
                       </div>
-                      <div style={{ padding: 10, fontWeight: "bold" }}>
+                      <div className="state-card-style">
                         <div>{location.recovered}</div>
                         <div
+                          className="state-card-info"
                           style={{
-                            fontSize: 15,
-                            fontWeight: "bold",
                             color: "#006266",
                           }}
                         >
@@ -119,12 +117,11 @@ class Cards extends Component {
 
                         <div>Recovered</div>
                       </div>
-                      <div style={{ padding: 10, fontWeight: "bold" }}>
+                      <div className="state-card-style">
                         <div>{location.deaths}</div>
                         <div
+                          className="state-card-info"
                           style={{
-                            fontSize: 15,
-                            fontWeight: "bold",
                             color: "#535c68",
                           }}
                         >

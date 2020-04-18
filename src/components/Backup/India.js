@@ -1,20 +1,20 @@
 import React, { Component } from "react";
 import "./App.css";
 import ReactTable from "react-table-6";
-import SimpleLineChart from "./SimpleLineChart/SimpleLineChart";
+import SimpleLineChart from "components/charts/SimpleLineChart/SimpleLineChart";
 import "react-table-6/react-table.css";
-import Github from "./assets/github1.png";
-import TinyChart from "./TinyChart";
-import IndiaIcon from "./assets/india.png";
-import World from "./assets/world.png";
+import Github from "assets/github1.png";
+import TinyChart from "components/charts/TinyChart";
+import IndiaIcon from "assets/india.png";
+import World from "assets/world.png";
 import { withRouter } from "react-router-dom";
-import Virus from "./assets/virus.gif";
+import Virus from "assets/virus.gif";
 import Popover from "react-popover";
-import ErrorBoundary from "./ErrorBoundry";
+import ErrorBoundary from "components/ui/ErrorBoundry/ErrorBoundry";
 import Select from "react-select";
 import ReactGA from "react-ga";
-import CustomChart from "./PieChart/CustomChart";
-import IndiaMap from "./IndiaMap/IndiaMap";
+import CustomChart from "components/charts/PieChart/CustomChart";
+import IndiaMap from "components/charts/IndiaMap/IndiaMap";
 
 class India extends Component {
   constructor(props) {
