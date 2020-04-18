@@ -1,4 +1,7 @@
 .indiamap svg{
-    overflow: inherit !important
+    overflow: inherit !important;
+    display: inline-block;
+    vertical-align: middle;
 }
     
+
