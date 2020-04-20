@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "6cf71abcf8567019af6f9dab356920b6",
+    "revision": "3e35dc9f85cc3ecf2ea4ba50d1fc6c1a",
     "url": "/Covid-19-Global-Dashboard/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/Covid-19-Global-Dashboard/static/css/2.861f4f67.chunk.css"
   },
   {
-    "revision": "d8b494132e5d3990ea75",
+    "revision": "bfe9b220578bba850aa4",
     "url": "/Covid-19-Global-Dashboard/static/css/main.2331deea.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/Covid-19-Global-Dashboard/static/js/2.3055758b.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "d8b494132e5d3990ea75",
-    "url": "/Covid-19-Global-Dashboard/static/js/main.b5fc2dd6.chunk.js"
+    "revision": "bfe9b220578bba850aa4",
+    "url": "/Covid-19-Global-Dashboard/static/js/main.6ab6ab1f.chunk.js"
   },
   {
     "revision": "be77cfcc28650b02762a",
