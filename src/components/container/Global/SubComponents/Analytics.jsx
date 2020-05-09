@@ -223,7 +223,7 @@ class Analytics extends Component {
 
         <div className="col-sm-6 col-12">
           <div className="gradient-card">
-            <GradientCardTitle title={"Top ten countries by cases"} />
+            <GradientCardTitle title={"Top 10 countries by cases"} />
             <div className="row" style={{ justifyContent: "center" }}>
               <div className="col-sm-6">
                 <Select
