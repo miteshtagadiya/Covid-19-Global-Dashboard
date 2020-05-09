@@ -117,12 +117,34 @@ const SimpleLineChart = (props) => {
       style={props.height ? { height: props.height } : { height: 270 }}
     >
       <ResponsiveContainer>
-        <Type width={500} height={100} data={data}>
+        <Type
+          layout={props.layout ? props.layout : "horizontal"}
+          width={500}
+          height={100}
+          data={data}
+          margin={
+            props.layout && props.layout === "vertical"
+              ? {
+                  left: 20,
+                }
+              : {}
+          }
+        >
           <CartesianGrid strokeDasharray="3 3" />
-
-          <XAxis hide={false} dataKey={props.axis ? props.axis : "name"} />
-
-          <YAxis />
+          {props.layout && props.layout === "vertical" ? (
+            <XAxis type="number" />
+          ) : (
+            <XAxis hide={false} dataKey={props.axis ? props.axis : "name"} />
+          )}
+          {props.layout && props.layout === "vertical" ? (
+            <YAxis
+              type="category"
+              hide={false}
+              dataKey={props.axis ? props.axis : "name"}
+            />
+          ) : (
+            <YAxis />
+          )}
           {props.customTooltip ? (
             <Tooltip content={<CustomTooltip />} />
           ) : (
