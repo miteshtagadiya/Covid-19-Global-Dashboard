@@ -63,7 +63,7 @@ class Global extends Component {
   }
 
   getDeathRates() {
-    fetch(`https://covid19-global-api.herokuapp.com/deaths-rate.json`, {
+    fetch(`https://covid19-global-api1.herokuapp.com/deaths-rate.json`, {
       method: "GET",
     })
       .then((res) => res.json())
@@ -80,7 +80,7 @@ class Global extends Component {
   }
 
   getGlobalData() {
-    fetch(`https://covid19-global-api.herokuapp.com/global.json`, {
+    fetch(`https://covid19-global-api1.herokuapp.com/global.json`, {
       header: { "Access-Control-Allow-Origin": "*" },
       method: "GET",
     })
