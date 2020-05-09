@@ -10,16 +10,10 @@ const CustomChart = (props) => {
         if (props.chartType === "TreeMap") {
           let selectedItem = chartWrapper.getChart().getSelection()[0];
           props.onPlotClick(props.rows[selectedItem.row]);
-          //console.log(props.rows[(Object.values(selectedItem[0]))])
           chartWrapper.getChart().setSelection([]);
         } else {
           var selectedItem = chartWrapper.getChart().getSelection()[0];
           if (selectedItem) {
-            // console.log(
-            //   "The user selected " +
-            //     Object.values(selectedItem) +
-            //     props.rows[Object.values(selectedItem)[0]][0]
-            // );
             props.onPlotClick(props.rows[Object.values(selectedItem)[0]][0]);
           }
         }
