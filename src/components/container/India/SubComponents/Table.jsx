@@ -156,6 +156,18 @@ class Table extends Component {
                   deltaConfirmed: this.props.stateWiseCity[city].districtData[
                     key
                   ]["delta"]["confirmed"],
+                  deceased: this.props.stateWiseCity[city].districtData[key]
+                    .deceased,
+                  active: this.props.stateWiseCity[city].districtData[key]
+                    .active,
+                  deltaDeceased: this.props.stateWiseCity[city].districtData[
+                    key
+                  ]["delta"]["deceased"],
+                  recovered: this.props.stateWiseCity[city].districtData[key]
+                    .recovered,
+                  deltaRecovered: this.props.stateWiseCity[city].districtData[
+                    key
+                  ]["delta"]["recovered"],
                 };
               }),
             };
@@ -187,6 +199,67 @@ class Table extends Component {
                           &#9650;
                         </span>
                         {props.original.deltaConfirmed}
+                      </span>
+                    )}{" "}
+                    <span className="number">{props.value}</span>
+                  </>
+                );
+              },
+            },
+            {
+              Header: "Active",
+              accessor: "active",
+              Cell: (props) => {
+                return (
+                  <>
+                    <span className="number">{props.value}</span>
+                  </>
+                );
+              },
+            },
+            {
+              Header: "Recovered",
+              accessor: "recovered",
+              Cell: (props) => {
+                return (
+                  <>
+                    {props.original.deltaRecovered === 0 ? null : (
+                      <span
+                        style={{
+                          fontSize: 15,
+                          fontWeight: "bold",
+                          color: "#006266",
+                        }}
+                      >
+                        <span style={{ fontSize: 15, fontWeight: "bold" }}>
+                          &#9650;
+                        </span>
+                        {props.original.deltaRecovered}
+                      </span>
+                    )}{" "}
+                    <span className="number">{props.value}</span>
+                  </>
+                );
+              },
+            },
+            {
+              Header: "Deaths",
+              accessor: "deceased",
+              Cell: (props) => {
+                return (
+                  <>
+                    {props.original.deltaDeceased === 0 ? null : (
+                      <span
+                        style={{
+                          fontSize: 15,
+                          fontWeight: "bold",
+                          color: "#535c68",
+                        }}
+                      >
+                        <span style={{ fontSize: 15, fontWeight: "bold" }}>
+                          &#9650;
+                        </span>
+                        {props.original.deltaDeceased}
                       </span>
                     )}{" "}
                     <span className="number">{props.value}</span>
