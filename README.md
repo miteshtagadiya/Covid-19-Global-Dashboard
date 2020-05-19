@@ -9,3 +9,10 @@ Dashboard created in ReactJS with ReCharts, React-Google-Charts, React-Simple-Ma
 <p align="center">
   <img src="/src/assets/covid19Global.gif">
 </p>
+
+
+
+## Setup
+```
+npm i && npm start
+```
