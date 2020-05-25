@@ -14,6 +14,26 @@ class Analytics extends Component {
   }
 
   render() {
+    let toptenCities = [];
+
+    if (this.props.stateWiseCity.length !== 0) {
+      let data = {};
+      Object.values(this.props.stateWiseCity).map((city) => {
+        return Object.assign(data, city.districtData);
+      });
+
+      let sorted = Object.keys(data).sort((a, b) => {
+        return data[b]["confirmed"] - data[a]["confirmed"];
+      });
+      let filtered = sorted
+        .filter((data) => data !== "Unassigned")
+        .slice(0, 10);
+
+      toptenCities = filtered.map((city) => {
+        return { name: city, ["Cases"]: data[city].confirmed };
+      });
+    }
+
     let totalDataDaily =
       this.props.india.length !== 0
         ? this.props.india.cases_time_series.map((cases) => {
@@ -368,6 +388,29 @@ class Analytics extends Component {
 
     return (
       <div className="row">
+        <div className="col-sm-12 col-12">
+          <div
+            style={{
+              minHeight: 368,
+              background: "linear-gradient(to right, #d9a7c7, #fffcdc)",
+              paddingBottom: 15,
+              paddingLeft: 15,
+              paddingTop: 30,
+              borderRadius: 15,
+              marginBottom: 15,
+            }}
+          >
+            <GradientCardTitle title={"Top 10 cities by confirmed cases"} />
+            <SimpleLineChart
+              chart={"BarChart"}
+              customTooltip={true}
+              grid={false}
+              data={toptenCities}
+              labels={["Cases"]}
+              colors={["#192a56"]}
+            />
+          </div>
+        </div>
         <div className="col-sm-6 col-12">
           <div
             style={{

@@ -266,6 +266,7 @@ class India extends Component {
               />
               {this.state.ui === "/" ? (
                 <Analytics
+                  stateWiseCity={this.state.stateWiseCity}
                   dailyStatus={this.state.dailyStatus}
                   rawData={this.state.rawData}
                   filterByCases={this.state.filterByCases}
