@@ -89,7 +89,10 @@ class Analytics extends Component {
     var pieChartData =
       this.props.india.length !== 0
         ? sortable
-            .filter((record) => record.state !== "Total")
+            .filter(
+              (record) =>
+                record.state !== "Total" && record.state !== "State Unassigned"
+            )
             .map((state) => {
               return [state.state, Number(state[this.props.filterByCases])];
             })
