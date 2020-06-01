@@ -147,6 +147,9 @@ class NumbersCard extends Component {
                   body={
                     <div
                       style={{
+                        maxHeight: 400,
+                        overflowY: "scroll",
+                        borderRight: 10,
                         background: "white",
                         borderRadius: 10,
                         padding: 15,
