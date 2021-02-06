@@ -44,11 +44,11 @@ const Footer = (props) => {
             fontWeight: "bold",
             textDecoration: "none",
           }}
-          href="https://miteshtagadiya.js.org"
+          href="https://shiva.js.org"
           rel="noopener noreferrer"
           target="_blank"
         >
-          Mitesh Tagadiya
+          Shiva
         </a>
       </div>
     </div>
